@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  merrimack-museum:
+  build:
     docker:
       - image: cimg/node:20.6.0
         auth:
@@ -23,8 +23,8 @@ jobs:
             - ./node_modules
       - run:
           name: Run tests
-          command: npm run test
+          command: npm run test:ci
 workflows:
   merrimack-museum-workflow:
     jobs:
-      - merrimack-museum
+      - build
