@@ -28,3 +28,7 @@ workflows:
   merrimack-museum-workflow:
     jobs:
       - build
+        filters:
+          branches: 
+            ignore:
+              - main
