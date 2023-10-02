@@ -1,9 +1,13 @@
+'use client'
 import Image from 'next/image'
-import { HeaderTabs } from '@/components/HeaderTabs'
+import { CardsCarousel } from '@/components/CardsCarousel';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main>
+      <div className='carousel'>
+        <CardsCarousel/>
+      </div>
     </main>
   )
 }
