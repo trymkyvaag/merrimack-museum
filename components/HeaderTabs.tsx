@@ -36,13 +36,8 @@ const user = {
 
 const tabs = [
   'Home',
-  'Orders',
-  'Education',
-  'Community',
-  'Forums',
-  'Support',
-  'Account',
-  'Helpdesk',
+  'Gallery',
+  'Random Image',
 ];
 
 export function HeaderTabs() {

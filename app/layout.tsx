@@ -1,6 +1,6 @@
 'use client'
 import './globals.css'
-import React from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import type { Metadata } from 'next'
 import Head from 'next/head';
 import { Inter } from 'next/font/google'
@@ -10,6 +10,9 @@ import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 
 import { HeaderTabs } from '@/components/HeaderTabs';
 import { FooterLinks } from '@/components/FooterLinks';
+
+import { AuthContext } from '@/lib/utils';
+import { useAuth } from '@/lib/useAuth';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +26,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  const { user, login, logout, setUser } = useAuth();
+
   return (
     <html lang="en">
       <head>
@@ -30,9 +36,7 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <HeaderTabs />
-            {children}
-          <FooterLinks />
+          <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>
         </MantineProvider>
       </body>
     </html>

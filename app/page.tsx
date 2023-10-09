@@ -1,13 +1,15 @@
 'use client'
 import Image from 'next/image'
-import { CardsCarousel } from '@/components/CardsCarousel';
-
+import { HeaderTabs } from '@/components/HeaderTabs';
+import { HeroText } from '@/components/HeroText';
+import { FooterLinks
+ } from '@/components/FooterLinks';
 export default function Home() {
   return (
     <main>
-      <div className='carousel'>
-        <CardsCarousel/>
-      </div>
+        <HeaderTabs />
+        <HeroText/>
+        <FooterLinks />
     </main>
   )
 }
