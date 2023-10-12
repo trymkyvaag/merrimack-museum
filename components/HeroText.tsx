@@ -2,8 +2,11 @@ import { Title, Text, Button, Container } from '@mantine/core';
 import { Dots } from './Dots';
 import classes from '@/styles/HeroText.module.css'
 import { CardsCarousel } from './CardsCarousel';
+import { useRouter } from 'next/navigation'
 
 export function HeroText() {
+  const router = useRouter()
+
   return (
     <Container className={classes.wrapper} size={1400}>
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
@@ -30,10 +33,10 @@ export function HeroText() {
         <CardsCarousel/>
 
         <div className={classes.controls}>
-          <Button className={classes.control} size="lg" variant="default" color="gray" onClick={() => {}}>
+          <Button className={classes.control} size="lg" variant="default" color="gray" onClick={() => router.push('/login')}>
             Log in
           </Button>
-          <Button className={classes.control} size="lg">
+          <Button className={classes.control} size="lg" onClick={() => router.push('/request')}>
             Request a piece
           </Button>
         </div>

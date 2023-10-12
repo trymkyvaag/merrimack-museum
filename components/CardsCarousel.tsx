@@ -23,13 +23,13 @@ function Card({ image, title, category }: CardProps) {
         <Text className={classes.category} size="xs">
           {category}
         </Text>
-        <Title order={3} className={classes.title}>
+        {/* <Title order={3} className={classes.title}>
           {title}
-        </Title>
+        </Title> */}
       </div>
-      <Button variant="white" color="dark">
+      {/* <Button variant="white" color="dark">
         Read article
-      </Button>
+      </Button> */}
     </Paper>
   );
 }
