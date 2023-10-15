@@ -4,14 +4,14 @@ import { HeaderTabs } from '@/components/HeaderTabs';
 import { HeroText } from '@/components/HeroText';
 import { FooterLinks } from '@/components/FooterLinks';
 import { ArticlesCardsGrid } from '@/components/ArticlesCardsGrid';
-import FormComponent from '../components/FormComponent';
 
-export default function Home() {
+export default function Admin() {
   return (
     <main>
-      <HeaderTabs />
-      <FormComponent />
-      <FooterLinks />
+        <HeaderTabs />
+        <HeroText/>
+        <ArticlesCardsGrid/>
+        <FooterLinks />
     </main>
   )
 }

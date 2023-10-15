@@ -26,6 +26,7 @@ import {
 } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderTabs.module.css';
+import { Link } from 'react-router-dom';
 
 const user = {
   name: 'Jane Spoonfighter',
@@ -38,6 +39,7 @@ const tabs = [
   'Home',
   'Gallery',
   'Random Image',
+  'Admin'
 ];
 
 export function HeaderTabs() {
@@ -172,6 +174,7 @@ export function HeaderTabs() {
           <Tabs.List>{items}</Tabs.List>
         </Tabs>
       </Container>
+      
     </div>
   );
 }
