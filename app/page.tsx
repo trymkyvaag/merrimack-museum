@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Container, Text, Button, Group } from '@mantine/core';
 import { GithubIcon } from '@mantine/ds';
 import classes from '@/styles/Home.module.css';
+import { useContext } from 'react';
+import LogInButton from '@/components/LogInButton';
 
 export default function Home() {
   return (
@@ -21,17 +23,7 @@ export default function Home() {
           </Text>
 
           <Group className={classes.controls}>
-            <Button
-              component={Link}
-              href='/login'
-              size="xl"
-              className={classes.control}
-              variant="gradient"
-              gradient={{ from: 'blue', to: 'cyan' }}
-            >
-              Log in
-            </Button>
-
+            <LogInButton />
             <Button
               component={Link}
               href='/gallery'

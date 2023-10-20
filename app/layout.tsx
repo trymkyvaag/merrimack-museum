@@ -5,9 +5,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '@mantine/core/styles.css';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
-import { AuthenticationProvider } from '@/lib/AuthenticationContext';
-import { SessionProvider } from "next-auth/react";
-import { Session } from 'next-auth';
+import Providers from '@/components/Providers';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,9 +15,9 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
-  children, session
+  children
 }: {
-  children: React.ReactNode, session: Session | null
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
@@ -27,9 +25,9 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-          <AuthenticationProvider session={session}>
-            <MantineProvider>{children}</MantineProvider>
-          </AuthenticationProvider>
+        <Providers>
+          <MantineProvider>{children}</MantineProvider>
+        </Providers>
       </body>
     </html>
   )

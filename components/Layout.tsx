@@ -9,7 +9,6 @@ import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useAuth } from '@/lib/AuthenticationContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,7 +34,6 @@ export default function Layout({
     children: React.ReactNode
 }) {
     const { data: Session } = useSession();
-    const { userEmail, authenticationLevel, login, logout } = useAuth();
     const [opened, { toggle }] = useDisclosure(false);
 
     const items = links.map((link) => {
