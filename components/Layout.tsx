@@ -8,8 +8,6 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
-
 const inter = Inter({ subsets: ['latin'] });
 
 const links = [
@@ -33,7 +31,6 @@ export default function Layout({
 }: {
     children: React.ReactNode
 }) {
-    const { data: Session } = useSession();
     const [opened, { toggle }] = useDisclosure(false);
 
     const items = links.map((link) => {
