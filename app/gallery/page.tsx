@@ -1,3 +1,5 @@
+'use client'
+
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio } from '@mantine/core';
 import classes from '@/styles/Gallery.module.css';
 
@@ -29,7 +31,6 @@ const mockdata = [
 ];
 
 export default function Gallery() {
-    
     const cards = mockdata.map((article) => (
         <Card key={article.title} p="md" radius="md" component="a" href="#" className={classes.card}>
             <AspectRatio ratio={1920 / 1080}>
@@ -43,7 +44,7 @@ export default function Gallery() {
             </Text>
         </Card>
     ));
-    return (
+    return ( 
         <main>
             <Container py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>

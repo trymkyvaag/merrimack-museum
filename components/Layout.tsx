@@ -8,6 +8,9 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+
 const inter = Inter({ subsets: ['latin'] });
 
 const links = [
@@ -32,7 +35,8 @@ export default function Layout({
     children: React.ReactNode
 }) {
     const [opened, { toggle }] = useDisclosure(false);
-
+    const { data: session, status, update } = useSession();
+    
     const items = links.map((link) => {
         const menuItems = link.links?.map((item) => (
             <Menu.Item key={item.link}>{item.label}</Menu.Item>
@@ -67,12 +71,26 @@ export default function Layout({
         );
     });
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            session ? console.log(session) : console.log("No active session");
+        }, 30000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [session]);
+
     return (
         <>
             <header className={classes.header}>
                 <Container size="md">
                     <div className={classes.inner}>
-                        <MantineLogo size={28} />
+                        <Link legacyBehavior href="/">
+                            <a>
+                                <MantineLogo size={28} />
+                            </a>
+                        </Link>
                         <Group gap={5} visibleFrom="sm">
                             {items}
                         </Group>
