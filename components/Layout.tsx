@@ -37,8 +37,8 @@ export default function Layout({
     const [opened, { toggle }] = useDisclosure(false);
 
     const items = links.map((link) => {
-        const menuItems = link.links?.map((item, index) => (
-            <Menu.Item key={`${item.link}-${index}`}>{item.label}</Menu.Item>
+        const menuItems = link.links?.map((item) => (
+            <Menu.Item key={item.link}>{item.label}</Menu.Item>
         ));
 
         if (menuItems) {
