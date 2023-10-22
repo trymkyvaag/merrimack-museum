@@ -1,6 +1,6 @@
 'use client'
 
-import { SimpleGrid, Card, Image, Text, Container, AspectRatio } from '@mantine/core';
+import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, ComboboxItem, OptionsFilter } from '@mantine/core';
 import classes from '@/styles/Gallery.module.css';
 
 const mockdata = [
@@ -44,8 +44,23 @@ export default function Gallery() {
             </Text>
         </Card>
     ));
-    return ( 
+
+    const optionsFilter: OptionsFilter = ({ options, search }) => {
+        const splittedSearch = search.toLowerCase().trim().split(' ');
+        return (options as ComboboxItem[]).filter((option) => {
+            const words = option.label.toLowerCase().trim().split(' ');
+            return splittedSearch.every((searchWord) => words.some((word) => word.includes(searchWord)));
+        });
+    };
+    return (
         <main>
+            <Container pt="xl" size="xs">
+                <Autocomplete
+                    placeholder='Search artwork...'
+                    data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
+                    filter={optionsFilter}
+                />
+            </Container>
             <Container py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
             </Container>
