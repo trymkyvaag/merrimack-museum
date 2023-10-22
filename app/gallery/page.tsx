@@ -1,6 +1,7 @@
 'use client'
 
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, ComboboxItem, OptionsFilter } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 import classes from '@/styles/Gallery.module.css';
 
 const mockdata = [
@@ -56,6 +57,7 @@ export default function Gallery() {
         <main>
             <Container pt="xl" size="xs">
                 <Autocomplete
+                    rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
                     placeholder='Search artwork...'
                     data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
                     filter={optionsFilter}
