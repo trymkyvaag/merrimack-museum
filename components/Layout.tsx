@@ -71,7 +71,33 @@ export default function Layout({
         );
     });
 
+    // const credentials = btoa(`${username}:${password}`);
+    // headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Basic ${credentials}`, // Add Basic Authentication
+    // },
+
     useEffect(() => {
+        if(session && session.user) {
+            fetch('http://localhost:8000/api/add-or-check-user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify( {address: session.user.email} )
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(data => {
+                console.log('Response Data:', data);
+            }).catch(error => { 
+                console.log(error);
+            })
+        }
+
+
         const intervalId = setInterval(() => {
             session ? console.log(session) : console.log("No active session");
         }, 30000);

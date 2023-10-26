@@ -61,6 +61,7 @@ export default function Gallery() {
                     placeholder='Search artwork...'
                     data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
                     filter={optionsFilter}
+                    limit={3}
                 />
             </Container>
             <Container py="xl">
