@@ -2,29 +2,37 @@
 import type { Metadata } from 'next'
 import Link from 'next/link';
 import { Inter } from 'next/font/google'
-import { Menu, Group, Center, Burger, Container } from '@mantine/core';
+import { Menu, Group, Center, Burger, Container, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
+interface NavLink {
+    link: string;
+    label: string;
+    auth: string | null;
+    links?: { link: string, label: string, auth: string | null }[] | null;
+}
+
 const links = [
-    { link: '/gallery', label: 'Gallery' },
-    { link: '/request', label: 'Request' },
-    { link: '/about', label: 'About' },
-    { link: '/dashboard', label: 'Dashboard' },
+    { link: '/gallery', label: 'Gallery', auth: null},
+    { link: '/request', label: 'Request', auth: 'faculty'},
+    { link: '/about', label: 'About', auth: null },
+    { link: '/dashboard', label: 'Dashboard', auth: 'admin'},
     {
         link: '#2',
         label: 'Support',
+        auth: null,
         links: [
-            { link: '/faq', label: 'FAQ' },
-            { link: '/demo', label: 'Book a demo' },
-            { link: '/forums', label: 'Forums' },
+            { link: '/faq', label: 'FAQ', auth: null},
+            { link: '/demo', label: 'Book a demo', auth: null },
+            { link: '/forums', label: 'Forums', auth: null },
         ],
     },
 ];
@@ -36,8 +44,17 @@ export default function Layout({
 }) {
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
+    const [items, setItems] = useState<any[]>(
+        links.filter((link) => link.auth === null).map((link) => {
+            if(link.links) {
+                return convertLinkToComponent({link: link.link, label: link.label, auth: link.auth, links: link.links});
+            } else {
+                return convertLinkToComponent({link: link.link, label: link.label, auth: link.auth});
+            }
+        })
+    );
     
-    const items = links.map((link) => {
+    function convertLinkToComponent(link: NavLink) {
         const menuItems = link.links?.map((item) => (
             <Menu.Item key={item.link}>{item.label}</Menu.Item>
         ));
@@ -69,7 +86,13 @@ export default function Layout({
                 </a>
             </Link>
         );
-    });
+    }
+
+    function addItemAtIndex (link: NavLink, index: number) {
+        const itemsCopy = [...items];
+        itemsCopy.splice(index, 0, convertLinkToComponent(link));
+        setItems(itemsCopy);
+    }
 
     // const credentials = btoa(`${username}:${password}`);
     // headers: {
@@ -92,15 +115,28 @@ export default function Layout({
                 return response.json();
             }).then(data => {
                 console.log('Response Data:', data);
+                if(data.user_type.user_type === 'admin') {
+                    setItems(links.map((link) => {
+                        return convertLinkToComponent({link: link.link, label: link.label, auth: link.auth});
+                    }));
+                }
+
+                if(data.user_type.user_type === 'faculty') {
+                    links
+                    .filter((link) => link.auth === 'faculty')
+                    .forEach((link) => addItemAtIndex({link: link.link, label: link.label, auth: link.auth}, items.length - 1));
+                }
+
             }).catch(error => { 
                 console.log(error);
-            })
-        }
+            });
 
+
+        }
 
         const intervalId = setInterval(() => {
             session ? console.log(session) : console.log("No active session");
-        }, 30000);
+        }, 10000);
 
         return () => {
             clearInterval(intervalId);

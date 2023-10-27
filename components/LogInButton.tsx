@@ -3,7 +3,7 @@
 import { Container, Text, Button, Group } from '@mantine/core';
 import { signIn, signOut, useSession } from 'next-auth/react';
 
-import classes from './LogInButton.module.css';
+import classes from '@/styles/LogInButton.module.css';
 
 const LogInButton = () => {
     const { data: session } = useSession();
