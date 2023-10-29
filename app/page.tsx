@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { Container, Text, Button, Group } from '@mantine/core';
-import { GithubIcon } from '@mantine/ds';
+import { IconAlbum } from '@tabler/icons-react';
 import classes from '@/styles/Home.module.css';
-import { useContext } from 'react';
 import LogInButton from '@/components/LogInButton';
 
 export default function Home() {
@@ -18,7 +17,7 @@ export default function Home() {
             Museum.
           </h1>
 
-          <Text className={classes.description} color="dimmed">
+          <Text className={classes.description} data-color="dimmed">
             Browse, share, request.
           </Text>
 
@@ -30,7 +29,7 @@ export default function Home() {
               size="xl"
               variant="default"
               className={classes.control}
-            // leftSection={<GithubIcon size={20} />}
+            leftSection={<IconAlbum size={20} />}
             >
               Browse
             </Button>

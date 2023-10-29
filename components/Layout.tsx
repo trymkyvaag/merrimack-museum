@@ -6,31 +6,26 @@ import { Menu, Group, Center, Burger, Container, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
+import { LinkProps } from '@/lib/types';
 import classes from '@/styles/HeaderMenu.module.css';
 
+import { Artwork } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
-interface NavLink {
-    link: string;
-    label: string;
-    auth: string | null;
-    links?: { link: string, label: string, auth: string | null }[] | null;
-}
-
 const links = [
-    { link: '/gallery', label: 'Gallery', auth: null},
-    { link: '/request', label: 'Request', auth: 'faculty'},
+    { link: '/gallery', label: 'Gallery', auth: null },
+    { link: '/request', label: 'Request', auth: 'faculty' },
     { link: '/about', label: 'About', auth: null },
-    { link: '/dashboard', label: 'Dashboard', auth: 'admin'},
+    { link: '/dashboard', label: 'Dashboard', auth: 'admin' },
     {
         link: '#2',
         label: 'Support',
         auth: null,
         links: [
-            { link: '/faq', label: 'FAQ', auth: null},
+            { link: '/faq', label: 'FAQ', auth: null },
             { link: '/demo', label: 'Book a demo', auth: null },
             { link: '/forums', label: 'Forums', auth: null },
         ],
@@ -44,17 +39,19 @@ export default function Layout({
 }) {
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
-    const [items, setItems] = useState<any[]>(
+    const [ token, setToken ] = useState<string>('');
+    const [ artwork, setArtwork] = useState<Artwork[]>([]);
+    const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
-            if(link.links) {
-                return convertLinkToComponent({link: link.link, label: link.label, auth: link.auth, links: link.links});
+            if (link.links) {
+                return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
             } else {
-                return convertLinkToComponent({link: link.link, label: link.label, auth: link.auth});
+                return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
             }
         })
     );
-    
-    function convertLinkToComponent(link: NavLink) {
+
+    function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
             <Menu.Item key={item.link}>{item.label}</Menu.Item>
         ));
@@ -88,59 +85,58 @@ export default function Layout({
         );
     }
 
-    function addItemAtIndex (link: NavLink, index: number) {
+    function addItemAtIndex(link: LinkProps, index: number) {
         const itemsCopy = [...items];
         itemsCopy.splice(index, 0, convertLinkToComponent(link));
         setItems(itemsCopy);
     }
 
-    // const credentials = btoa(`${username}:${password}`);
-    // headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Basic ${credentials}`, // Add Basic Authentication
-    // },
-
     useEffect(() => {
-        if(session && session.user) {
-            fetch('http://localhost:8000/api/add-or-check-user/', {
-                method: 'POST',
+        fetch('http://localhost:8000/api/token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: process.env.BEARER_EMAIL,
+                password: process.env.BEARER_PASSWORD,
+            }),
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch authentication token');
+            }
+            return response.json();
+        }).then((data) => {
+            setToken(data.token);
+
+            return fetch('http://localhost:8000/api/artworks/', {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, // Use the obtained token here
                 },
-                body: JSON.stringify( {address: session.user.email} )
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            }).then(data => {
-                console.log('Response Data:', data);
-                if(data.user_type.user_type === 'admin') {
-                    setItems(links.map((link) => {
-                        return convertLinkToComponent({link: link.link, label: link.label, auth: link.auth});
-                    }));
-                }
-
-                if(data.user_type.user_type === 'faculty') {
-                    links
-                    .filter((link) => link.auth === 'faculty')
-                    .forEach((link) => addItemAtIndex({link: link.link, label: link.label, auth: link.auth}, items.length - 1));
-                }
-
-            }).catch(error => { 
-                console.log(error);
             });
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Response Data:', data);
+            if (data.is_admin) {
+                setItems(links.map((link) => {
+                    return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                }));
+            }
 
-
-        }
-
-        const intervalId = setInterval(() => {
-            session ? console.log(session) : console.log("No active session");
-        }, 10000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
+            if (data.is_faculty) {
+                links
+                    .filter((link) => link.auth === 'faculty')
+                    .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
+            }
+        }).catch(error => {
+            console.log(error);
+        });
     }, [session]);
 
     return (

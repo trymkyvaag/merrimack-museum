@@ -1,37 +1,14 @@
 'use client'
 
-import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, ComboboxItem, OptionsFilter } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
+import { IconSearch, IconArrowUp } from '@tabler/icons-react';
+import { useWindowScroll } from '@mantine/hooks';
+import { mockdata } from '@/lib/utils';
 import classes from '@/styles/Gallery.module.css';
 
-const mockdata = [
-    {
-        title: 'Top 10 places to visit in Norway this summer',
-        image:
-            'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80',
-        date: 'August 18, 2022',
-    },
-    {
-        title: 'Best forests to visit in North America',
-        image:
-            'https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80',
-        date: 'August 27, 2022',
-    },
-    {
-        title: 'Hawaii beaches review: better than you think',
-        image:
-            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80',
-        date: 'September 9, 2022',
-    },
-    {
-        title: 'Mountains at night: 12 best locations to enjoy the view',
-        image:
-            'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80',
-        date: 'September 12, 2022',
-    },
-];
 
 export default function Gallery() {
+    const [scroll, scrollTo] = useWindowScroll();
     const cards = mockdata.map((article) => (
         <Card key={article.title} p="md" radius="md" component="a" href="#" className={classes.card}>
             <AspectRatio ratio={1920 / 1080}>
@@ -53,20 +30,36 @@ export default function Gallery() {
             return splittedSearch.every((searchWord) => words.some((word) => word.includes(searchWord)));
         });
     };
+
     return (
-        <main>
-            <Container pt="xl" size="xs">
-                <Autocomplete
-                    rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
-                    placeholder='Search artwork...'
-                    data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
-                    filter={optionsFilter}
-                    limit={3}
-                />
-            </Container>
-            <Container py="xl">
-                <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
-            </Container>
-        </main>
+        <>
+            <main>
+                <Container pt="xl" size="xs">
+                    <Autocomplete
+                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
+                        placeholder='Search artwork...'
+                        data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
+                        filter={optionsFilter}
+                        limit={3}
+                    />
+                </Container>
+                <Container py="xl">
+                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+                </Container>
+            </main>
+            <Affix position={{ bottom: 20, right: 20 }}>
+                <Transition transition="slide-up" mounted={scroll.y > 0}>
+                    {(transitionStyles) => (
+                        <Button
+                            leftSection={<IconArrowUp style={{ width: rem(16), height: rem(16) }} />}
+                            style={transitionStyles}
+                            onClick={() => scrollTo({ y: 0 })}
+                        >
+                            Scroll to top
+                        </Button>
+                    )}
+                </Transition>
+            </Affix>
+        </>
     )
 }
