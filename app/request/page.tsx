@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react';
-import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container } from '@mantine/core';
+import Link from 'next/link';
+import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import classes from '@/styles/Picker.module.css';
@@ -11,6 +12,9 @@ import { request_mock_data } from '@/lib/utils';
 export default function Request() {
     const [opened, setOpened] = useState(false);
     const [selected, setSelected] = useState(request_mock_data[0]);
+    const [active, setActive] = useState(1);
+    const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
+    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
     const items = request_mock_data.map((item) => (
         <Menu.Item
             // leftSection={<Image src={item.image} width={18} height={18} />}
@@ -37,7 +41,7 @@ export default function Request() {
     });
 
     const handleSubmit = () => {
-    
+
     };
 
     return (
@@ -128,11 +132,34 @@ export default function Request() {
                     />
 
                     <Group justify="center" mt="xl">
+                        {/* <Link href="/gallery" passHref> */}
                         <Button type="submit" size="md" onSubmit={() => handleSubmit}>
                             Submit Request
                         </Button>
+                        {/* </Link> */}
                     </Group>
                 </form>
+            </Container>
+
+            <Container py='lg' size='sm'>
+                <Stepper active={active} onStepClick={setActive}>
+                    <Stepper.Step label="First step" description="Request">
+                        Step 1: Submit Request
+                    </Stepper.Step>
+                    <Stepper.Step label="Second step" description="Request Review">
+                        Step 2: Request is being reviewed
+                    </Stepper.Step>
+                    <Stepper.Step label="Final step" description="Approved">
+                        Step 3: Request Approved
+                    </Stepper.Step>
+                    <Stepper.Completed>
+                        Art piece out for delivery
+                    </Stepper.Completed>
+                </Stepper>
+                <Group justify="center" mt="xl">
+                    <Button variant="default" onClick={prevStep}>Back</Button>
+                    <Button onClick={nextStep}>Next step</Button>
+                </Group>
             </Container>
         </>
     )

@@ -6,7 +6,6 @@ import { useWindowScroll } from '@mantine/hooks';
 import { mockdata } from '@/lib/utils';
 import classes from '@/styles/Gallery.module.css';
 
-
 export default function Gallery() {
     const [scroll, scrollTo] = useWindowScroll();
     const cards = mockdata.map((article) => (
@@ -34,18 +33,18 @@ export default function Gallery() {
     return (
         <>
             <main>
-                <Container pt="xl" size="xs">
-                    <Autocomplete
-                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
-                        placeholder='Search artwork...'
-                        data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
-                        filter={optionsFilter}
-                        limit={3}
-                    />
-                </Container>
-                <Container py="xl">
-                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
-                </Container>
+                    <Container pt="xl" size="xs">
+                        <Autocomplete
+                            rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
+                            placeholder='Search artwork...'
+                            data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
+                            filter={optionsFilter}
+                            limit={3}
+                        />
+                    </Container>
+                    <Container py="xl">
+                        <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+                    </Container>
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <Transition transition="slide-up" mounted={scroll.y > 0}>
