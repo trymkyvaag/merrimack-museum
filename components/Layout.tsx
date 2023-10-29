@@ -1,4 +1,5 @@
 'use client'
+
 import type { Metadata } from 'next'
 import Link from 'next/link';
 import { Inter } from 'next/font/google'
@@ -39,8 +40,8 @@ export default function Layout({
 }) {
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
-    const [ token, setToken ] = useState<string>('');
-    const [ artwork, setArtwork] = useState<Artwork[]>([]);
+    const [token, setToken] = useState<string>('');
+    const [artwork, setArtwork] = useState<Artwork[]>([]);
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
             if (link.links) {
@@ -92,30 +93,31 @@ export default function Layout({
     }
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/token/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: process.env.BEARER_EMAIL,
-                password: process.env.BEARER_PASSWORD,
-            }),
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch authentication token');
-            }
-            return response.json();
-        }).then((data) => {
-            setToken(data.token);
-
-            return fetch('http://localhost:8000/api/artworks/', {
-                method: 'GET',
+        if (session && session.user) {
+            fetch('api/token', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Use the obtained token here
                 },
+                body: JSON.stringify({ email: session.user.email }),
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch authentication token');
+                }
+                return response.json();
+            }).then((data) => {
+                setToken(data.token);
+            }).catch((error) => {
+                console.log(error);
             });
+        }
+
+        fetch('api/artworks', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
         }).then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -137,6 +139,7 @@ export default function Layout({
         }).catch(error => {
             console.log(error);
         });
+
     }, [session]);
 
     return (
