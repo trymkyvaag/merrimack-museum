@@ -31,4 +31,4 @@ export const request_mock_data = [
     { label: 'Submarine' },
     { label: 'Elephant' },
     { label: 'Pollock' },
-  ];
+];

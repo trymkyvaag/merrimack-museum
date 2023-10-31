@@ -99,7 +99,8 @@ export default function Layout({
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email: session.user.email }),
+                // body: JSON.stringify({ email: session.user.email }),
+                body: JSON.stringify({ email: 'julie69@example.com' }),
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch authentication token');
@@ -107,6 +108,15 @@ export default function Layout({
                 return response.json();
             }).then((data) => {
                 setToken(data.token);
+                if (data.user.is_admin) {
+                    setItems(links.map((link) => {
+                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                    }));
+                } else if (data.user.is_faculty) {
+                    links
+                        .filter((link) => link.auth === 'faculty')
+                        .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
+                }
             }).catch((error) => {
                 console.log(error);
             });
@@ -124,18 +134,8 @@ export default function Layout({
             }
             return response.json();
         }).then(data => {
-            console.log('Response Data:', data);
-            if (data.is_admin) {
-                setItems(links.map((link) => {
-                    return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-                }));
-            }
-
-            if (data.is_faculty) {
-                links
-                    .filter((link) => link.auth === 'faculty')
-                    .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
-            }
+            setArtwork(data);
+            console.log(artwork);
         }).catch(error => {
             console.log(error);
         });
