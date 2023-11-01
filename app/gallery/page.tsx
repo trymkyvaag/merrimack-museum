@@ -1,18 +1,39 @@
 'use client'
 
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
-import { IconSearch, IconArrowUp } from '@tabler/icons-react';
+import { IconSearch, IconArrowUp, IconStar } from '@tabler/icons-react';
+import { Carousel } from '@mantine/carousel';
 import { useWindowScroll } from '@mantine/hooks';
-import { mockdata } from '@/lib/utils';
+import { mockdata, carousel_images } from '@/lib/utils';
+import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
 
 export default function Gallery() {
     const [scroll, scrollTo] = useWindowScroll();
+
+    const slides = carousel_images.map((image, index) => (
+        <Carousel.Slide key={index}>
+            <AspectRatio ratio={1920 / 1080}>
+                <Image src={image} height={220} />
+            </AspectRatio>
+        </Carousel.Slide>
+    ));
+
     const cards = mockdata.map((article) => (
         <Card key={article.title} p="md" radius="md" component="a" href="#" className={classes.card}>
-            <AspectRatio ratio={1920 / 1080}>
-                <Image src={article.image} />
-            </AspectRatio>
+            <Card.Section>
+                <Carousel
+                    withIndicators
+                    loop
+                    classNames={{
+                        root: classes.carousel,
+                        controls: classes.carouselControls,
+                        indicator: classes.carouselIndicator,
+                    }}
+                >
+                    {slides}
+                </Carousel>
+            </Card.Section>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                 {article.date}
             </Text>
@@ -33,18 +54,18 @@ export default function Gallery() {
     return (
         <>
             <main>
-                    <Container pt="xl" size="xs">
-                        <Autocomplete
-                            rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
-                            placeholder='Search artwork...'
-                            data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
-                            filter={optionsFilter}
-                            limit={3}
-                        />
-                    </Container>
-                    <Container py="xl">
-                        <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
-                    </Container>
+                <Container pt="xl" size="xs">
+                    <Autocomplete
+                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
+                        placeholder='Search artwork...'
+                        data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
+                        filter={optionsFilter}
+                        limit={3}
+                    />
+                </Container>
+                <Container py="xl">
+                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+                </Container>
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <Transition transition="slide-up" mounted={scroll.y > 0}>
