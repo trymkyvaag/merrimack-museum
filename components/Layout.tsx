@@ -117,28 +117,26 @@ export default function Layout({
                         .filter((link) => link.auth === 'faculty')
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
                 }
-            }).catch((error) => {
+
+                return fetch('api/artworks', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            }).then(data => {
+                setArtwork(data);
+                console.log(artwork);
+            }).catch(error => {
                 console.log(error);
             });
         }
-
-        fetch('api/artworks', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        }).then(data => {
-            setArtwork(data);
-            console.log(artwork);
-        }).catch(error => {
-            console.log(error);
-        });
 
     }, [session]);
 
