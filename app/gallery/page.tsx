@@ -1,6 +1,7 @@
 'use client'
 
-import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
+import { useState } from 'react';
+import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
 import { IconSearch, IconArrowUp, IconStar } from '@tabler/icons-react';
 import { Carousel } from '@mantine/carousel';
 import { useWindowScroll } from '@mantine/hooks';
@@ -10,6 +11,7 @@ import classes from '@/styles/Gallery.module.css';
 
 export default function Gallery() {
     const [scroll, scrollTo] = useWindowScroll();
+    const [value, setValue] = useState('Clear me');
 
     const slides = carousel_images.map((image, index) => (
         <Carousel.Slide key={index}>
@@ -43,24 +45,15 @@ export default function Gallery() {
         </Card>
     ));
 
-    const optionsFilter: OptionsFilter = ({ options, search }) => {
-        const splittedSearch = search.toLowerCase().trim().split(' ');
-        return (options as ComboboxItem[]).filter((option) => {
-            const words = option.label.toLowerCase().trim().split(' ');
-            return splittedSearch.every((searchWord) => words.some((word) => word.includes(searchWord)));
-        });
-    };
-
     return (
         <>
             <main>
                 <Container pt="xl" size="xs">
-                    <Autocomplete
+                    <Input
+                        placeholder="Search artwork"
+                        onChange={(event) => setValue(event.currentTarget.value)}
+                        rightSectionPointerEvents="all"
                         rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
-                        placeholder='Search artwork...'
-                        data={['Mickey Mouse', 'Lady Liberty', 'Eiffel Tower']}
-                        filter={optionsFilter}
-                        limit={3}
                     />
                 </Container>
                 <Container py="xl">
