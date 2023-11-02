@@ -7,10 +7,10 @@ import { Menu, Group, Center, Burger, Container, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
-import { LinkProps } from '@/lib/types';
+import { DjangoImage, LinkProps } from '@/lib/types';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { Artwork } from '@/lib/types';
+import { Artwork, ArtworkContext } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -42,6 +42,11 @@ export default function Layout({
     const { data: session, status, update } = useSession();
     const [token, setToken] = useState<string>('');
     const [artwork, setArtwork] = useState<Artwork[]>([]);
+    const [map, setMap] = useState<Map<string, DjangoImage[]>>(new Map());
+    const [imageUrls, setImageUrls] = useState<DjangoImage[]>([]);
+    const addArtwork = (newArtwork: Artwork) => {
+        setArtwork((prevArtwork) => [...prevArtwork, newArtwork]);
+    };
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
             if (link.links) {
@@ -125,18 +130,48 @@ export default function Layout({
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            }).then(data => {
-                setArtwork(data);
-                console.log(artwork);
             }).catch(error => {
                 console.log(error);
             });
         }
+
+        fetch('api/artworks', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            setArtwork(data);
+            console.log(artwork);
+        }).catch(error => {
+            console.log(error);
+        });
+
+        fetch('api/images/?artwork=${artwork}', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            const urls = data.map((filename: string) => {
+                return `https://your-django-server/api/get_image/${filename}`;
+            });
+            setImageUrls(urls);
+        }).catch(error => {
+            console.log(error);
+        });
 
     }, [session]);
 
@@ -157,7 +192,11 @@ export default function Layout({
                     </div>
                 </Container>
             </header>
-            <main>{children}</main>
+            <main>
+                <ArtworkContext.Provider value={{ artwork, map, addArtwork, setMap }}>
+                    {children}
+                </ArtworkContext.Provider>
+            </main>
         </>
     )
 }
