@@ -1,6 +1,5 @@
 .card {
     transition: transform 150ms ease, box-shadow 150ms ease;
-  
     &:hover {
       transform: scale(1.01);
       box-shadow: var(--mantine-shadow-md);
@@ -10,4 +9,33 @@
   .title {
     font-family: 'Greycliff CF', var(--mantine-font-family);
     font-weight: bold;
+  }
+
+
+
+  .price {
+    color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  }
+  
+  .carousel {
+    @mixin hover {
+      .carouselControls {
+        opacity: 1;
+      }
+    }
+  }
+  
+  .carouselControls {
+    transition: opacity 150ms ease;
+    opacity: 0;
+  }
+  
+  .carouselIndicator {
+    width: rem(4px);
+    height: rem(4px);
+    transition: width 250ms ease;
+  
+    &[data-active] {
+      width: rem(16px);
+    }
   }
