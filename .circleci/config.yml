@@ -23,7 +23,7 @@ jobs:
             - ./node_modules
       - run:
           name: Run tests
-          command: npm run test:ci  --passWithNoTests
+          command: npm run test:ci
 workflows:
   merrimack-museum-workflow:
     jobs:
