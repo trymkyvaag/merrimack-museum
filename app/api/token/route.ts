@@ -1,10 +1,11 @@
 import { NextApiRequest } from 'next';
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
         const email = data.email;
+        
         if (!email) {
             return NextResponse.json({ error: 'Email is missing in the request body' }, {status: 400});
         }
