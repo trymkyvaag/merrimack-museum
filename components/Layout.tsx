@@ -13,13 +13,9 @@ import classes from '@/styles/HeaderMenu.module.css';
 import { Artwork, ArtworkContext } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import fs from 'fs';
-
-
 
 const inter = Inter({ subsets: ['latin'] });
 const imagePaths: string[] = [];
-
 
 const links = [
     { link: '/gallery', label: 'Gallery', auth: null },
@@ -62,51 +58,6 @@ export default function Layout({
         })
     );
 
-
-    const fetchRandomArtwork = (count = 5) => {
-        fetch('http://localhost:8000/api/randomartwork/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ num_artworks: count }), // Send the count as JSON in the request body
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch random artwork');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                const newImagePaths: string[] = data.map((item: { image_path: string }) => item.image_path);
-                imagePaths.length = 0; // Clear the existing array
-                imagePaths.push(...newImagePaths);
-                console.log(data);
-                console.log(imagePaths);
-
-
-                const imageUrls: string[] = imagePaths
-                    .map((directoryPath) => {
-                        const files = fs.readdirSync(directoryPath);
-                        const imageFile = files.find((file) => file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png'));
-                        if (imageFile) {
-                            return `${directoryPath}/${imageFile}`;
-                        }
-                        return null; // No image found in the directory
-                    })
-                    .filter((url) => url !== null) as string[];
-
-
-
-                console.log(imageUrls);
-
-                // You can update your state or do other processing here
-            })
-            .catch((error) => {
-                console.error('Error fetching random artwork:', error);
-            });
-    };
-
     function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
             <Menu.Item key={item.link}>{item.label}</Menu.Item>
@@ -148,6 +99,7 @@ export default function Layout({
     }
 
     useEffect(() => {
+
         if (session && session.user) {
             console.log(session.user.email);
         }
@@ -159,7 +111,6 @@ export default function Layout({
                 },
                 body: JSON.stringify({ address: session.user.email }),
 
-                //body: JSON.stringify({ email: 'julie69@example.com' }),
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch authentication token');
@@ -177,19 +128,30 @@ export default function Layout({
                         .filter((link) => link.auth === 'faculty')
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
                 }
-
-
-
-
             }).catch(error => {
                 console.log(error);
             });
-            console.log("MADE IT TO FETCH");
-            fetchRandomArtwork();
-
+            // Contact front end server (api/artworks/route.ts)
+            fetch('api/artworks', {
+                method: 'POST',
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
+                    // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
+                    // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
+                    console.log('IMG path data:', data);
+                })
+                .catch((error) => {
+                    console.error('Error fetching data:', error);
+                });
         }
     }, [session]);
-
 
     return (
         <>
@@ -212,7 +174,12 @@ export default function Layout({
                 <ArtworkContext.Provider value={{ artwork, map, addArtwork, setMap }}>
                     {children}
                 </ArtworkContext.Provider>
+                <h1>HEADER FOR PICTURES</h1>
+                {/* Div for img cards */}
+                <div>
+
+                </div>
             </main>
         </>
-    )
+    );
 }
