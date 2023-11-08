@@ -98,26 +98,31 @@ export default function Layout({
     }
 
     useEffect(() => {
+        if(session && session.user) {
+        console.log(session.user.email);
+        }
         if (session && session.user) {
-            fetch('api/token', {
+            fetch('http://localhost:8000/api/add-or-check-user/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // body: JSON.stringify({ email: session.user.email }),
-                body: JSON.stringify({ email: 'julie69@example.com' }),
+                body: JSON.stringify({ address: session.user.email }),
+                
+                //body: JSON.stringify({ email: 'julie69@example.com' }),
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch authentication token');
                 }
                 return response.json();
             }).then((data) => {
+                console.log(data)
                 setToken(data.token);
-                if (data.user.is_admin) {
+                if (data.user_type.user_type === "admin") {
                     setItems(links.map((link) => {
                         return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
                     }));
-                } else if (data.user.is_faculty) {
+                } else if (data.user_type.user_type == "FS") {
                     links
                         .filter((link) => link.auth === 'faculty')
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
