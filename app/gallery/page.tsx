@@ -9,6 +9,12 @@ import { mockdata, carousel_images } from '@/lib/utils';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
 
+
+
+// console.log("Inside page.tsx!!");
+// console.log(imagePaths); // Access the constant from File1
+
+
 export default function Gallery() {
     const [scroll, scrollTo] = useWindowScroll();
     const [value, setValue] = useState('Clear me');

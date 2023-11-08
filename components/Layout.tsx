@@ -13,8 +13,13 @@ import classes from '@/styles/HeaderMenu.module.css';
 import { Artwork, ArtworkContext } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import fs from 'fs';
+
+
 
 const inter = Inter({ subsets: ['latin'] });
+const imagePaths: string[] = [];
+
 
 const links = [
     { link: '/gallery', label: 'Gallery', auth: null },
@@ -57,6 +62,7 @@ export default function Layout({
         })
     );
 
+
     const fetchRandomArtwork = (count = 5) => {
         fetch('http://localhost:8000/api/randomartwork/', {
             method: 'POST',
@@ -72,8 +78,27 @@ export default function Layout({
                 return response.json();
             })
             .then((data) => {
-                // Print the data to the console
+                const newImagePaths: string[] = data.map((item: { image_path: string }) => item.image_path);
+                imagePaths.length = 0; // Clear the existing array
+                imagePaths.push(...newImagePaths);
                 console.log(data);
+                console.log(imagePaths);
+
+
+                const imageUrls: string[] = imagePaths
+                    .map((directoryPath) => {
+                        const files = fs.readdirSync(directoryPath);
+                        const imageFile = files.find((file) => file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png'));
+                        if (imageFile) {
+                            return `${directoryPath}/${imageFile}`;
+                        }
+                        return null; // No image found in the directory
+                    })
+                    .filter((url) => url !== null) as string[];
+
+
+
+                console.log(imageUrls);
 
                 // You can update your state or do other processing here
             })
@@ -161,8 +186,10 @@ export default function Layout({
             });
             console.log("MADE IT TO FETCH");
             fetchRandomArtwork();
+
         }
     }, [session]);
+
 
     return (
         <>
