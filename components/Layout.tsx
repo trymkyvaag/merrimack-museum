@@ -57,6 +57,31 @@ export default function Layout({
         })
     );
 
+    const fetchRandomArtwork = (count = 5) => {
+        fetch('http://localhost:8000/api/randomartwork/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ num_artworks: count }), // Send the count as JSON in the request body
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch random artwork');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Print the data to the console
+                console.log(data);
+
+                // You can update your state or do other processing here
+            })
+            .catch((error) => {
+                console.error('Error fetching random artwork:', error);
+            });
+    };
+
     function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
             <Menu.Item key={item.link}>{item.label}</Menu.Item>
@@ -98,8 +123,8 @@ export default function Layout({
     }
 
     useEffect(() => {
-        if(session && session.user) {
-        console.log(session.user.email);
+        if (session && session.user) {
+            console.log(session.user.email);
         }
         if (session && session.user) {
             fetch('http://localhost:8000/api/add-or-check-user/', {
@@ -108,7 +133,7 @@ export default function Layout({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ address: session.user.email }),
-                
+
                 //body: JSON.stringify({ email: 'julie69@example.com' }),
             }).then(response => {
                 if (!response.ok) {
@@ -128,56 +153,15 @@ export default function Layout({
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
                 }
 
-                return fetch('api/artworks', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+
+
+
             }).catch(error => {
                 console.log(error);
             });
+            console.log("MADE IT TO FETCH");
+            fetchRandomArtwork();
         }
-
-        fetch('api/artworks', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        }).then(data => {
-            setArtwork(data);
-            console.log(artwork);
-        }).catch(error => {
-            console.log(error);
-        });
-
-        fetch('api/images/?artwork=${artwork}', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        }).then(data => {
-            const urls = data.map((filename: string) => {
-                return `https://your-django-server/api/get_image/${filename}`;
-            });
-            setImageUrls(urls);
-        }).catch(error => {
-            console.log(error);
-        });
-
     }, [session]);
 
     return (
