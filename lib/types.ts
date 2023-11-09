@@ -9,14 +9,17 @@ export interface LinkProps {
 
 
 export interface Artwork {
-    artwork_id: string;
-    title: string;
-    creation_date: string;
-    description: string;
+    image_path: any;
+    comments: string;
+    location: string;
+    donor: string;
+    height: number;
+    width: number;
+    date_created_year: number;
+    date_created_month: number;
+    category: string;
     artist: string;
-    category: string | null;
-    location: string | null;
-    donor: string | null;
+    idartwork: number;
 };
 
 export interface DjangoImage {
