@@ -132,24 +132,24 @@ export default function Layout({
                 console.log(error);
             });
             // Contact front end server (api/artworks/route.ts)
-            fetch('api/artworks', {
-                method: 'POST',
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch data');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
-                    // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
-                    // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
-                    console.log('IMG path data:', data);
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error);
-                });
+            // fetch('api/artworks', {
+            //     method: 'POST',
+            // })
+            //     .then((response) => {
+            //         if (!response.ok) {
+            //             throw new Error('Failed to fetch data');
+            //         }
+            //         return response.json();
+            //     })
+            //     .then((data) => {
+            //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
+            //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
+            //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
+            //         console.log('IMG path data:', data);
+            //     })
+            //     .catch((error) => {
+            //         console.error('Error fetching data:', error);
+            //     });
         }
     }, [session]);
 
@@ -174,11 +174,7 @@ export default function Layout({
                 <ArtworkContext.Provider value={{ artwork, map, addArtwork, setMap }}>
                     {children}
                 </ArtworkContext.Provider>
-                <h1>HEADER FOR PICTURES</h1>
-                {/* Div for img cards */}
-                <div>
 
-                </div>
             </main>
         </>
     );
