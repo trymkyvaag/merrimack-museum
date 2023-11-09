@@ -31,7 +31,7 @@ export default function Gallery() {
                 'Content-Type': 'application/json',
             },
 
-            body: JSON.stringify({ num_artworks: 5 }),
+            body: JSON.stringify(10),
         })
 
             .then((response) => {
@@ -116,7 +116,7 @@ export default function Gallery() {
                                         'Content-Type': 'application/json',
                                     },
 
-                                    body: JSON.stringify({ num_artworks: scrollToValue }),
+                                    body: JSON.stringify( scrollToValue ),
                                 })
 
                                     .then((response) => {
