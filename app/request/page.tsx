@@ -44,12 +44,12 @@ export default function Request() {
 
 
     const handleSubmit = () => {
-
+        //form.insertListItem('fruits', { name: 'Orange', available: true }, 1); //insert selected 
+        //form.values; // -> { name: 'John', email: '', age: 21 }
         fetch('http://localhost:8000/api/move-requests/', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // Include any additional headers if needed
             },
             body: JSON.stringify(form.values),
         })

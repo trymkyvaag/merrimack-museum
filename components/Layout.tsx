@@ -162,6 +162,22 @@ export default function Layout({
             console.log("MADE IT TO FETCH");
             fetchRandomArtwork();
         }
+
+        fetch('api/artworks', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Artworks:', data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
     }, [session]);
 
     return (
