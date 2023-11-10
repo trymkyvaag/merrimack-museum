@@ -1,6 +1,6 @@
 'use client'
 
-import { Select } from '@mantine/core';
+import { CardSection, Select } from '@mantine/core';
 import { useState, useEffect, SetStateAction } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
 import { IconSearch, IconArrowUp, IconStar } from '@tabler/icons-react';
@@ -52,9 +52,11 @@ export default function Gallery() {
 
     const cards = artworkData.map((artwork) => (
         <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
-            <AspectRatio ratio={1080 / 900}>
-                <Image src={artwork.image_path.image_path} height={220} />
-            </AspectRatio>
+            <CardSection>
+                <AspectRatio ratio={1080 / 900}>
+                    <Image src={artwork.image_path.image_path} height={220} />
+                </AspectRatio>
+            </CardSection>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                 {"Identifier: " + (artwork.idartwork ? artwork.idartwork : '-')}
             </Text>
@@ -116,7 +118,7 @@ export default function Gallery() {
                                         'Content-Type': 'application/json',
                                     },
 
-                                    body: JSON.stringify( scrollToValue ),
+                                    body: JSON.stringify(scrollToValue),
                                 })
 
                                     .then((response) => {
