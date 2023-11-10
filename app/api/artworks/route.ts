@@ -4,16 +4,16 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
     try {
 
-        const headers = new Headers();
-        for (const [key, value] of Object.entries(req.headers)) {
-            if (typeof value === 'string') {
-                headers.set(key, value);
-            }
-        }
+        // const headers = new Headers();
+        // for (const [key, value] of Object.entries(req.headers)) {
+        //     if (typeof value === 'string') {
+        //         headers.set(key, value);
+        //     }
+        // }
 
         const externalApiResponse = await fetch('http://localhost:8000/api/artworks/', {
             method: 'GET',
-            headers: headers
+            // headers: headers
         });
 
         if (externalApiResponse.ok) {
