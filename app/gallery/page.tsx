@@ -1,12 +1,10 @@
 'use client'
 
-import { CardSection, Select } from '@mantine/core';
+import { Select } from '@mantine/core';
 import { useState, useEffect, SetStateAction } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
 import { IconSearch, IconArrowUp, IconStar } from '@tabler/icons-react';
-import { Carousel } from '@mantine/carousel';
 import { useWindowScroll } from '@mantine/hooks';
-import { mockdata, carousel_images } from '@/lib/utils';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
 import { Artwork, ArtworkContext } from '@/lib/types';
@@ -52,11 +50,11 @@ export default function Gallery() {
 
     const cards = artworkData.map((artwork) => (
         <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
-            <CardSection>
+            <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
                     <Image src={artwork.image_path.image_path} height={220} />
                 </AspectRatio>
-            </CardSection>
+            </Card.Section>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                 {"Identifier: " + (artwork.idartwork ? artwork.idartwork : '-')}
             </Text>
