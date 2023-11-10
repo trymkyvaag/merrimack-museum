@@ -52,9 +52,9 @@ export default function Gallery() {
 
     const cards = artworkData.map((artwork) => (
         <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
-            <Card.Section>
+            <AspectRatio ratio={1080 / 900}>
                 <Image src={artwork.image_path.image_path} height={220} />
-            </Card.Section>
+            </AspectRatio>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                 {"Identifier: " + (artwork.idartwork ? artwork.idartwork : '-')}
             </Text>
