@@ -59,11 +59,9 @@ export default function Request() {
                 return response.json();
             })
             .then((data) => {
-                // Handle the response data
                 console.log("Response Data:", data);
             })
             .catch((error) => {
-                // Handle errors
                 console.error("Error:", error);
             });
     };
