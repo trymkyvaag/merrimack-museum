@@ -1,19 +1,18 @@
-import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
     try {
-
-        // const headers = new Headers();
-        // for (const [key, value] of Object.entries(req.headers)) {
-        //     if (typeof value === 'string') {
-        //         headers.set(key, value);
-        //     }
-        // }
-
-        const externalApiResponse = await fetch('http://localhost:8000/api/artworks/', {
-            method: 'GET',
-            // headers: headers
+        const data = await req.json();
+        
+        if (!data) {
+            return NextResponse.json({ error: 'Form data is missing in the request body' }, {status: 400});
+        }
+        const externalApiResponse = await fetch('http://localhost:8000/api/move-requests/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
         });
 
         if (externalApiResponse.ok) {

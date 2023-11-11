@@ -19,18 +19,11 @@ export interface Artwork {
     donor: string | null;
 };
 
-export interface DjangoImage {
-    image_id: string;
-    artwork: string
-    cover: string,
-    description: string | null,
-}
-
 interface ArtworkContextType {
-    artwork: Artwork[];
-    map: Map<string, DjangoImage[]>
+    artworks: Artwork[];
+    artworksMap: Map<string, Artwork[]>
     addArtwork: (newArtwork: Artwork) => void;
-    setMap: (map: Map<string, DjangoImage[]>) => void;
+    setArtworksMap: (map: Map<string, Artwork[]>) => void;
 }
 
 export const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);
