@@ -8,6 +8,8 @@ import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork, useUser } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
+import image from '@/public/404.svg';
+import classesTwo from '@/styles/NotFoundImage.module.css';
 
 export default function Request() {
     const { data: session, status, update } = useSession();
@@ -75,7 +77,7 @@ export default function Request() {
         <>
             {
                 // || isFaculty || isAdmin
-                true ?
+                isFaculty ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">
@@ -210,7 +212,21 @@ export default function Request() {
                     </Container>
 
                     :
-                    <div><p>Operation not allowed</p></div>
+                    <Container className={classesTwo.root}>
+                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                            <Image src={image.src} className={classesTwo.mobileImage} />
+                            <div>
+                                <Title className={classesTwo.title}>Please sign in...</Title>
+                                <Text c="dimmed" size="lg">
+                                    Note: Only Faculty may request an art piece.
+                                </Text>
+                                {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                                    Get back to home page
+                                </Button> */}
+                            </div>
+                            <Image src={image.src} className={classesTwo.desktopImage} />
+                        </SimpleGrid>
+                    </Container>
             }
         </>
     )
