@@ -9,7 +9,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { Artwork, ArtworkContext, LinkProps } from '@/lib/types';
+import { Artwork, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -39,6 +39,8 @@ export default function Layout({
 }) {
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const [isFaculty, setIsFaculty] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
     const [artworks, setArtworks] = useState<Artwork[]>([]);
     const [artworksMap, setArtworksMap] = useState<Map<string, Artwork[]>>(new Map());
@@ -140,10 +142,16 @@ export default function Layout({
                 console.log(data)
                 setToken(data.token);
                 if (data.user_type.user_type === "admin") {
+                    setIsAdmin(true);
                     setItems(links.map((link) => {
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                        if (link.links) {
+                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                        } else {
+                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                        }
                     }));
                 } else if (data.user_type.user_type == "FS") {
+                    setIsFaculty(true);
                     links
                         .filter((link) => link.auth === 'faculty')
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
@@ -175,8 +183,8 @@ export default function Layout({
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.title)) {
                     artworksMap.set(artwork.title, []);
-                  }
-                  artworksMap.get(artwork.title)?.push(artwork);
+                }
+                artworksMap.get(artwork.title)?.push(artwork);
             });
         }).catch(error => {
             console.error('Error:', error);
@@ -202,7 +210,9 @@ export default function Layout({
             </header>
             <main>
                 <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
-                    {children}
+                    <UserContext.Provider value={{ isAdmin, isFaculty, setIsAdmin, setIsFaculty }}>
+                        {children}
+                    </UserContext.Provider>
                 </ArtworkContext.Provider>
             </main>
         </>
