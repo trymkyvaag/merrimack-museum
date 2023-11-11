@@ -8,9 +8,6 @@ import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
-import styles from './ScrollableMenu.module.css';
-
-import { request_mock_data } from '@/lib/utils';
 
 export default function Request() {
     const { data: session, status, update } = useSession();
@@ -20,6 +17,7 @@ export default function Request() {
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+    
     const items = artworks.map((item) => (
         <Menu.Item
             // leftSection={<Image src={item.image} width={18} height={18} />}
@@ -34,12 +32,12 @@ export default function Request() {
             email: '',
             source: '',
             destination: '',
-            subject: '',
             message: '',
         },
         validate: {
             email: (value) => !/^\S+@\S+$/.test(value),
-            subject: (value) => value.trim().length === 0,  // Make sure to add validators for source and destination
+            source: (value) => value.trim().length === 0,
+            destination: (value) => value.trim().length === 0,
         },
     });
 
