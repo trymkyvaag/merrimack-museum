@@ -7,10 +7,9 @@ import { Menu, Group, Center, Burger, Container, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
-import { DjangoImage, LinkProps } from '@/lib/types';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { Artwork, ArtworkContext } from '@/lib/types';
+import { Artwork, ArtworkContext, LinkProps } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -41,11 +40,10 @@ export default function Layout({
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
     const [token, setToken] = useState<string>('');
-    const [artwork, setArtwork] = useState<Artwork[]>([]);
-    const [map, setMap] = useState<Map<string, DjangoImage[]>>(new Map());
-    const [imageUrls, setImageUrls] = useState<DjangoImage[]>([]);
+    const [artworks, setArtworks] = useState<Artwork[]>([]);
+    const [artworksMap, setArtworksMap] = useState<Map<string, Artwork[]>>(new Map());
     const addArtwork = (newArtwork: Artwork) => {
-        setArtwork((prevArtwork) => [...prevArtwork, newArtwork]);
+        setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
@@ -174,7 +172,15 @@ export default function Layout({
             }
             return response.json();
         }).then(data => {
-            console.log('Artworks:', data);
+            setArtworks(data);
+            artworks.forEach((artwork) => {
+                if (!artworksMap.has(artwork.title)) {
+                    artworksMap.set(artwork.title, []);
+                  }
+                  artworksMap.get(artwork.title)?.push(artwork);
+            });
+            console.log(artworks);
+            console.log(artworksMap)
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -198,7 +204,7 @@ export default function Layout({
                 </Container>
             </header>
             <main>
-                <ArtworkContext.Provider value={{ artwork, map, addArtwork, setMap }}>
+                <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
                     {children}
                 </ArtworkContext.Provider>
             </main>

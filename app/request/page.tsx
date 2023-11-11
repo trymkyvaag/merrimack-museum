@@ -13,19 +13,19 @@ import { request_mock_data } from '@/lib/utils';
 
 export default function Request() {
     const { data: session, status, update } = useSession();
-    const { artwork, map } = useArtwork();
+    const { artworks, artworksMap } = useArtwork();
     const [opened, setOpened] = useState(false);
-    const [selected, setSelected] = useState(request_mock_data[0]);
+    const [selected, setSelected] = useState(artworks[0]);
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-    const items = request_mock_data.map((item) => (
+    const items = artworks.map((item) => (
         <Menu.Item
             // leftSection={<Image src={item.image} width={18} height={18} />}
             onClick={() => setSelected(item)}
-            key={item.label}
+            key={item.title}
         >
-            {item.label}
+            {item.title}
         </Menu.Item>
     ));
     const form = useForm({
@@ -130,7 +130,7 @@ export default function Request() {
                                         <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
                                             <Group gap="xs">
                                                 {/* <Image src={selected.image} width={22} height={22} /> */}
-                                                <span className={classes.label}>{selected.label}</span>
+                                                <span className={classes.label}>{selected ? selected.title : 'Select piece'}</span>
                                             </Group>
                                             <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                         </UnstyledButton>
