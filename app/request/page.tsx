@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper } from '@mantine/core';
-import { IconChevronDown } from '@tabler/icons-react';
+import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
+import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork } from '@/lib/types';
@@ -13,7 +13,8 @@ export default function Request() {
     const { data: session, status, update } = useSession();
     const { artworks, artworksMap } = useArtwork();
     const [opened, setOpened] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+    const theme = useMantineTheme();
+    const [checked, setChecked] = useState(false);
     const [selected, setSelected] = useState(artworks[0]);
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
@@ -61,22 +62,47 @@ export default function Request() {
             console.error("Error:", error);
         });
 
-        setSubmitted(true);
+        setChecked(true);
     };
 
     useEffect(() => {
         if (session && session.user) {
             form.setFieldValue('email', session.user.email ?? '');
         }
-    }, [session, submitted]);
+    }, [session]);
     return (
         <>
             {
                 // session && session.user 
                 true ?
-                    <div>
-                        {!submitted ?
-                            <div>
+                    <Container>
+                        <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+                            <Tooltip label="View your requests" refProp="rootRef">
+                                <Switch
+                                    checked={checked}
+                                    onChange={(event) => setChecked(event.currentTarget.checked)}
+                                    color="teal"
+                                    size="md"
+                                    thumbIcon={
+                                        checked ? (
+                                            <IconCheck
+                                                style={{ width: rem(12), height: rem(12) }}
+                                                color={theme.colors.teal[6]}
+                                                stroke={3}
+                                            />
+                                        ) : (
+                                            <IconX
+                                                style={{ width: rem(12), height: rem(12) }}
+                                                color={theme.colors.red[6]}
+                                                stroke={3}
+                                            />
+                                        )
+                                    }
+                                />
+                            </Tooltip>
+                        </div>
+                        {!checked ?
+                            <Container>
                                 <Container px='lg' py='lg' size='sm'>
                                     <form onSubmit={form.onSubmit(handleSubmit)}>
                                         <Title
@@ -157,7 +183,7 @@ export default function Request() {
                                         </Group>
                                     </form>
                                 </Container>
-                            </div>
+                            </Container>
                             :
                             <Container py='lg' size='sm'>
                                 <Stepper active={active} onStepClick={setActive}>
@@ -180,7 +206,7 @@ export default function Request() {
                                 </Group>
                             </Container>
                         }
-                    </div>
+                    </Container>
 
                     :
                     <div><p>Operation not allowed</p></div>

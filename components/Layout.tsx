@@ -131,8 +131,6 @@ export default function Layout({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ address: session.user.email }),
-
-                //body: JSON.stringify({ email: 'julie69@example.com' }),
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch authentication token');
@@ -173,15 +171,13 @@ export default function Layout({
             return response.json();
         }).then(data => {
             setArtworks(data);
-            artworks.sort((a, b) => a.title.localeCompare(b.title)); // DON'T THINK SORTING IS WORKING PROPERLY
-            console.log(artworks);
+            // artworks.sort((a, b) => a.title.localeCompare(b.title)); // DON'T THINK SORTING IS WORKING PROPERLY
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.title)) {
                     artworksMap.set(artwork.title, []);
                   }
                   artworksMap.get(artwork.title)?.push(artwork);
             });
-            console.log(artworksMap)
         }).catch(error => {
             console.error('Error:', error);
         });
