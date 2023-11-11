@@ -8,6 +8,7 @@ import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
+import styles from './ScrollableMenu.module.css';
 
 import { request_mock_data } from '@/lib/utils';
 
@@ -118,13 +119,15 @@ export default function Request() {
                                         {...form.getInputProps('destination')}
                                     />
                                 </SimpleGrid>
-
                                 <Menu
                                     onOpen={() => setOpened(true)}
                                     onClose={() => setOpened(false)}
                                     radius="md"
                                     width="target"
                                     withinPortal
+                                    trigger="hover" 
+                                    openDelay={100} 
+                                    closeDelay={400}
                                 >
                                     <Menu.Target>
                                         <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
@@ -135,7 +138,7 @@ export default function Request() {
                                             <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                         </UnstyledButton>
                                     </Menu.Target>
-                                    <Menu.Dropdown>{items}</Menu.Dropdown>
+                                    <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>{items}</Menu.Dropdown>
                                 </Menu>
                                 <Textarea
                                     mt="md"
