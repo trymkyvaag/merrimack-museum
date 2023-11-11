@@ -1,19 +1,23 @@
 'use client'
 
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper } from '@mantine/core';
-import { IconChevronDown } from '@tabler/icons-react';
+import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
+import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
-import { useArtwork } from '@/lib/types';
+import { useArtwork, useUser } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
+import image from '@/public/404.svg';
+import classesTwo from '@/styles/NotFoundImage.module.css';
 
 export default function Request() {
     const { data: session, status, update } = useSession();
-    const { artworks, artworksMap } = useArtwork();
+    const { artworks } = useArtwork();
+    const { isAdmin, isFaculty } = useUser();
     const [opened, setOpened] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+    const theme = useMantineTheme();
+    const [checked, setChecked] = useState(false);
     const [selected, setSelected] = useState(artworks[0]);
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
@@ -61,22 +65,47 @@ export default function Request() {
             console.error("Error:", error);
         });
 
-        setSubmitted(true);
+        setChecked(true);
     };
 
     useEffect(() => {
         if (session && session.user) {
             form.setFieldValue('email', session.user.email ?? '');
         }
-    }, [session, submitted]);
+    }, [session]);
     return (
         <>
             {
-                // session && session.user 
-                true ?
-                    <div>
-                        {!submitted ?
-                            <div>
+                // || isFaculty || isAdmin
+                isFaculty ?
+                    <Container>
+                        <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+                            <Tooltip label="View your requests" refProp="rootRef">
+                                <Switch
+                                    checked={checked}
+                                    onChange={(event) => setChecked(event.currentTarget.checked)}
+                                    color="teal"
+                                    size="md"
+                                    thumbIcon={
+                                        checked ? (
+                                            <IconCheck
+                                                style={{ width: rem(12), height: rem(12) }}
+                                                color={theme.colors.teal[6]}
+                                                stroke={3}
+                                            />
+                                        ) : (
+                                            <IconX
+                                                style={{ width: rem(12), height: rem(12) }}
+                                                color={theme.colors.red[6]}
+                                                stroke={3}
+                                            />
+                                        )
+                                    }
+                                />
+                            </Tooltip>
+                        </div>
+                        {!checked ?
+                            <Container>
                                 <Container px='lg' py='lg' size='sm'>
                                     <form onSubmit={form.onSubmit(handleSubmit)}>
                                         <Title
@@ -157,7 +186,7 @@ export default function Request() {
                                         </Group>
                                     </form>
                                 </Container>
-                            </div>
+                            </Container>
                             :
                             <Container py='lg' size='sm'>
                                 <Stepper active={active} onStepClick={setActive}>
@@ -180,10 +209,24 @@ export default function Request() {
                                 </Group>
                             </Container>
                         }
-                    </div>
+                    </Container>
 
                     :
-                    <div><p>Operation not allowed</p></div>
+                    <Container className={classesTwo.root}>
+                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                            <Image src={image.src} className={classesTwo.mobileImage} />
+                            <div>
+                                <Title className={classesTwo.title}>Please sign in...</Title>
+                                <Text c="dimmed" size="lg">
+                                    Note: Only Faculty may request an art piece.
+                                </Text>
+                                {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                                    Get back to home page
+                                </Button> */}
+                            </div>
+                            <Image src={image.src} className={classesTwo.desktopImage} />
+                        </SimpleGrid>
+                    </Container>
             }
         </>
     )
