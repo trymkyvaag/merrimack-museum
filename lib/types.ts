@@ -19,13 +19,6 @@ export interface Artwork {
     donor: string | null;
 };
 
-export interface DjangoImage {
-    image_id: string;
-    artwork: string
-    cover: string,
-    description: string | null,
-}
-
 interface ArtworkContextType {
     artworks: Artwork[];
     artworksMap: Map<string, Artwork[]>
