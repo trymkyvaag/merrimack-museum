@@ -173,13 +173,14 @@ export default function Layout({
             return response.json();
         }).then(data => {
             setArtworks(data);
+            artworks.sort((a, b) => a.title.localeCompare(b.title)); // DON'T THINK SORTING IS WORKING PROPERLY
+            console.log(artworks);
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.title)) {
                     artworksMap.set(artwork.title, []);
                   }
                   artworksMap.get(artwork.title)?.push(artwork);
             });
-            console.log(artworks);
             console.log(artworksMap)
         }).catch(error => {
             console.error('Error:', error);
