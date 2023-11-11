@@ -43,8 +43,6 @@ export default function Request() {
 
 
     const handleSubmit = () => {
-        //form.insertListItem('fruits', { name: 'Orange', available: true }, 1); //insert selected 
-        //form.values; // -> { name: 'John', email: '', age: 21 }
         fetch('http://localhost:3000/api/moverequests/', {
             method: "POST",
             headers: {
@@ -75,7 +73,7 @@ export default function Request() {
                 true ?
                     <div>
                         <Container px='lg' py='lg' size='sm'>
-                            <form onSubmit={form.onSubmit(() => { })}>
+                            <form onSubmit={form.onSubmit(handleSubmit)}>
                                 <Title
                                     order={2}
                                     size="h1"
@@ -147,7 +145,7 @@ export default function Request() {
 
                                 <Group justify="center" mt="xl">
                                     {/* <Link href="/gallery" passHref> */}
-                                    <Button type="submit" size="md" onSubmit={() => handleSubmit}>
+                                    <Button type="submit" size="md" onSubmit={() => {}}>
                                         Submit Request
                                     </Button>
                                     {/* </Link> */}
