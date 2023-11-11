@@ -17,7 +17,7 @@ export default function Request() {
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-    
+
     const items = artworks.map((item) => (
         <Menu.Item
             // leftSection={<Image src={item.image} width={18} height={18} />}
@@ -45,25 +45,22 @@ export default function Request() {
     const handleSubmit = () => {
         //form.insertListItem('fruits', { name: 'Orange', available: true }, 1); //insert selected 
         //form.values; // -> { name: 'John', email: '', age: 21 }
-        fetch('http://localhost:8000/api/move-requests/', {
+        fetch('http://localhost:3000/api/moverequests/', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(form.values),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log("Response Data:", data);
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
     };
 
     useEffect(() => {
@@ -121,8 +118,8 @@ export default function Request() {
                                     radius="md"
                                     width="target"
                                     withinPortal
-                                    trigger="hover" 
-                                    openDelay={100} 
+                                    trigger="hover"
+                                    openDelay={100}
                                     closeDelay={400}
                                 >
                                     <Menu.Target>
