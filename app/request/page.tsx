@@ -74,7 +74,7 @@ export default function Request() {
     return (
         <>
             {
-                // session && session.user 
+                // || isFaculty || isAdmin
                 true ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
