@@ -6,12 +6,14 @@ export async function POST(req: NextRequest) {
 
 
     let passedValue = await new NextResponse(req.body).text();
+    console.log("\n\n\nRecived keywords: ")
+    console.log(passedValue)
 
     console.log("here: ", passedValue);
     try {
 
         // Fetch data from the "randomartworks" endpoint
-        const randomArtworksResponse = await fetch('http://localhost:8000/api/search-artwork/', {
+        const sewarchArtworksResponse = await fetch('http://localhost:8000/api/search-artwork/', {
             method: 'POST', // Type post
             headers: {
                 'Content-Type': 'application/json',
@@ -19,12 +21,12 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({ keyword: passedValue }),  // Endpoint expects num_artworks: 'int' as input. Default as 5 for now.
 
         });
-        if (!randomArtworksResponse.ok) {
-            throw new Error('Failed to fetch data from randomartworks');
+        if (!sewarchArtworksResponse.ok) {
+            throw new Error('Failed to fetch data from SearchArtworks');
         }
 
         // Grab data
-        const data = await randomArtworksResponse.json();
+        const data = await sewarchArtworksResponse.json();
 
         // Return data response in json format
         return NextResponse.json(data);
