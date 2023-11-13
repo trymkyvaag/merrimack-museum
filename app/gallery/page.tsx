@@ -9,6 +9,8 @@ import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
 import { Artwork } from '@/lib/types';
 
+
+
 export default function Gallery() {
     const [value, setValue] = useState('');
     const [artworkData, setArtworkData] = useState([]);
@@ -19,9 +21,9 @@ export default function Gallery() {
         placeholder="Search artwork"
         onChange={(event) => setValue(event.currentTarget.value)}
         onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-                handleSearch();
-            }
+            // if (event.key === 'Enter') {
+            //     // handleSearch(event.);
+            // }
         }}
         rightSectionPointerEvents="all"
         rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
@@ -83,7 +85,29 @@ export default function Gallery() {
             });
     }, []); // Empty dependency array to fetch data once when the component mounts
 
-    const cards = artworkData.map((artwork) => (
+    interface Artwork {
+        idartwork: number;
+        artist: {
+            artist_name: string;
+        };
+        category?: {
+            category: string;
+        };
+        date_created_month?: number | null;
+        date_created_year?: number | null;
+        width?: string | null;
+        height?: string | null;
+        donor?: string | null;
+        location?: {
+            location: string;
+        } | null;
+        comments?: string | null;
+        image_path: {
+            image_path: string;
+        };
+    }
+
+    const cards = artworkData.map((artwork: Artwork) => (
         <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
@@ -153,7 +177,6 @@ export default function Gallery() {
                         onChange={(selectedValue: string | null) => {
                             if (selectedValue !== null) {
                                 setScrollToValue(parseInt(selectedValue, 10));
-                                handleSearch();
                             }
                         }}
                     />
