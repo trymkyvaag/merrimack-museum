@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     try {
 
         // Fetch data from the "randomartworks" endpoint
-        const sewarchArtworksResponse = await fetch('http://127.0.0.1:8000/api/search-artwork/', {
+        const sewarchArtworksResponse = await fetch('http://127.0.0.1:8000/api/searchartwork/', {
             method: 'POST', // Type post
             headers: {
                 'Content-Type': 'application/json',
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
 
         // Grab data
         const data = await sewarchArtworksResponse.json();
+        console.log(data)
 
         // Return data response in json format
         return NextResponse.json(data);
