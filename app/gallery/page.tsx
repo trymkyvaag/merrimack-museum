@@ -27,38 +27,35 @@ export default function Gallery() {
         rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
     />
 
-    const handleSearch = () => {
-        console.log("value: " + value)
-        if (value.trim() !== '') {
-            // Make the fetch request with the search value
-            fetch('api/search', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ keyword: value }),
+    const handleSearch = (searchValue: string) => {
+        // Make the fetch request with the selected value
+        fetch('api/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ keyword: searchValue }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                return response.json();
             })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch data');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log(data);
-                    setArtworkData(data);
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error);
-                });
-        }
+            .then((data) => {
+                console.log(data);
+                setArtworkData(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
     };
 
-    const handleEnterKeyPress = (event: { key: string; }) => {
-        if (event.key === 'Enter') {
-            handleSearch();
-        }
-    };
+    // const handleEnterKeyPress = (event: { key: string; }) => {
+    //     if (event.key === 'Enter') {
+    //         handleSearch();
+    //     }
+    // };
 
     useEffect(() => {
         // Initial fetch when component mounts
@@ -76,6 +73,8 @@ export default function Gallery() {
                 return response.json();
             })
             .then((data) => {
+                console.log("(In useeffect)in then:")
+
                 console.log(data);
                 setArtworkData(data);
             })
@@ -132,7 +131,9 @@ export default function Gallery() {
                         onChange={(event) => setValue(event.currentTarget.value)}
                         onKeyDown={(event) => {
                             if (event.key === 'Enter') {
-                                handleSearch();
+                                console.log("(in event.key ==  enter) call handlesearch :")
+
+                                handleSearch(value);
                             }
                         }}
                         rightSectionPointerEvents="all"

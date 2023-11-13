@@ -6,8 +6,8 @@ export async function POST(req: NextRequest) {
 
 
     let passedValue = await new NextResponse(req.body).text();
-    console.log("\n\n\nRecived keywords: ")
-    console.log(passedValue)
+    console.log("\n\n\nRecived keywords: " + passedValue)
+    
 
     try {
 
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ keyword: passedValue }),  // Endpoint expects num_artworks: 'int' as input. Default as 5 for now.
+            body: JSON.stringify({ keyword: passedValue }),
 
         });
         if (!sewarchArtworksResponse.ok) {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
         // Grab data
         const data = await sewarchArtworksResponse.json();
-        console.log("Returned data" + data)
+        console.log("Returned data: |" + data + "|")
 
         // Return data response in json format
         return NextResponse.json(data);
