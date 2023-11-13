@@ -88,9 +88,38 @@ export default function Gallery() {
                 <Container pt="xl" size="xs">
                     <Input
                         placeholder="Search artwork"
-                        onChange={(event: { currentTarget: { value: SetStateAction<string> } }) =>
-                            setValue(event.currentTarget.value)
-                        }
+                        onClick={(event: { currentTarget: { value: SetStateAction<string> } }) => {
+                            console.log("In search bar:")
+                            console.log(value)
+                            if (value !== null) {
+
+
+                                // Make the fetch request with the selected value
+                                fetch('api/search', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+
+                                    body: JSON.stringify(scrollToValue),
+                                })
+
+                                    .then((response) => {
+                                        if (!response.ok) {
+                                            throw new Error('Failed to fetch data');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then((data) => {
+                                        console.log(data);
+                                        setArtworkData(data);
+                                    })
+                                    .catch((error) => {
+                                        console.error('Error fetching data:', error);
+                                    });
+
+                            }
+                        }}
                         rightSectionPointerEvents="all"
                         rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
                     />
