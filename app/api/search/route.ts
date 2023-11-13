@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     let passedValue = await new NextResponse(req.body).text();
 
-    console.log("here: ", x);
+    console.log("here: ", passedValue);
     try {
 
         // Fetch data from the "randomartworks" endpoint
