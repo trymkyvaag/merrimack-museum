@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 // Goal: Contact Django back end endpoint that returns random artwork
 export async function POST(req: NextRequest) {
 
-    
 
     let passedValue = await new NextResponse(req.body).text();
     let valueToJson = JSON.parse(passedValue);
@@ -19,6 +18,7 @@ export async function POST(req: NextRequest) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ num_artworks: x }),  // Endpoint expects num_artworks: 'int' as input. Default as 5 for now.
+
         });
         if (!randomArtworksResponse.ok) {
             throw new Error('Failed to fetch data from randomartworks');
