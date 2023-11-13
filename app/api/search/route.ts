@@ -9,7 +9,6 @@ export async function POST(req: NextRequest) {
     console.log("\n\n\nRecived keywords: ")
     console.log(passedValue)
 
-    console.log("here: ", passedValue);
     try {
 
         // Fetch data from the "randomartworks" endpoint
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
 
         // Grab data
         const data = await sewarchArtworksResponse.json();
-        console.log(data)
+        console.log("Returned data" + data)
 
         // Return data response in json format
         return NextResponse.json(data);

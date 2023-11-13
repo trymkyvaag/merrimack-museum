@@ -15,8 +15,20 @@ export default function Gallery() {
     const [scrollToValue, setScrollToValue] = useState(10);
 
     const [scroll, scrollTo] = useWindowScroll();
+    <Input
+        placeholder="Search artwork"
+        onChange={(event) => setValue(event.currentTarget.value)}
+        onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+                handleSearch();
+            }
+        }}
+        rightSectionPointerEvents="all"
+        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
+    />
 
     const handleSearch = () => {
+        console.log("value: " + value)
         if (value.trim() !== '') {
             // Make the fetch request with the search value
             fetch('api/search', {
@@ -117,17 +129,14 @@ export default function Gallery() {
                 <Container pt="xl" size="xs">
                     <Input
                         placeholder="Search artwork"
-                        value={value}
                         onChange={(event) => setValue(event.currentTarget.value)}
-                        onKeyDown={handleEnterKeyPress}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                handleSearch();
+                            }
+                        }}
                         rightSectionPointerEvents="all"
-                        rightSection={
-                            <IconSearch
-                                style={{ width: 'rem(15)', height: 'rem(15)' }}
-                                stroke={1.5}
-                                onClick={handleSearch}
-                            />
-                        }
+                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
                     />
                 </Container>
                 <Container py="xl">
@@ -136,7 +145,28 @@ export default function Gallery() {
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    {/* Rest of your Affix and other components */}
+                    <Select
+                        data={['10', '20', '30', '40', '50']}
+                        value={scrollToValue.toString()}
+                        style={{ width: '75px' }}
+                        onChange={(selectedValue: string | null) => {
+                            if (selectedValue !== null) {
+                                setScrollToValue(parseInt(selectedValue, 10));
+                                handleSearch();
+                            }
+                        }}
+                    />
+                    <Transition transition="slide-up" mounted={scroll.y > 0}>
+                        {(transitionStyles) => (
+                            <Button
+                                leftSection={<IconArrowUp style={{ width: rem(16), height: rem(16) }} />}
+                                style={transitionStyles}
+                                onClick={() => scrollTo({ y: scrollToValue })}
+                            >
+                                Scroll to top
+                            </Button>
+                        )}
+                    </Transition>
                 </div>
             </Affix>
         </>
