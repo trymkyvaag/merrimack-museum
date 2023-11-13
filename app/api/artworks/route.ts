@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
     const x = parseInt(valueToJson);
     console.log("here: ", x);
     try {
-        
+
         // Fetch data from the "randomartworks" endpoint
-        const randomArtworksResponse = await fetch('http://localhost:8000/api/randomartwork/', {
+        const randomArtworksResponse = await fetch('http://127.0.0.1:8000/api/randomartwork/', {
             method: 'POST', // Type post
             headers: {
                 'Content-Type': 'application/json',
