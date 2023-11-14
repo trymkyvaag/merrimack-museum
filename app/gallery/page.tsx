@@ -111,10 +111,10 @@ export default function Gallery() {
                 {"Identifier: " + (artwork.idartwork ? artwork.idartwork : '-')}
             </Text>
             <Text className={classes.title} mt={5}>
-                {"ttitle: " + (artwork.title ? artwork.artist.artist_name : '-')}
+                {"Title: " + (artwork.title ? artwork.title : '-')}
             </Text>
             <Text className={classes.title} mt={5}>
-                {"Artist Name: " + (artwork.artist ? artwork.title : '-')}
+                {"Artist Name: " + (artwork.artist ? artwork.artist.artist_name : '-')}
             </Text>
             <Text className={classes.title} mt={5}>
                 {"Category: " + (artwork.category ? artwork.category.category : '-')}
