@@ -77,7 +77,7 @@ export default function Request() {
         <>
             {
                 // || isFaculty || isAdmin
-                isFaculty ?
+                true ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">

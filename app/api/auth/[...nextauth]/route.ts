@@ -29,10 +29,14 @@ const handler = NextAuth({
         }),
     ],
     callbacks: {
-        async jwt({ token }) {
-            token.userRole = "admin"
-            return token
-        },
+        async jwt({ token, user }: { token: any; user: any }) {
+            console.log("JWT Callback:", token);
+            return Promise.resolve(token);
+          },
+          async session({ session, user }: { session: any; user: any }) {
+            console.log("Session Callback:", session);
+            return Promise.resolve(session);
+          },
     },
 });
 
