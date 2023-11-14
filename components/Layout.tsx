@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
+const imagePaths: string[] = [];
 
 const links = [
     { link: '/gallery', label: 'Gallery', auth: null },
@@ -124,6 +125,7 @@ export default function Layout({
     }
 
     useEffect(() => {
+
         if (session && session.user) {
             fetch('http://localhost:8000/api/add-or-check-user/', {
                 method: 'POST',
@@ -131,6 +133,7 @@ export default function Layout({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ address: session.user.email }),
+
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch authentication token');
@@ -153,14 +156,30 @@ export default function Layout({
                         .filter((link) => link.auth === 'faculty')
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
                 }
-
-
-
-
             }).catch(error => {
                 console.log(error);
             });
+
             fetchRandomArtwork();
+            // Contact front end server (api/artworks/route.ts)
+            // fetch('api/artworks', {
+            //     method: 'POST',
+            // })
+            //     .then((response) => {
+            //         if (!response.ok) {
+            //             throw new Error('Failed to fetch data');
+            //         }
+            //         return response.json();
+            //     })
+            //     .then((data) => {
+            //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
+            //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
+            //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
+            //         console.log('IMG path data:', data);
+            //     })
+            //     .catch((error) => {
+            //         console.error('Error fetching data:', error);
+            //     });
         }
 
         fetch('api/artworks', {
@@ -210,7 +229,8 @@ export default function Layout({
                         {children}
                     </UserContext.Provider>
                 </ArtworkContext.Provider>
+
             </main>
         </>
-    )
+    );
 }
