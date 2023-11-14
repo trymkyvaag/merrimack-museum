@@ -48,12 +48,17 @@ export default function Request() {
 
 
     const handleSubmit = () => {
+
+        const data = {
+            ...form.values,
+            artwork: selected
+        }
         fetch('http://localhost:3000/api/moverequests/', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(form.values),
+            body: JSON.stringify(data),
         }).then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
