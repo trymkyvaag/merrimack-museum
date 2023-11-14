@@ -53,7 +53,7 @@ export default function Request() {
             ...form.values,
             artwork: selected.artwork_id
         }
-        fetch('http://localhost:3000/api/moverequests/', {
+        fetch('api/moverequests', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

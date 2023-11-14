@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Form data is missing in the request body' }, {status: 400});
         }
 
+        console.log(`Sending data: ${data}`);
         const externalApiResponse = await fetch('http://localhost:8000/api/move-request/', {
             method: 'POST',
             headers: {
