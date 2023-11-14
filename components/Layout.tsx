@@ -74,6 +74,7 @@ export default function Layout({
             .then((data) => {
                 // Print the data to the console
                 console.log(data);
+                
 
                 // You can update your state or do other processing here
             })
@@ -124,9 +125,6 @@ export default function Layout({
 
     useEffect(() => {
         if (session && session.user) {
-            console.log(session.user.email);
-        }
-        if (session && session.user) {
             fetch('http://localhost:8000/api/add-or-check-user/', {
                 method: 'POST',
                 headers: {
@@ -139,7 +137,6 @@ export default function Layout({
                 }
                 return response.json();
             }).then((data) => {
-                console.log(data)
                 setToken(data.token);
                 if (data.user_type.user_type === "admin") {
                     setIsAdmin(true);
@@ -163,7 +160,6 @@ export default function Layout({
             }).catch(error => {
                 console.log(error);
             });
-            console.log("MADE IT TO FETCH");
             fetchRandomArtwork();
         }
 
