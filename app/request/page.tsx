@@ -51,7 +51,7 @@ export default function Request() {
 
         const data = {
             ...form.values,
-            artwork: selected
+            artwork: selected.artwork_id
         }
         fetch('http://localhost:3000/api/moverequests/', {
             method: "POST",
