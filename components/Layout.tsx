@@ -7,10 +7,9 @@ import { Menu, Group, Center, Burger, Container, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
-import { DjangoImage, LinkProps } from '@/lib/types';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { Artwork, ArtworkContext } from '@/lib/types';
+import { Artwork, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -41,12 +40,13 @@ export default function Layout({
 }) {
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const [isFaculty, setIsFaculty] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
-    const [artwork, setArtwork] = useState<Artwork[]>([]);
-    const [map, setMap] = useState<Map<string, DjangoImage[]>>(new Map());
-    const [imageUrls, setImageUrls] = useState<DjangoImage[]>([]);
+    const [artworks, setArtworks] = useState<Artwork[]>([]);
+    const [artworksMap, setArtworksMap] = useState<Map<string, Artwork[]>>(new Map());
     const addArtwork = (newArtwork: Artwork) => {
-        setArtwork((prevArtwork) => [...prevArtwork, newArtwork]);
+        setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
@@ -120,10 +120,16 @@ export default function Layout({
                 console.log(data)
                 setToken(data.token);
                 if (data.user_type.user_type === "admin") {
+                    setIsAdmin(true);
                     setItems(links.map((link) => {
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                        if (link.links) {
+                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                        } else {
+                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                        }
                     }));
                 } else if (data.user_type.user_type == "FS") {
+                    setIsFaculty(true);
                     links
                         .filter((link) => link.auth === 'faculty')
                         .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
@@ -151,6 +157,29 @@ export default function Layout({
             //         console.error('Error fetching data:', error);
             //     });
         }
+
+        fetch('api/artworks', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            setArtworks(data);
+            // artworks.sort((a, b) => a.title.localeCompare(b.title)); // DON'T THINK SORTING IS WORKING PROPERLY
+            artworks.forEach((artwork) => {
+                if (!artworksMap.has(artwork.title)) {
+                    artworksMap.set(artwork.title, []);
+                }
+                artworksMap.get(artwork.title)?.push(artwork);
+            });
+        }).catch(error => {
+            console.error('Error:', error);
+        });
     }, [session]);
 
     return (
@@ -171,8 +200,10 @@ export default function Layout({
                 </Container>
             </header>
             <main>
-                <ArtworkContext.Provider value={{ artwork, map, addArtwork, setMap }}>
-                    {children}
+                <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
+                    <UserContext.Provider value={{ isAdmin, isFaculty, setIsAdmin, setIsFaculty }}>
+                        {children}
+                    </UserContext.Provider>
                 </ArtworkContext.Provider>
 
             </main>
