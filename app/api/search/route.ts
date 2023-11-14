@@ -1,7 +1,12 @@
 import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from "next/server";
 
-// Goal: Contact Django back end endpoint that returns random artwork
+/**
+ * Post to get artoworks from backend using the search endpoint
+ * and keywords from frontend
+ * @param req, the request 
+ * @returns data in json form
+ */
 export async function POST(req: NextRequest) {
 
 
@@ -17,7 +22,6 @@ export async function POST(req: NextRequest) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            // body: JSON.stringify({ keyword: passedValue }),
             body: passedValue
 
         });
@@ -27,7 +31,6 @@ export async function POST(req: NextRequest) {
 
         // Grab data
         const data = await sewarchArtworksResponse.json();
-        console.log("Returned data: |" + JSON.stringify(data) + "|")
 
 
         // Return data response in json format

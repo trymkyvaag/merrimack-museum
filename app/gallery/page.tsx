@@ -7,7 +7,6 @@ import { IconSearch, IconArrowUp } from '@tabler/icons-react';
 import { useWindowScroll } from '@mantine/hooks';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
-import { Artwork } from '@/lib/types';
 
 
 
@@ -17,20 +16,13 @@ export default function Gallery() {
     const [scrollToValue, setScrollToValue] = useState(10);
 
     const [scroll, scrollTo] = useWindowScroll();
-    <Input
-        placeholder="Search artwork"
-        onChange={(event) => setValue(event.currentTarget.value)}
-        onKeyDown={(event) => {
-            // if (event.key === 'Enter') {
-            //     // handleSearch(event.);
-            // }
-        }}
-        rightSectionPointerEvents="all"
-        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
-    />
-
+    /**
+     * Function for handeling the search 
+     * @param searchValue, a string where words are separated by spaces 
+     */
     const handleSearch = (searchValue: string) => {
-        // Make the fetch request with the selected value
+
+        //fetch the frontend endpoint
         fetch('api/search', {
             method: 'POST',
             headers: {
@@ -45,7 +37,7 @@ export default function Gallery() {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
+                //Set the data to the cards using the setArtwrokData
                 setArtworkData(data);
             })
             .catch((error) => {
@@ -53,12 +45,9 @@ export default function Gallery() {
             });
     };
 
-    // const handleEnterKeyPress = (event: { key: string; }) => {
-    //     if (event.key === 'Enter') {
-    //         handleSearch();
-    //     }
-    // };
-
+    /**
+     * Set inital data
+     */
     useEffect(() => {
         // Initial fetch when component mounts
         fetch('api/artworks', {
@@ -75,9 +64,6 @@ export default function Gallery() {
                 return response.json();
             })
             .then((data) => {
-                console.log("(In useeffect)in then:")
-
-                console.log(data);
                 setArtworkData(data);
             })
             .catch((error) => {
@@ -85,6 +71,9 @@ export default function Gallery() {
             });
     }, []); // Empty dependency array to fetch data once when the component mounts
 
+    /**
+     * Use interface to avoid tsx errors when declaring cards
+     */
     interface Artwork {
         idartwork: number;
         artist: {
@@ -93,6 +82,7 @@ export default function Gallery() {
         category?: {
             category: string;
         };
+        title: string | null;
         date_created_month?: number | null;
         date_created_year?: number | null;
         width?: string | null;
@@ -107,6 +97,9 @@ export default function Gallery() {
         };
     }
 
+    /**
+     * Create the cards. Maps the data (The artworks) to Cards
+     */
     const cards = artworkData.map((artwork: Artwork) => (
         <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
             <Card.Section>
@@ -118,7 +111,10 @@ export default function Gallery() {
                 {"Identifier: " + (artwork.idartwork ? artwork.idartwork : '-')}
             </Text>
             <Text className={classes.title} mt={5}>
-                {"Artist Name: " + (artwork.artist ? artwork.artist.artist_name : '-')}
+                {"ttitle: " + (artwork.title ? artwork.artist.artist_name : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Artist Name: " + (artwork.artist ? artwork.title : '-')}
             </Text>
             <Text className={classes.title} mt={5}>
                 {"Category: " + (artwork.category ? artwork.category.category : '-')}
@@ -154,9 +150,9 @@ export default function Gallery() {
                         placeholder="Search artwork"
                         onChange={(event) => setValue(event.currentTarget.value)}
                         onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                                console.log("(in event.key ==  enter) call handlesearch :")
 
+                            //Call handleSearch to display works corresponding to keywords
+                            if (event.key === 'Enter') {
                                 handleSearch(value);
                             }
                         }}
