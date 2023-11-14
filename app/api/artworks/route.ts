@@ -4,14 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 // Goal: Contact Django back end endpoint that returns random artwork
 export async function POST(req: NextRequest) {
 
-    
+
 
     let passedValue = await new NextResponse(req.body).text();
     let valueToJson = JSON.parse(passedValue);
     const x = parseInt(valueToJson);
     console.log("here: ", x);
     try {
-        
+
         // Fetch data from the "randomartworks" endpoint
         const randomArtworksResponse = await fetch('http://localhost:8000/api/randomartwork/', {
             method: 'POST', // Type post
