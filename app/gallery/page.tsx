@@ -157,7 +157,7 @@ export default function Gallery() {
                             }
                         }}
                         rightSectionPointerEvents="all"
-                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} />}
+                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} onClick={() => handleSearch(value)} />}
                     />
                 </Container>
                 <Container py="xl">
