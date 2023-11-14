@@ -7,12 +7,21 @@ export async function POST(req: NextRequest) {
         if (!data) {
             return NextResponse.json({ error: 'Form data is missing in the request body' }, {status: 400});
         }
-        const externalApiResponse = await fetch('http://localhost:8000/api/move-requests/', {
+
+        console.log(`Sending data: ${JSON.stringify(data)}`);
+        const externalApiResponse = await fetch('http://localhost:8000/api/move-request/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+                address: data.email,
+                to_location: data.destination,
+                is_pending: true,
+                is_approved: false,
+                comments: data.message,
+                artwork: data.artwork,
+            }),
         });
 
         if (externalApiResponse.ok) {

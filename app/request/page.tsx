@@ -48,12 +48,17 @@ export default function Request() {
 
 
     const handleSubmit = () => {
-        fetch('http://localhost:3000/api/moverequests/', {
+
+        const data = {
+            ...form.values,
+            artwork: selected.artwork_id
+        }
+        fetch('api/moverequests', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(form.values),
+            body: JSON.stringify(data),
         }).then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -77,7 +82,7 @@ export default function Request() {
         <>
             {
                 // || isFaculty || isAdmin
-                isFaculty ?
+                true ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">

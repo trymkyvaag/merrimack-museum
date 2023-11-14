@@ -58,6 +58,32 @@ export default function Layout({
         })
     );
 
+    const fetchRandomArtwork = (count = 5) => {
+        fetch('http://localhost:8000/api/randomartwork/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ num_artworks: count }), // Send the count as JSON in the request body
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch random artwork');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Print the data to the console
+                console.log(data);
+                
+
+                // You can update your state or do other processing here
+            })
+            .catch((error) => {
+                console.error('Error fetching random artwork:', error);
+            });
+    };
+
     function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
             <Menu.Item key={item.link}>{item.label}</Menu.Item>
@@ -101,9 +127,6 @@ export default function Layout({
     useEffect(() => {
 
         if (session && session.user) {
-            console.log(session.user.email);
-        }
-        if (session && session.user) {
             fetch('http://localhost:8000/api/add-or-check-user/', {
                 method: 'POST',
                 headers: {
@@ -117,7 +140,6 @@ export default function Layout({
                 }
                 return response.json();
             }).then((data) => {
-                console.log(data)
                 setToken(data.token);
                 if (data.user_type.user_type === "admin") {
                     setIsAdmin(true);
@@ -137,6 +159,8 @@ export default function Layout({
             }).catch(error => {
                 console.log(error);
             });
+
+            fetchRandomArtwork();
             // Contact front end server (api/artworks/route.ts)
             // fetch('api/artworks', {
             //     method: 'POST',
