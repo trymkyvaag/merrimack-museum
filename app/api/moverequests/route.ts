@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
-        
+
         if (!data) {
-            return NextResponse.json({ error: 'Form data is missing in the request body' }, {status: 400});
+            return NextResponse.json({ error: 'Form data is missing in the request body' }, { status: 400 });
         }
 
         console.log(`Sending data: ${JSON.stringify(data)}`);
@@ -15,12 +15,13 @@ export async function POST(req: NextRequest) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                "user": {"address": data.email},
+                "user": { "address": data.email },
                 "to_location": data.destination,
                 "is_pending": 1,
                 "is_approved": 0,
                 "comments": data.message,
                 "artwork": data.artwork.idartwork,
+                "time_stamp": data.time_stamp
             }),
         });
 
