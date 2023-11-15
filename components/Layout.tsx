@@ -75,7 +75,7 @@ export default function Layout({
             .then((data) => {
                 // Print the data to the console
                 console.log(data);
-                
+
 
                 // You can update your state or do other processing here
             })
@@ -182,7 +182,7 @@ export default function Layout({
             //     });
         }
 
-        fetch('api/artworks', {
+        fetch('api/artworksList', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

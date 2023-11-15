@@ -8,8 +8,8 @@ export interface LinkProps {
     links?: { link: string, label: string, auth: string | null }[] | null;
 }
 
-
 export interface Artwork {
+    title: string
     image_path: any;
     comments: string;
     location: string;
@@ -51,7 +51,7 @@ export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export const useUser = () => {
     const context = useContext(UserContext);
-    if(!context) {
+    if (!context) {
         throw new Error('useUser must be used within a UserProvider');
     }
     return context;
