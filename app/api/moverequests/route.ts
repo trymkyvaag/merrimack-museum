@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({
                 "user": {"address": data.email},
                 "to_location": data.destination,
-                "is_pending": true,
-                "is_approved": false,
+                "is_pending": 1,
+                "is_approved": 0,
                 "comments": data.message,
                 "artwork": data.artwork.idartwork,
             }),
