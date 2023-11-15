@@ -18,20 +18,24 @@ export default function Request() {
     const [opened, setOpened] = useState(false);
     const theme = useMantineTheme();
     const [checked, setChecked] = useState(false);
-    const [selected, setSelected] = useState(artworks[0]);
+    const [selected, setSelected] = useState(artworks[0] || null);
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
+    const handleMenuItemClick = (item: any) => {
+        setSelected(item);
+    };
+
     const items = artworks.map((item) => (
         <Menu.Item
-            // leftSection={<Image src={item.image} width={18} height={18} />}
-            onClick={() => setSelected(item)}
+            onClick={() => handleMenuItemClick(item)}
             key={item.title}
         >
             {item.title}
         </Menu.Item>
     ));
+
     const form = useForm({
         initialValues: {
             email: '',
@@ -48,11 +52,17 @@ export default function Request() {
 
 
     const handleSubmit = () => {
+        if (!selected) {
+            console.error("Selected is undefined or null");
+            return;
+        }
 
         const data = {
             ...form.values,
-            artwork: selected.artwork_id
+            artwork: selected
         }
+        console.log("Request Page: Before sending to nextjs api");
+        console.log(data)
         fetch('api/moverequests', {
             method: "POST",
             headers: {
@@ -77,7 +87,7 @@ export default function Request() {
         if (session && session.user) {
             form.setFieldValue('email', session.user.email ?? '');
         }
-    }, [session]);
+    }, [session, selected]);
     return (
         <>
             {
