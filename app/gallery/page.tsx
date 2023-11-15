@@ -104,7 +104,20 @@ export default function Gallery() {
         <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
-                    <Image src={artwork.image_path.image_path} height={220} />
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            background: 'transparent',
+                            zIndex: 2,
+                            pointerEvents: 'none', // Allow interactions with the underlying image
+                        }}
+                    >
+                        <Image src={artwork.image_path.image_path} height={220} />
+                    </div>
                 </AspectRatio>
             </Card.Section>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
