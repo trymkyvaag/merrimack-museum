@@ -10,6 +10,7 @@ import { useArtwork, useUser } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import image from '@/public/404.svg';
 import classesTwo from '@/styles/NotFoundImage.module.css';
+import { format } from 'date-fns';
 
 export default function Request() {
     const { data: session, status, update } = useSession();
@@ -59,7 +60,8 @@ export default function Request() {
 
         const data = {
             ...form.values,
-            artwork: selected
+            artwork: selected,
+            time_stamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
         }
         console.log("Request Page: Before sending to nextjs api");
         console.log(data)
