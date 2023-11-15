@@ -9,7 +9,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { Artwork, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
+import { ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -43,9 +43,9 @@ export default function Layout({
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [isFaculty, setIsFaculty] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
-    const [artworks, setArtworks] = useState<Artwork[]>([]);
-    const [artworksMap, setArtworksMap] = useState<Map<string, Artwork[]>>(new Map());
-    const addArtwork = (newArtwork: Artwork) => {
+    const [artworks, setArtworks] = useState<ArtworkType[]>([]);
+    const [artworksMap, setArtworksMap] = useState<Map<string, ArtworkType[]>>(new Map());
+    const addArtwork = (newArtwork: ArtworkType) => {
         setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
     const [items, setItems] = useState<React.ReactNode[]>(

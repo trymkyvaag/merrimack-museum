@@ -8,7 +8,7 @@ export interface LinkProps {
     links?: { link: string, label: string, auth: string | null }[] | null;
 }
 
-export interface Artwork {
+export interface ArtworkType {
     title: string
     image_path: any;
     comments: string;
@@ -24,10 +24,10 @@ export interface Artwork {
 };
 
 interface ArtworkContextType {
-    artworks: Artwork[];
-    artworksMap: Map<string, Artwork[]>
-    addArtwork: (newArtwork: Artwork) => void;
-    setArtworksMap: (map: Map<string, Artwork[]>) => void;
+    artworks: ArtworkType[];
+    artworksMap: Map<string, ArtworkType[]>
+    addArtwork: (newArtwork: ArtworkType) => void;
+    setArtworksMap: (map: Map<string, ArtworkType[]>) => void;
 }
 
 export const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);
