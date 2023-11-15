@@ -1,31 +1,37 @@
 import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from "next/server";
 
-// Goal: Contact Django back end endpoint that returns random artwork
+/**
+ * Post to get artoworks from backend using the search endpoint
+ * and keywords from frontend
+ * @param req, the request 
+ * @returns data in json form
+ */
 export async function POST(req: NextRequest) {
 
 
     let passedValue = await new NextResponse(req.body).text();
-    let valueToJson = JSON.parse(passedValue);
-    const x = parseInt(valueToJson);
-    console.log("here: ", x);
+    console.log("\n\n\Passed value: " + passedValue)
+
+
     try {
 
         // Fetch data from the "randomartworks" endpoint
-        const randomArtworksResponse = await fetch('http://127.0.0.1:8000/api/randomartwork/', {
+        const sewarchArtworksResponse = await fetch('http://127.0.0.1:8000/api/searchartwork/', {
             method: 'POST', // Type post
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ num_artworks: x }),  // Endpoint expects num_artworks: 'int' as input. Default as 5 for now.
+            body: passedValue
 
         });
-        if (!randomArtworksResponse.ok) {
-            throw new Error('Failed to fetch data from randomartworks');
+        if (!sewarchArtworksResponse.ok) {
+            throw new Error('Failed to fetch data from SearchArtworks');
         }
 
         // Grab data
-        const data = await randomArtworksResponse.json();
+        const data = await sewarchArtworksResponse.json();
+
 
         // Return data response in json format
         return NextResponse.json(data);
