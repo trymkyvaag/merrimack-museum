@@ -30,9 +30,9 @@ export default function Request() {
     const items = artworks.map((item) => (
         <Menu.Item
             onClick={() => handleMenuItemClick(item)}
-            key={item.title}
+            key={item.idartwork}
         >
-            {item.title}
+            {item.idartwork}
         </Menu.Item>
     ));
 
@@ -92,7 +92,7 @@ export default function Request() {
         <>
             {
                 // || isFaculty || isAdmin
-                true ?
+                isFaculty || isAdmin ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">
@@ -173,7 +173,7 @@ export default function Request() {
                                                 <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
                                                     <Group gap="xs">
                                                         {/* <Image src={selected.image} width={22} height={22} /> */}
-                                                        <span className={classes.label}>{selected ? selected.title : 'Select piece'}</span>
+                                                        <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
                                                     </Group>
                                                     <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                                 </UnstyledButton>
