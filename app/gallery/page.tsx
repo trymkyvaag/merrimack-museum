@@ -185,7 +185,7 @@ export default function Gallery() {
                 <Container py="xl">
                     <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
                 </Container>
-                <Modal opened={opened} onClose={close} title="Authentication" centered>
+                <Modal opened={opened} onClose={close} centered>
                     {/* Modal content */}
                 </Modal>
             </main>
