@@ -9,7 +9,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
+import { RequestType, RequestContext, useRequest, ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -43,6 +43,7 @@ export default function Layout({
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [isFaculty, setIsFaculty] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
+    const [request, setRequest] = useState<RequestType | null>(null);
     const [artworks, setArtworks] = useState<ArtworkType[]>([]);
     const [artworksMap, setArtworksMap] = useState<Map<string, ArtworkType[]>>(new Map());
     const addArtwork = (newArtwork: ArtworkType) => {
@@ -126,12 +127,12 @@ export default function Layout({
 
     useEffect(() => {
 
-        fetch('http://localhost:8000/api/add-or-check-user/', {
+        fetch('api/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ address: session?.user?.email }),
+            body: JSON.stringify({ email: session?.user?.email }),
 
         }).then(response => {
             if (!response.ok) {
@@ -214,7 +215,7 @@ export default function Layout({
             }
             return response.json();
         }).then(data => {
-            console.log(data);
+            setRequest(data)
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -241,7 +242,9 @@ export default function Layout({
             <main>
                 <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
                     <UserContext.Provider value={{ isAdmin, isFaculty, setIsAdmin, setIsFaculty }}>
+                        <RequestContext.Provider value={{request, setRequest}}>
                         {children}
+                        </RequestContext.Provider>
                     </UserContext.Provider>
                 </ArtworkContext.Provider>
 

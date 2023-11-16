@@ -6,18 +6,19 @@ import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Gro
 import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
-import { useArtwork, useUser } from '@/lib/types';
+import { useArtwork, useUser, useRequest } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import image from '@/public/404.svg';
 import classesTwo from '@/styles/NotFoundImage.module.css';
 import { format } from 'date-fns';
 
 export default function Request() {
+    const theme = useMantineTheme();
     const { data: session, status, update } = useSession();
     const { artworks } = useArtwork();
     const { isAdmin, isFaculty } = useUser();
+    const { request } = useRequest();
     const [opened, setOpened] = useState(false);
-    const theme = useMantineTheme();
     const [checked, setChecked] = useState(false);
     const [selected, setSelected] = useState(artworks[0] || null);
     const [active, setActive] = useState(1);
