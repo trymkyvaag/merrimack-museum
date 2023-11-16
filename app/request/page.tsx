@@ -122,7 +122,7 @@ export default function Request() {
                                 />
                             </Tooltip>
                         </div>
-                        {!checked ?
+                        {!checked ? (
                             <Container>
                                 <Container px='lg' py='lg' size='sm'>
                                     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -205,28 +205,33 @@ export default function Request() {
                                     </form>
                                 </Container>
                             </Container>
-                            :
-                            <Container py='lg' size='sm'>
-                                <Stepper active={active} onStepClick={setActive}>
-                                    <Stepper.Step label="First step" description="Request">
-                                        Step 1: Submit Request
-                                    </Stepper.Step>
-                                    <Stepper.Step label="Second step" description="Request Review">
-                                        Step 2: Request is being reviewed
-                                    </Stepper.Step>
-                                    <Stepper.Step label="Final step" description="Approved">
-                                        Step 3: Request Approved
-                                    </Stepper.Step>
-                                    <Stepper.Completed>
-                                        Art piece out for delivery
-                                    </Stepper.Completed>
-                                </Stepper>
-                                <Group justify="center" mt="xl">
-                                    <Button variant="default" onClick={prevStep}>Back</Button>
-                                    <Button onClick={nextStep}>Next step</Button>
-                                </Group>
-                            </Container>
-                        }
+                        ) : (
+                            request?.move_request ? (
+                                <Container py='lg' size='sm'>
+                                    <Stepper active={active} onStepClick={setActive}>
+                                        <Stepper.Step label="First step" description="Request">
+                                            Step 1: Submit Request
+                                        </Stepper.Step>
+                                        <Stepper.Step label="Second step" description="Request Review">
+                                            Step 2: Request is being reviewed
+                                        </Stepper.Step>
+                                        <Stepper.Step label="Final step" description="Approved">
+                                            Step 3: Request Approved
+                                        </Stepper.Step>
+                                        <Stepper.Completed>
+                                            Art piece out for delivery
+                                        </Stepper.Completed>
+                                    </Stepper>
+                                    <Group justify="center" mt="xl">
+                                        <Button variant="default" onClick={prevStep}>Back</Button>
+                                        <Button onClick={nextStep}>Next step</Button>
+                                    </Group>
+                                </Container>
+                            ) : (
+                                <Container><p>No active requests</p></Container>
+                            )
+                        )}
+
                     </Container>
 
                     :

@@ -136,7 +136,7 @@ export default function Layout({
 
         }).then(response => {
             if (!response.ok) {
-                throw new Error('Failed to fetch authentication token');
+                throw new Error('Failed to get user permission');
             }
             return response.json();
         }).then((data) => {
