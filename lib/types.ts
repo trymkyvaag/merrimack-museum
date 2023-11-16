@@ -63,25 +63,33 @@ export const useRequest = () => {
 }
 
 export interface ArtworkType {
-    title: string
-    image_path: any;
-    comments: string;
-    location: string;
-    donor: string;
-    height: number;
-    width: number;
-    date_created_year: number;
-    date_created_month: number;
-    category: string;
-    artist: string;
     idartwork: number;
-};
+    artist: {
+        artist_name: string;
+    };
+    category?: {
+        category: string;
+    };
+    title: string | null;
+    date_created_month?: number | null;
+    date_created_year?: number | null;
+    width?: string | null;
+    height?: string | null;
+    donor?: string | null;
+    location?: {
+        location: string;
+    } | null;
+    comments?: string | null;
+    image_path: {
+        image_path: string;
+    };
+}
 
 interface ArtworkContextType {
     artworks: ArtworkType[];
-    artworksMap: Map<string, ArtworkType[]>
+    artworksMap: Map<number, ArtworkType[]>
     addArtwork: (newArtwork: ArtworkType) => void;
-    setArtworksMap: (map: Map<string, ArtworkType[]>) => void;
+    setArtworksMap: (map: Map<number, ArtworkType[]>) => void;
 }
 
 export const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);

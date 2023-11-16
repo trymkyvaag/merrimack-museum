@@ -45,7 +45,7 @@ export default function Layout({
     const [token, setToken] = useState<string>('');
     const [request, setRequest] = useState<RequestType | null>(null);
     const [artworks, setArtworks] = useState<ArtworkType[]>([]);
-    const [artworksMap, setArtworksMap] = useState<Map<string, ArtworkType[]>>(new Map());
+    const [artworksMap, setArtworksMap] = useState<Map<number, ArtworkType[]>>(new Map());
     const addArtwork = (newArtwork: ArtworkType) => {
         setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
@@ -194,10 +194,10 @@ export default function Layout({
         }).then(data => {
             setArtworks(data);
             artworks.forEach((artwork) => {
-                if (!artworksMap.has(artwork.title)) {
-                    artworksMap.set(artwork.title, []);
+                if (!artworksMap.has(artwork.idartwork)) {
+                    artworksMap.set(artwork.idartwork, []);
                 }
-                artworksMap.get(artwork.title)?.push(artwork);
+                artworksMap.get(artwork.idartwork)?.push(artwork);
             });
         }).catch(error => {
             console.error('Error:', error);
