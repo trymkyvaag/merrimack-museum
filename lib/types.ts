@@ -1,4 +1,4 @@
-import { User } from "next-auth";
+// import { User } from "next-auth";
 import { createContext, useContext } from "react";
 
 export interface LinkProps {
@@ -8,26 +8,88 @@ export interface LinkProps {
     links?: { link: string, label: string, auth: string | null }[] | null;
 }
 
-export interface Artwork {
-    title: string
-    image_path: any;
-    comments: string;
-    location: string;
-    donor: string;
-    height: number;
-    width: number;
-    date_created_year: number;
-    date_created_month: number;
-    category: string;
-    artist: string;
+export interface RequestType {
+    move_request: {
+        idmove_request: number,
+        user: {
+            address: string,
+            user_type: {
+                user_type: string
+            }
+        },
+        artwork: {
+            idartwork: number,
+            artist: {
+                artist_name: string
+            },
+            donor: null,
+            location: {
+                location: string
+            },
+            category: {
+                category: string
+            },
+            image_path: {
+                image_path: string
+            },
+            title: string,
+            date_created_month: null,
+            date_created_year: null,
+            comments: null,
+            width: string,
+            height: string
+        },
+        to_location: string,
+        is_pending: number,
+        is_approved: number,
+        comments: string,
+        time_stamp: string
+    } | null
+}
+
+interface RequestContextType {
+    request: RequestType | null
+    setRequest: (r : RequestType) => void;
+}
+
+export const RequestContext = createContext<RequestContextType | undefined>(undefined);
+
+export const useRequest = () => {
+    const context = useContext(RequestContext);
+    if (!context) {
+        throw new Error('useArtwork must be used within an ArtworkProvider');
+    }
+    return context;
+}
+
+export interface ArtworkType {
     idartwork: number;
-};
+    artist: {
+        artist_name: string;
+    };
+    category?: {
+        category: string;
+    };
+    title: string | null;
+    date_created_month?: number | null;
+    date_created_year?: number | null;
+    width?: string | null;
+    height?: string | null;
+    donor?: string | null;
+    location?: {
+        location: string;
+    } | null;
+    comments?: string | null;
+    image_path: {
+        image_path: string;
+    };
+}
 
 interface ArtworkContextType {
-    artworks: Artwork[];
-    artworksMap: Map<string, Artwork[]>
-    addArtwork: (newArtwork: Artwork) => void;
-    setArtworksMap: (map: Map<string, Artwork[]>) => void;
+    artworks: ArtworkType[];
+    artworksMap: Map<number, ArtworkType[]>
+    addArtwork: (newArtwork: ArtworkType) => void;
+    setArtworksMap: (map: Map<number, ArtworkType[]>) => void;
 }
 
 export const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);

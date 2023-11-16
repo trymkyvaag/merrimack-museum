@@ -1,4 +1,3 @@
-import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -9,12 +8,12 @@ export async function POST(req: NextRequest) {
         if (!email) {
             return NextResponse.json({ error: 'Email is missing in the request body' }, {status: 400});
         }
-        const externalApiResponse = await fetch('http://localhost:8000/api/token/', {
+        const externalApiResponse = await fetch('http://localhost:8000/api/add-or-check-user/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({email: email}),
+            body: JSON.stringify({address: email}),
         });
 
         if (externalApiResponse.ok) {

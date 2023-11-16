@@ -6,18 +6,19 @@ import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Gro
 import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
-import { useArtwork, useUser } from '@/lib/types';
+import { useArtwork, useUser, useRequest } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import image from '@/public/404.svg';
 import classesTwo from '@/styles/NotFoundImage.module.css';
 import { format } from 'date-fns';
 
 export default function Request() {
+    const theme = useMantineTheme();
     const { data: session, status, update } = useSession();
     const { artworks } = useArtwork();
     const { isAdmin, isFaculty } = useUser();
+    const { request } = useRequest();
     const [opened, setOpened] = useState(false);
-    const theme = useMantineTheme();
     const [checked, setChecked] = useState(false);
     const [selected, setSelected] = useState(artworks[0] || null);
     const [active, setActive] = useState(1);
@@ -89,7 +90,18 @@ export default function Request() {
         if (session && session.user) {
             form.setFieldValue('email', session.user.email ?? '');
         }
-    }, [session, selected]);
+
+        if(request?.move_request && request.move_request.is_approved) {
+            nextStep();
+            nextStep();
+            nextStep();
+        } else if(request?.move_request && request.move_request.is_pending) {
+            nextStep();
+            nextStep();
+        } else {
+            nextStep();
+        }
+    }, [session, selected, request]);
     return (
         <>
             {
@@ -111,17 +123,18 @@ export default function Request() {
                                                 stroke={3}
                                             />
                                         ) : (
-                                            <IconX
-                                                style={{ width: rem(12), height: rem(12) }}
-                                                color={theme.colors.red[6]}
-                                                stroke={3}
-                                            />
+                                            // <IconX
+                                            //     style={{ width: rem(12), height: rem(12) }}
+                                            //     color={theme.colors.red[6]}
+                                            //     stroke={3}
+                                            // />
+                                            null
                                         )
                                     }
                                 />
                             </Tooltip>
                         </div>
-                        {!checked ?
+                        {!checked ? (
                             <Container>
                                 <Container px='lg' py='lg' size='sm'>
                                     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -204,28 +217,47 @@ export default function Request() {
                                     </form>
                                 </Container>
                             </Container>
-                            :
-                            <Container py='lg' size='sm'>
-                                <Stepper active={active} onStepClick={setActive}>
-                                    <Stepper.Step label="First step" description="Request">
-                                        Step 1: Submit Request
-                                    </Stepper.Step>
-                                    <Stepper.Step label="Second step" description="Request Review">
-                                        Step 2: Request is being reviewed
-                                    </Stepper.Step>
-                                    <Stepper.Step label="Final step" description="Approved">
-                                        Step 3: Request Approved
-                                    </Stepper.Step>
-                                    <Stepper.Completed>
-                                        Art piece out for delivery
-                                    </Stepper.Completed>
-                                </Stepper>
-                                <Group justify="center" mt="xl">
-                                    <Button variant="default" onClick={prevStep}>Back</Button>
-                                    <Button onClick={nextStep}>Next step</Button>
-                                </Group>
-                            </Container>
-                        }
+                        ) : (
+                            request?.move_request ? (
+                                <Container py='lg' size='sm'>
+                                    <Stepper active={active} onStepClick={setActive}>
+                                        <Stepper.Step label="First step" description="Request">
+                                            Step 1: Submit Request
+                                        </Stepper.Step>
+                                        <Stepper.Step label="Second step" description="Request Review">
+                                            Step 2: Request is being reviewed
+                                        </Stepper.Step>
+                                        <Stepper.Step label="Final step" description="Approved">
+                                            Step 3: Request Approved
+                                        </Stepper.Step>
+                                        <Stepper.Completed>
+                                            Art piece out for delivery
+                                        </Stepper.Completed>
+                                    </Stepper>
+                                    {/* <Group justify="center" mt="xl">
+                                        <Button variant="default" onClick={prevStep}>Back</Button>
+                                        <Button onClick={nextStep}>Next step</Button>
+                                    </Group> */}
+                                </Container>
+                            ) : (
+                                <Container className={classesTwo.root}>
+                                    <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                                        <Image src={image.src} className={classesTwo.mobileImage} />
+                                        <div>
+                                            <Title className={classesTwo.title}>Please file a request...</Title>
+                                            <Text c="dimmed" size="lg">
+                                                You have no active requests.
+                                            </Text>
+                                            {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                                    Get back to home page
+                                </Button> */}
+                                        </div>
+                                        <Image src={image.src} className={classesTwo.desktopImage} />
+                                    </SimpleGrid>
+                                </Container>
+                            )
+                        )}
+
                     </Container>
 
                     :
