@@ -94,14 +94,14 @@ export default function Request() {
         if(request?.move_request && request.move_request.is_approved) {
             nextStep();
             nextStep();
-            nextStep();
         } else if(request?.move_request && request.move_request.is_pending) {
             nextStep();
-            nextStep();
         } else {
-            nextStep();
+            prevStep();
+            prevStep();
+            prevStep();
         }
-    }, [session, selected, request]);
+    }, [session, selected]);
     return (
         <>
             {
