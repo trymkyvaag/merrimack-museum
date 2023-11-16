@@ -90,7 +90,18 @@ export default function Request() {
         if (session && session.user) {
             form.setFieldValue('email', session.user.email ?? '');
         }
-    }, [session, selected]);
+
+        if(request?.move_request && request.move_request.is_approved) {
+            nextStep();
+            nextStep();
+            nextStep();
+        } else if(request?.move_request && request.move_request.is_pending) {
+            nextStep();
+            nextStep();
+        } else {
+            nextStep();
+        }
+    }, [session, selected, request]);
     return (
         <>
             {
@@ -223,10 +234,10 @@ export default function Request() {
                                             Art piece out for delivery
                                         </Stepper.Completed>
                                     </Stepper>
-                                    <Group justify="center" mt="xl">
+                                    {/* <Group justify="center" mt="xl">
                                         <Button variant="default" onClick={prevStep}>Back</Button>
                                         <Button onClick={nextStep}>Next step</Button>
-                                    </Group>
+                                    </Group> */}
                                 </Container>
                             ) : (
                                 <Container className={classesTwo.root}>
