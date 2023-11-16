@@ -126,61 +126,59 @@ export default function Layout({
 
     useEffect(() => {
 
-        if (session && session.user) {
-            fetch('http://localhost:8000/api/add-or-check-user/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ address: session.user.email }),
+        fetch('http://localhost:8000/api/add-or-check-user/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ address: session?.user?.email }),
 
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch authentication token');
-                }
-                return response.json();
-            }).then((data) => {
-                setToken(data.token);
-                if (data.user_type.user_type === "admin") {
-                    setIsAdmin(true);
-                    setItems(links.map((link) => {
-                        if (link.links) {
-                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-                        } else {
-                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-                        }
-                    }));
-                } else if (data.user_type.user_type == "FS") {
-                    setIsFaculty(true);
-                    links
-                        .filter((link) => link.auth === 'faculty')
-                        .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
-                }
-            }).catch(error => {
-                console.log(error);
-            });
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch authentication token');
+            }
+            return response.json();
+        }).then((data) => {
+            setToken(data.token);
+            if (data.user_type.user_type === "admin") {
+                setIsAdmin(true);
+                setItems(links.map((link) => {
+                    if (link.links) {
+                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                    } else {
+                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                    }
+                }));
+            } else if (data.user_type.user_type == "FS") {
+                setIsFaculty(true);
+                links
+                    .filter((link) => link.auth === 'faculty')
+                    .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
+            }
+        }).catch(error => {
+            console.log(error);
+        });
 
-            fetchRandomArtwork();
-            // Contact front end server (api/artworks/route.ts)
-            // fetch('api/artworks', {
-            //     method: 'POST',
-            // })
-            //     .then((response) => {
-            //         if (!response.ok) {
-            //             throw new Error('Failed to fetch data');
-            //         }
-            //         return response.json();
-            //     })
-            //     .then((data) => {
-            //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
-            //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
-            //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
-            //         console.log('IMG path data:', data);
-            //     })
-            //     .catch((error) => {
-            //         console.error('Error fetching data:', error);
-            //     });
-        }
+        fetchRandomArtwork();
+        // Contact front end server (api/artworks/route.ts)
+        // fetch('api/artworks', {
+        //     method: 'POST',
+        // })
+        //     .then((response) => {
+        //         if (!response.ok) {
+        //             throw new Error('Failed to fetch data');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then((data) => {
+        //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
+        //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
+        //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
+        //         console.log('IMG path data:', data);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error fetching data:', error);
+        //     });
 
         fetch('api/artworksList', {
             method: 'GET',
@@ -194,7 +192,6 @@ export default function Layout({
             return response.json();
         }).then(data => {
             setArtworks(data);
-            // artworks.sort((a, b) => a.title.localeCompare(b.title)); // DON'T THINK SORTING IS WORKING PROPERLY
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.title)) {
                     artworksMap.set(artwork.title, []);
@@ -204,6 +201,24 @@ export default function Layout({
         }).catch(error => {
             console.error('Error:', error);
         });
+
+        fetch('api/findrequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ address: session?.user?.email }),
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.log(data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
     }, [session]);
 
     return (
