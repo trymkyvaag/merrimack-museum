@@ -9,7 +9,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { Artwork, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
+import { RequestType, RequestContext, useRequest, ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -43,9 +43,10 @@ export default function Layout({
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [isFaculty, setIsFaculty] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
-    const [artworks, setArtworks] = useState<Artwork[]>([]);
-    const [artworksMap, setArtworksMap] = useState<Map<string, Artwork[]>>(new Map());
-    const addArtwork = (newArtwork: Artwork) => {
+    const [request, setRequest] = useState<RequestType | null>(null);
+    const [artworks, setArtworks] = useState<ArtworkType[]>([]);
+    const [artworksMap, setArtworksMap] = useState<Map<string, ArtworkType[]>>(new Map());
+    const addArtwork = (newArtwork: ArtworkType) => {
         setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
     const [items, setItems] = useState<React.ReactNode[]>(
@@ -126,61 +127,59 @@ export default function Layout({
 
     useEffect(() => {
 
-        if (session && session.user) {
-            fetch('http://localhost:8000/api/add-or-check-user/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ address: session.user.email }),
+        fetch('api/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: session?.user?.email }),
 
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch authentication token');
-                }
-                return response.json();
-            }).then((data) => {
-                setToken(data.token);
-                if (data.user_type.user_type === "admin") {
-                    setIsAdmin(true);
-                    setItems(links.map((link) => {
-                        if (link.links) {
-                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-                        } else {
-                            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-                        }
-                    }));
-                } else if (data.user_type.user_type == "FS") {
-                    setIsFaculty(true);
-                    links
-                        .filter((link) => link.auth === 'faculty')
-                        .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
-                }
-            }).catch(error => {
-                console.log(error);
-            });
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch authentication token');
+            }
+            return response.json();
+        }).then((data) => {
+            setToken(data.token);
+            if (data.user_type.user_type === "admin") {
+                setIsAdmin(true);
+                setItems(links.map((link) => {
+                    if (link.links) {
+                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                    } else {
+                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+                    }
+                }));
+            } else if (data.user_type.user_type == "FS") {
+                setIsFaculty(true);
+                links
+                    .filter((link) => link.auth === 'faculty')
+                    .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
+            }
+        }).catch(error => {
+            console.log(error);
+        });
 
-            fetchRandomArtwork();
-            // Contact front end server (api/artworks/route.ts)
-            // fetch('api/artworks', {
-            //     method: 'POST',
-            // })
-            //     .then((response) => {
-            //         if (!response.ok) {
-            //             throw new Error('Failed to fetch data');
-            //         }
-            //         return response.json();
-            //     })
-            //     .then((data) => {
-            //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
-            //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
-            //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
-            //         console.log('IMG path data:', data);
-            //     })
-            //     .catch((error) => {
-            //         console.error('Error fetching data:', error);
-            //     });
-        }
+        fetchRandomArtwork();
+        // Contact front end server (api/artworks/route.ts)
+        // fetch('api/artworks', {
+        //     method: 'POST',
+        // })
+        //     .then((response) => {
+        //         if (!response.ok) {
+        //             throw new Error('Failed to fetch data');
+        //         }
+        //         return response.json();
+        //     })
+        //     .then((data) => {
+        //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
+        //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
+        //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
+        //         console.log('IMG path data:', data);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error fetching data:', error);
+        //     });
 
         fetch('api/artworksList', {
             method: 'GET',
@@ -194,7 +193,6 @@ export default function Layout({
             return response.json();
         }).then(data => {
             setArtworks(data);
-            // artworks.sort((a, b) => a.title.localeCompare(b.title)); // DON'T THINK SORTING IS WORKING PROPERLY
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.title)) {
                     artworksMap.set(artwork.title, []);
@@ -204,6 +202,24 @@ export default function Layout({
         }).catch(error => {
             console.error('Error:', error);
         });
+
+        fetch('api/findrequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ address: session?.user?.email }),
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            setRequest(data)
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
     }, [session]);
 
     return (
@@ -226,7 +242,9 @@ export default function Layout({
             <main>
                 <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
                     <UserContext.Provider value={{ isAdmin, isFaculty, setIsAdmin, setIsFaculty }}>
+                        <RequestContext.Provider value={{request, setRequest}}>
                         {children}
+                        </RequestContext.Provider>
                     </UserContext.Provider>
                 </ArtworkContext.Provider>
 

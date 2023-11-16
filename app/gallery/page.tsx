@@ -1,21 +1,47 @@
 'use client';
 
-import { Select } from '@mantine/core';
+import { Modal, Select } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
 import { IconSearch, IconArrowUp } from '@tabler/icons-react';
-import { useWindowScroll } from '@mantine/hooks';
+import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
 
+/**
+     * Use interface to avoid tsx errors when declaring cards
+     */
+interface Artwork {
+    idartwork: number;
+    artist: {
+        artist_name: string;
+    };
+    category?: {
+        category: string;
+    };
+    title: string | null;
+    date_created_month?: number | null;
+    date_created_year?: number | null;
+    width?: string | null;
+    height?: string | null;
+    donor?: string | null;
+    location?: {
+        location: string;
+    } | null;
+    comments?: string | null;
+    image_path: {
+        image_path: string;
+    };
+}
 
 
 export default function Gallery() {
     const [value, setValue] = useState('');
     const [artworkData, setArtworkData] = useState([]);
     const [scrollToValue, setScrollToValue] = useState(10);
-
     const [scroll, scrollTo] = useWindowScroll();
+    const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+    const [opened, { open, close }] = useDisclosure(false);
     /**
      * Function for handeling the search 
      * @param searchValue, a string where words are separated by spaces 
@@ -45,6 +71,11 @@ export default function Gallery() {
             });
     };
 
+    const handleCardClick = (artwork: Artwork) => {
+        open();
+        setSelectedArtwork(artwork);
+    };
+
     /**
      * Set inital data
      */
@@ -71,37 +102,13 @@ export default function Gallery() {
             });
     }, []); // Empty dependency array to fetch data once when the component mounts
 
-    /**
-     * Use interface to avoid tsx errors when declaring cards
-     */
-    interface Artwork {
-        idartwork: number;
-        artist: {
-            artist_name: string;
-        };
-        category?: {
-            category: string;
-        };
-        title: string | null;
-        date_created_month?: number | null;
-        date_created_year?: number | null;
-        width?: string | null;
-        height?: string | null;
-        donor?: string | null;
-        location?: {
-            location: string;
-        } | null;
-        comments?: string | null;
-        image_path: {
-            image_path: string;
-        };
-    }
+
 
     /**
      * Create the cards. Maps the data (The artworks) to Cards
      */
     const cards = artworkData.map((artwork: Artwork) => (
-        <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card}>
+        <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
 
@@ -178,6 +185,9 @@ export default function Gallery() {
                 <Container py="xl">
                     <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
                 </Container>
+                <Modal opened={opened} onClose={close} centered>
+                    {/* Modal content */}
+                </Modal>
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

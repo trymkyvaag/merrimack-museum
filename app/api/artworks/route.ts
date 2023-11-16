@@ -1,4 +1,3 @@
-import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from "next/server";
 
 // Goal: Contact Django back end endpoint that returns random artwork
