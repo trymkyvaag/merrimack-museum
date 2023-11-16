@@ -38,14 +38,11 @@ interface Artwork {
 export default function Gallery() {
     const [value, setValue] = useState('');
     const [artworkData, setArtworkData] = useState([]);
-
     const [scrollToValue, setScrollToValue] = useState(null);
-
     const [scroll, scrollTo] = useWindowScroll();
-    const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
     const [opened, { open, close }] = useDisclosure(false);
     /**
-     * Function for handeling the search 
+     * Function for handling the search 
      * @param searchValue, a string where words are separated by spaces 
      */
     const handleSearch = (searchValue: string) => {
@@ -74,6 +71,10 @@ export default function Gallery() {
     };
 
 
+    /**
+     * Function for handling the dropdown integer values 
+     * @param num_artworks, a number from the dropdown that is a multiple of 3 
+     */
     const handleCards = (num_artworks: number) => {
 
         fetch('api/artworks', {
@@ -98,12 +99,38 @@ export default function Gallery() {
     };
 
     /**
+     * Function for handling the dropdown string value
+     * @param all_artworks, a string from the dropdown: "All"
+     */
+    const handleAll = (all_artworks: string) => {
+
+        fetch('api/artworks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(all_artworks),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setArtworkData(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    };
+
+    /**
      * Set inital data
      */
     useEffect(() => {
-        handleCards(15);
-    }, []); // Empty dependency array to fetch data once when the component mounts
-
+        handleAll("All");
+    }, []);
 
 
     /**
@@ -194,13 +221,15 @@ export default function Gallery() {
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Select
-                        data={['9', '18', '27', '36', '45']}
+                        data={['15', '30', '45', '60', '90', "All"]}
                         value={scrollToValue !== null ? scrollToValue : null}
                         style={{ width: '75px' }}
                         onChange={(selectedValue: string | null) => {
-                            if (selectedValue !== null) {
+                            if (selectedValue !== null && selectedValue.toLowerCase() !== "all") {
                                 // Make the fetch request with the selected value
                                 handleCards(parseInt(selectedValue));
+                            } else if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
+                                handleAll(selectedValue);
                             }
                         }}
 
@@ -210,7 +239,7 @@ export default function Gallery() {
                             <Button
                                 leftSection={<IconArrowUp style={{ width: rem(16), height: rem(16) }} />}
                                 style={transitionStyles}
-                                onClick={() => scrollTo({ y: scrollToValue })}
+                                onClick={() => scrollTo({ y: 0 })}
                             >
                                 Scroll to top
                             </Button>
