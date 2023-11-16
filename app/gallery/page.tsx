@@ -13,7 +13,7 @@ import classes from '@/styles/Gallery.module.css';
 export default function Gallery() {
     const [value, setValue] = useState('');
     const [artworkData, setArtworkData] = useState([]);
-    const [scrollToValue, setScrollToValue] = useState(10);
+    const [scrollToValue, setScrollToValue] = useState(null);
 
     const [scroll, scrollTo] = useWindowScroll();
     /**
@@ -45,17 +45,15 @@ export default function Gallery() {
             });
     };
 
-    /**
-     * Set inital data
-     */
-    useEffect(() => {
-        // Initial fetch when component mounts
+    const handleCards = (num_artworks: number) => {
+
+        //fetch the frontend endpoint
         fetch('api/artworks', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(10),
+            body: JSON.stringify(num_artworks),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -69,6 +67,13 @@ export default function Gallery() {
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
+    };
+
+    /**
+     * Set inital data
+     */
+    useEffect(() => {
+        handleCards(15);
     }, []); // Empty dependency array to fetch data once when the component mounts
 
     /**
@@ -182,14 +187,16 @@ export default function Gallery() {
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Select
-                        data={['10', '20', '30', '40', '50']}
-                        value={scrollToValue.toString()}
+                        data={['9', '18', '27', '36', '45']}
+                        value={scrollToValue !== null ? scrollToValue : null}
                         style={{ width: '75px' }}
                         onChange={(selectedValue: string | null) => {
                             if (selectedValue !== null) {
-                                setScrollToValue(parseInt(selectedValue, 10));
+                                // Make the fetch request with the selected value
+                                handleCards(parseInt(selectedValue));
                             }
                         }}
+
                     />
                     <Transition transition="slide-up" mounted={scroll.y > 0}>
                         {(transitionStyles) => (
