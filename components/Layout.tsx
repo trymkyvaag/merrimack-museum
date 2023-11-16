@@ -208,7 +208,8 @@ export default function Layout({
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ address: session?.user?.email }),
+            // body: JSON.stringify({ address: session?.user?.email }),
+            body: JSON.stringify({ address: "casem@merrimack.edu" }),
         }).then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

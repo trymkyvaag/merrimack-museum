@@ -90,7 +90,18 @@ export default function Request() {
         if (session && session.user) {
             form.setFieldValue('email', session.user.email ?? '');
         }
-    }, [session, selected]);
+
+        if(request?.move_request && request.move_request.is_approved) {
+            nextStep();
+            nextStep();
+            nextStep();
+        } else if(request?.move_request && request.move_request.is_pending) {
+            nextStep();
+            nextStep();
+        } else {
+            nextStep();
+        }
+    }, [session, selected, request]);
     return (
         <>
             {
@@ -112,11 +123,12 @@ export default function Request() {
                                                 stroke={3}
                                             />
                                         ) : (
-                                            <IconX
-                                                style={{ width: rem(12), height: rem(12) }}
-                                                color={theme.colors.red[6]}
-                                                stroke={3}
-                                            />
+                                            // <IconX
+                                            //     style={{ width: rem(12), height: rem(12) }}
+                                            //     color={theme.colors.red[6]}
+                                            //     stroke={3}
+                                            // />
+                                            null
                                         )
                                     }
                                 />
@@ -222,13 +234,27 @@ export default function Request() {
                                             Art piece out for delivery
                                         </Stepper.Completed>
                                     </Stepper>
-                                    <Group justify="center" mt="xl">
+                                    {/* <Group justify="center" mt="xl">
                                         <Button variant="default" onClick={prevStep}>Back</Button>
                                         <Button onClick={nextStep}>Next step</Button>
-                                    </Group>
+                                    </Group> */}
                                 </Container>
                             ) : (
-                                <Container><p>No active requests</p></Container>
+                                <Container className={classesTwo.root}>
+                                    <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                                        <Image src={image.src} className={classesTwo.mobileImage} />
+                                        <div>
+                                            <Title className={classesTwo.title}>Please file a request...</Title>
+                                            <Text c="dimmed" size="lg">
+                                                You have no active requests.
+                                            </Text>
+                                            {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                                    Get back to home page
+                                </Button> */}
+                                        </div>
+                                        <Image src={image.src} className={classesTwo.desktopImage} />
+                                    </SimpleGrid>
+                                </Container>
                             )
                         )}
 
