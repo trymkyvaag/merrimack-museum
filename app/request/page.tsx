@@ -92,14 +92,11 @@ export default function Request() {
         }
 
         if(request?.move_request && request.move_request.is_approved) {
-            nextStep();
-            nextStep();
+            setActive(3);
         } else if(request?.move_request && request.move_request.is_pending) {
-            nextStep();
+            setActive(2);
         } else {
-            prevStep();
-            prevStep();
-            prevStep();
+            setActive(1);
         }
     }, [session, selected]);
     return (
