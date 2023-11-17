@@ -18,7 +18,7 @@ export default function Home() {
             </h1>
 
             <Text className={classes.description} data-color="dimmed">
-              Welcome to the Merrimack Museum – where the past meets the present, and every exhibit is a brushstroke in the masterpiece of knowledge.
+              Welcome to the Merrimack Museum - Browse, experience
             </Text>
 
             <Group className={classes.controls}>

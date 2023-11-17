@@ -6,49 +6,83 @@ import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Gro
 import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
-import { useArtwork, useUser, useRequest } from '@/lib/types';
+import { useArtwork, useArtworkImage, useRequest, useUser } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import image from '@/public/404.svg';
 import classesTwo from '@/styles/NotFoundImage.module.css';
 import { format } from 'date-fns';
 
+interface StepperProps {
+    active: number;
+    onStepClick: (stepIndex: number) => void;
+    children: React.ReactNode;
+}
+
+interface StepperStepProps {
+    label: string;
+    description: string;
+    children: React.ReactNode;
+}
+
+interface StepperCompletedProps {
+    children: React.ReactNode;
+}
+
+interface MultiStepperState {
+    activeSteps: number[];
+}
+
 export default function Request() {
     const theme = useMantineTheme();
-    const { data: session, status, update } = useSession();
-    const { artworks } = useArtwork();
-    const { isAdmin, isFaculty } = useUser();
-    const { request } = useRequest();
+    const { data: session } = useSession();
+    const { artworkImages } = useArtworkImage();
+    const { user } = useUser();
+    const { requests } = useRequest();
     const [opened, setOpened] = useState(false);
     const [checked, setChecked] = useState(false);
-    const [selected, setSelected] = useState(artworks[0] || null);
+    const [selected, setSelected] = useState(artworkImages[0] || null);
+    const [activeSteps, setActiveSteps] = useState([0, 0, 0]); // One active step for each stepper
+
+    const handleStepClick = (stepperIndex: any, stepIndex: any) => {
+        const newActiveSteps = [...activeSteps];
+        newActiveSteps[stepperIndex] = stepIndex;
+        setActiveSteps(newActiveSteps);
+    };
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
     const handleMenuItemClick = (item: any) => {
+        console.log('Request page: clicked item: ');
+        console.log(item);
         setSelected(item);
     };
 
-    const items = artworks.map((item) => (
+    const items = artworkImages.map((item) => (
         <Menu.Item
             onClick={() => handleMenuItemClick(item)}
-            key={item.idartwork}
+            key={item.id}
         >
-            {item.idartwork}
+            {item.id}
         </Menu.Item>
     ));
 
     const form = useForm({
         initialValues: {
             email: '',
-            source: '',
-            destination: '',
-            message: '',
+            building: '',
+            address: '315 Turnpike St,',
+            city: 'North Andover',
+            state: 'Massachusetts',
+            country: 'U.S.A'
         },
         validate: {
             email: (value) => !/^\S+@\S+$/.test(value),
-            source: (value) => value.trim().length === 0,
-            destination: (value) => value.trim().length === 0,
+            building: (value) => value.trim().length === 0,
+            address: (value) => value.trim().length === 0,
+            city: (value) => value.trim().length === 0,
+            state: (value) => value.trim().length === 0,
+            country: (value) => value.trim().length === 0,
         },
     });
 
@@ -60,9 +94,25 @@ export default function Request() {
         }
 
         const data = {
-            ...form.values,
-            artwork: selected,
-            time_stamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+            // "user_id": user?.id,
+            "email": user?.email,
+            "artwork_id": selected.artwork_data?.id,
+            "artwork_title": selected.artwork_data?.title,
+            "artwork_creation_date": selected.artwork_data?.creation_date,
+            "artwork_description": selected.artwork_data?.description,
+            "request_date": format(new Date(), 'yyyy-MM-dd'),
+            "current_location_id": selected.artwork_data?.location_id,
+            "current_location_name": selected.artwork_data?.location_name,
+            "current_location_address": selected.artwork_data?.location_address,
+            "current_location_city": selected.artwork_data?.location_city,
+            "current_location_state": selected.artwork_data?.location_state,
+            "current_location_country": selected.artwork_data?.location_country,
+            "new_location_name": form.values.building,
+            "new_location_address": form.values.address,
+            "new_location_city": form.values.city,
+            "new_location_state": form.values.state,
+            "new_location_country": form.values.country,
+            "status": "Pending"
         }
         console.log("Request Page: Before sending to nextjs api");
         console.log(data)
@@ -75,6 +125,8 @@ export default function Request() {
         }).then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
+            } else {
+                console.log("Sent move request to backend");
             }
             return response.json();
         }).then((data) => {
@@ -91,19 +143,18 @@ export default function Request() {
             form.setFieldValue('email', session.user.email ?? '');
         }
 
-        if(request?.move_request && request.move_request.is_approved) {
-            setActive(3);
-        } else if(request?.move_request && request.move_request.is_pending) {
-            setActive(2);
-        } else {
-            setActive(1);
-        }
+        // if(request?.move_request && request.move_request.is_approved) {
+        //     setActive(3);
+        // } else if(request?.move_request && request.move_request.is_pending) {
+        //     setActive(2);
+        // } else {
+        //     setActive(1);
+        // }
     }, [session, selected]);
     return (
         <>
             {
-                // || isFaculty || isAdmin
-                isFaculty || isAdmin ?
+                user?.is_admin || user?.is_faculty ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">
@@ -147,6 +198,7 @@ export default function Request() {
 
                                         <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
                                             <TextInput
+                                                withAsterisk
                                                 label="Email"
                                                 placeholder="Your email"
                                                 name="email"
@@ -157,18 +209,39 @@ export default function Request() {
 
                                         <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
                                             <TextInput
-                                                label="Source"
+                                                label="Building"
                                                 placeholder="Art Center"
-                                                name="source"
+                                                name="building"
                                                 variant="filled"
-                                                {...form.getInputProps('source')}
+                                                {...form.getInputProps('building')}
                                             />
                                             <TextInput
-                                                label="Destination"
-                                                placeholder="Obrien ..."
-                                                name="destination"
+                                                label="Address"
+                                                placeholder="310 Turnpike St"
+                                                name="address"
                                                 variant="filled"
-                                                {...form.getInputProps('destination')}
+                                                {...form.getInputProps('address')}
+                                            />
+                                            <TextInput
+                                                label="City"
+                                                placeholder="North Andover"
+                                                name="city"
+                                                variant="filled"
+                                                {...form.getInputProps('city')}
+                                            />
+                                            <TextInput
+                                                label="State"
+                                                placeholder="Massachusetts"
+                                                name="state"
+                                                variant="filled"
+                                                {...form.getInputProps('state')}
+                                            />
+                                            <TextInput
+                                                label="Country"
+                                                placeholder="U.S.A"
+                                                name="country"
+                                                variant="filled"
+                                                {...form.getInputProps('country')}
                                             />
                                         </SimpleGrid>
                                         <Menu
@@ -185,7 +258,7 @@ export default function Request() {
                                                 <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
                                                     <Group gap="xs">
                                                         {/* <Image src={selected.image} width={22} height={22} /> */}
-                                                        <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
+                                                        <span className={classes.label}>{selected ? selected.id : 'Select piece'}</span>
                                                     </Group>
                                                     <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                                 </UnstyledButton>
@@ -215,45 +288,55 @@ export default function Request() {
                                 </Container>
                             </Container>
                         ) : (
-                            request?.move_request ? (
-                                <Container py='lg' size='sm'>
-                                    <Stepper active={active} onStepClick={setActive}>
-                                        <Stepper.Step label="First step" description="Request">
-                                            Step 1: Submit Request
-                                        </Stepper.Step>
-                                        <Stepper.Step label="Second step" description="Request Review">
-                                            Step 2: Request is being reviewed
-                                        </Stepper.Step>
-                                        <Stepper.Step label="Final step" description="Approved">
-                                            Step 3: Request Approved
-                                        </Stepper.Step>
-                                        <Stepper.Completed>
-                                            Art piece out for delivery
-                                        </Stepper.Completed>
-                                    </Stepper>
-                                    {/* <Group justify="center" mt="xl">
-                                        <Button variant="default" onClick={prevStep}>Back</Button>
-                                        <Button onClick={nextStep}>Next step</Button>
-                                    </Group> */}
-                                </Container>
-                            ) : (
-                                <Container className={classesTwo.root}>
-                                    <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
-                                        <Image src={image.src} className={classesTwo.mobileImage} />
-                                        <div>
-                                            <Title className={classesTwo.title}>Please file a request...</Title>
-                                            <Text c="dimmed" size="lg">
-                                                You have no active requests.
-                                            </Text>
-                                            {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
-                                    Get back to home page
-                                </Button> */}
-                                        </div>
-                                        <Image src={image.src} className={classesTwo.desktopImage} />
-                                    </SimpleGrid>
-                                </Container>
-                            )
-                        )}
+                            <>
+                                {requests.length > 0 ? (
+                                    requests.map((req) => {
+                                        let stat = 1;
+
+                                        if (req.status === 'Pending') {
+                                            stat = 2;
+                                        } else if (req.status === 'Approved') {
+                                            stat = 3;
+                                        } else if(req.status === 'Denied') {
+                                            return <></>;
+                                        }
+                                        return (
+                                            <Container py='lg' size='sm'>
+                                                <Stepper active={stat}>
+                                                    <Stepper.Step label="First step" description="Request">
+                                                        Step 1: Submit Request
+                                                    </Stepper.Step>
+                                                    <Stepper.Step label="Second step" description="Request Review">
+                                                        Step 2: Request is being reviewed
+                                                    </Stepper.Step>
+                                                    <Stepper.Step label="Final step" description="Approved">
+                                                        Step 3: Request Approved
+                                                    </Stepper.Step>
+                                                    <Stepper.Completed>
+                                                        Art piece out for delivery
+                                                    </Stepper.Completed>
+                                                </Stepper>
+                                            </Container>
+                                        )
+                                    })
+
+                                ) : (
+                                    <Container className={classesTwo.root}>
+                                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                                            <Image src={image.src} className={classesTwo.mobileImage} />
+                                            <div>
+                                                <Title className={classesTwo.title}>Please file a request...</Title>
+                                                <Text c="dimmed" size="lg">
+                                                    You have no active requests.
+                                                </Text>
+                                            </div>
+                                            <Image src={image.src} className={classesTwo.desktopImage} />
+                                        </SimpleGrid>
+                                    </Container>
+                                )}
+                            </>
+                        )
+                        }
 
                     </Container>
 

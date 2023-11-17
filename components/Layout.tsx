@@ -9,7 +9,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { RequestType, RequestContext, useRequest, ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
+import { RequestType, RequestContext, useRequest, ArtworkType, ArtworkContext, ArtworkImageType, ArtworkImageContext, UserContext, useArtwork, LinkProps, UserType, useUser } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -40,15 +40,22 @@ export default function Layout({
 }) {
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
-    const [isAdmin, setIsAdmin] = useState<boolean>(false);
-    const [isFaculty, setIsFaculty] = useState<boolean>(false);
-    const [token, setToken] = useState<string>('');
-    const [request, setRequest] = useState<RequestType | null>(null);
+    const [user, setUser] = useState<UserType | null>(null);
+    const [requests, setRequests] = useState<RequestType[]>([]);
     const [artworks, setArtworks] = useState<ArtworkType[]>([]);
-    const [artworksMap, setArtworksMap] = useState<Map<number, ArtworkType[]>>(new Map());
+    const [artworkImages, setArtworkImages] = useState<ArtworkImageType[]>([]);
     const addArtwork = (newArtwork: ArtworkType) => {
         setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
+
+    const addArtworkImage = (newArtworkImage: ArtworkImageType) => {
+        setArtworkImages((prevArtworkImages) => [...prevArtworkImages, newArtworkImage])
+    };
+
+    const addRequest = (newRequest: RequestType) => {
+        setRequests((prevRequests) => [...prevRequests, newRequest]);
+    }
+
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
             if (link.links) {
@@ -58,32 +65,6 @@ export default function Layout({
             }
         })
     );
-
-    const fetchRandomArtwork = (count = 5) => {
-        fetch('http://localhost:8000/api/randomartwork/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ num_artworks: count }), // Send the count as JSON in the request body
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch random artwork');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Print the data to the console
-                console.log(data);
-
-
-                // You can update your state or do other processing here
-            })
-            .catch((error) => {
-                console.error('Error fetching random artwork:', error);
-            });
-    };
 
     function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
@@ -125,100 +106,115 @@ export default function Layout({
         setItems(itemsCopy);
     }
 
-    useEffect(() => {
+    const fetchUserData = async (email: string) => {
+        try {
+            const response = await fetch(`api/user/?email=${email}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-        fetch('api/user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: session?.user?.email }),
-
-        }).then(response => {
             if (!response.ok) {
-                throw new Error('Failed to get user permission');
+                throw new Error('Failed to get User');
             }
-            return response.json();
-        }).then((data) => {
-            setToken(data.token);
-            if (data.user_type.user_type === "admin") {
-                setIsAdmin(true);
-                setItems(links.map((link) => {
-                    if (link.links) {
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-                    } else {
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-                    }
-                }));
-            } else if (data.user_type.user_type == "FS") {
-                setIsFaculty(true);
+
+            const data = await response.json();
+            console.log('Backend user response: ', data);
+            setUser(data);
+
+            if (data?.is_admin) {
+                setItems(
+                    links.map((link) => {
+                        if (link.links) {
+                            return convertLinkToComponent({
+                                link: link.link,
+                                label: link.label,
+                                auth: link.auth,
+                                links: link.links,
+                            });
+                        } else {
+                            return convertLinkToComponent({
+                                link: link.link,
+                                label: link.label,
+                                auth: link.auth,
+                            });
+                        }
+                    })
+                );
+            } else if (data.is_faculty) {
                 links
                     .filter((link) => link.auth === 'faculty')
-                    .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
+                    .forEach((link) =>
+                        addItemAtIndex(
+                            {
+                                link: link.link,
+                                label: link.label,
+                                auth: link.auth,
+                            },
+                            items.length - 1
+                        )
+                    );
             }
-        }).catch(error => {
-            console.log(error);
-        });
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
 
-        fetchRandomArtwork();
-        // Contact front end server (api/artworks/route.ts)
-        // fetch('api/artworks', {
-        //     method: 'POST',
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error('Failed to fetch data');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then((data) => {
-        //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
-        //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
-        //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
-        //         console.log('IMG path data:', data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching data:', error);
-        //     });
-
-        fetch('api/artworksList', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        }).then(data => {
-            setArtworks(data);
-            artworks.forEach((artwork) => {
-                if (!artworksMap.has(artwork.idartwork)) {
-                    artworksMap.set(artwork.idartwork, []);
-                }
-                artworksMap.get(artwork.idartwork)?.push(artwork);
+    const fetchArtworkImages = async () => {
+        try {
+            const response = await fetch('api/images', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             });
-        }).catch(error => {
-            console.error('Error:', error);
-        });
 
-        fetch('api/findrequest', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ address: session?.user?.email }),
-        }).then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json();
-        }).then(data => {
-            setRequest(data)
-        }).catch(error => {
-            console.error('Error:', error);
-        });
+
+            const data = await response.json();
+            console.log('Artwork Images data: ', data);
+            setArtworkImages(data);
+        } catch (error) {
+            console.error('Error fetching artwork images:', error);
+        }
+    };
+
+    const fetchMoveRequests = async (email: string) => {
+        try {
+            const response = await fetch(`api/moverequests/?email=${email}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Move Request Backend data:', data);
+            setRequests(data);
+        } catch (error) {
+            console.error('Error fetching move requests:', error);
+        }
+    };
+
+
+    useEffect(() => {
+
+        const userEmail = session?.user?.email as string;
+
+        const fetchData = async () => {
+            await fetchUserData(userEmail);
+            await fetchArtworkImages();
+            await fetchMoveRequests(userEmail);
+        };
+
+        fetchData();
 
     }, [session]);
 
@@ -240,13 +236,15 @@ export default function Layout({
                 </Container>
             </header>
             <main>
-                <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
-                    <UserContext.Provider value={{ isAdmin, isFaculty, setIsAdmin, setIsFaculty }}>
-                        <RequestContext.Provider value={{request, setRequest}}>
-                        {children}
-                        </RequestContext.Provider>
-                    </UserContext.Provider>
-                </ArtworkContext.Provider>
+                <ArtworkImageContext.Provider value={{ artworkImages, addArtworkImage }}>
+                    <ArtworkContext.Provider value={{ artworks, addArtwork }}>
+                        <UserContext.Provider value={{ user, setUser }}>
+                            <RequestContext.Provider value={{ requests, addRequest }}>
+                                {children}
+                            </RequestContext.Provider>
+                        </UserContext.Provider>
+                    </ArtworkContext.Provider>
+                </ArtworkImageContext.Provider>
 
             </main>
         </>

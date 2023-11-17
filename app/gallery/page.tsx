@@ -7,6 +7,7 @@ import { IconSearch, IconArrowUp } from '@tabler/icons-react';
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
+import { ArtworkImageType, ArtworkType, useArtworkImage } from '@/lib/types';
 
 /**
      * Use interface to avoid tsx errors when declaring cards
@@ -37,83 +38,96 @@ interface Artwork {
 
 export default function Gallery() {
     const [value, setValue] = useState('');
-    const [artworkData, setArtworkData] = useState([]);
+    const { artworkImages, addArtworkImage } = useArtworkImage();
+    const [filteredArtworkImages, setFilteredArworkImages] = useState<ArtworkImageType[]>(artworkImages);
+    const [searchTerm, setSearchTerm] = useState<string>('');
     const [scrollToValue, setScrollToValue] = useState(10);
     const [scroll, scrollTo] = useWindowScroll();
-    const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+    const [selectedArtwork, setSelectedArtwork] = useState<ArtworkImageType | null>(null);
     const [opened, { open, close }] = useDisclosure(false);
+
+    function filterArtworks(artworks: ArtworkImageType[], searchTerm: string): ArtworkImageType[] {
+        const lowercaseSearch = searchTerm.toLowerCase();
+
+        console.log("Search Term");
+        console.log(lowercaseSearch);
+        return artworkImages.filter((artwork) => {
+            if (artwork.artwork_data) {
+                console.log("Artwork awrtwork data for search");
+                console.log(artwork.artwork_data);
+                return Object.values(artwork.artwork_data).some(
+                    (value) => typeof value === 'string' && value.toLowerCase().includes(lowercaseSearch)
+                );
+            }
+            return false;
+        });
+    }
+
     /**
      * Function for handeling the search 
      * @param searchValue, a string where words are separated by spaces 
      */
     const handleSearch = (searchValue: string) => {
-
-        //fetch the frontend endpoint
-        fetch('api/search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ keyword: searchValue }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                //Set the data to the cards using the setArtwrokData
-                setArtworkData(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
+        // setFilteredArworkImages((prevArtworkImages) =>
+        //     filterArtworks(prevArtworkImages, searchValue)
+        // );
+        setSearchTerm(searchValue);
+        if (searchValue.trim() === '') {
+            // Reset filteredArtworkImages to an empty array
+            setFilteredArworkImages([]);
+        } else {
+            // Perform filtering when searchValue is not empty
+            setFilteredArworkImages((prevArtworkImages) =>
+                filterArtworks(prevArtworkImages, searchValue)
+            );
+        }
     };
 
-    const handleCardClick = (artwork: Artwork) => {
+    const handleCardClick = (artwork: ArtworkImageType) => {
         open();
         setSelectedArtwork(artwork);
     };
 
     /**
-     * Set inital data
-     */
-    useEffect(() => {
-        // Initial fetch when component mounts
-        fetch('api/artworks', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(10),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setArtworkData(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    }, []); // Empty dependency array to fetch data once when the component mounts
-
-
-
-    /**
      * Create the cards. Maps the data (The artworks) to Cards
      */
-    const cards = artworkData.map((artwork: Artwork) => (
-        <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
+    // const cards = filteredArtworkImages.map((artwork: ArtworkImageType) => (
+    //     <Card key={artwork.id} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
+    //         <Card.Section>
+    //             <AspectRatio ratio={1080 / 900}>
+
+    //                 <Image
+    //                     src={artwork.image_file}
+    //                     height={220}
+    //                     style={{
+    //                         position: 'absolute',
+    //                         top: 0,
+    //                         left: 0,
+    //                         width: '100%',
+    //                         height: '100%',
+    //                         background: 'transparent',
+    //                         zIndex: 2,
+    //                         pointerEvents: 'none'
+    //                     }}
+    //                 />
+
+    //             </AspectRatio>
+    //         </Card.Section>
+    //         <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
+    //             {"Identifier: " + (artwork.id ? artwork.id : '-')}
+    //         </Text>
+    //         <Text className={classes.title} mt={5}>
+    //             {(artwork.artwork_data?.title ? artwork.artwork_data.title : '-')}
+    //         </Text>
+    //     </Card>
+    // ));
+
+    const cards = (filteredArtworkImages.length > 0 ? filteredArtworkImages : artworkImages).map((artwork: ArtworkImageType) => (
+        <Card key={artwork.id} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
-
                     <Image
-                        src={artwork.image_path.image_path}
+                        src={artwork.image_file}
                         height={220}
                         style={{
                             position: 'absolute',
@@ -126,43 +140,22 @@ export default function Gallery() {
                             pointerEvents: 'none'
                         }}
                     />
-
                 </AspectRatio>
             </Card.Section>
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-                {"Identifier: " + (artwork.idartwork ? artwork.idartwork : '-')}
+                {"Identifier: " + (artwork.id ? artwork.id : '-')}
             </Text>
             <Text className={classes.title} mt={5}>
-                {"Title: " + (artwork.title ? artwork.title : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Artist Name: " + (artwork.artist ? artwork.artist.artist_name : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Category: " + (artwork.category ? artwork.category.category : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"MM/YYYY: " + (artwork.date_created_month && artwork.date_created_year
-                    ? `${artwork.date_created_month}/${artwork.date_created_year}`
-                    : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Width X Height: " + (artwork.width && artwork.height
-                    ? `${artwork.width}/${artwork.height}`
-                    : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Donor Name: " + (artwork.donor ? artwork.donor : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Location: " + (artwork.location ? artwork.location.location : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Comments: " + (artwork.comments ? artwork.comments : '-')}
+                {(artwork.artwork_data?.title ? artwork.artwork_data.title : '-')}
             </Text>
         </Card>
     ));
 
+    useEffect(() => {
+        // setFilteredArworkImages(artworkImages);
+        console.log("Filtered artwork images");
+        console.log(filteredArtworkImages);
+    }, [filteredArtworkImages]);
 
     return (
         <>

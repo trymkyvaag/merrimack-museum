@@ -9,47 +9,32 @@ export interface LinkProps {
 }
 
 export interface RequestType {
-    move_request: {
-        idmove_request: number,
-        user: {
-            address: string,
-            user_type: {
-                user_type: string
-            }
-        },
-        artwork: {
-            idartwork: number,
-            artist: {
-                artist_name: string
-            },
-            donor: null,
-            location: {
-                location: string
-            },
-            category: {
-                category: string
-            },
-            image_path: {
-                image_path: string
-            },
-            title: string,
-            date_created_month: null,
-            date_created_year: null,
-            comments: null,
-            width: string,
-            height: string
-        },
-        to_location: string,
-        is_pending: number,
-        is_approved: number,
-        comments: string,
-        time_stamp: string
-    } | null
+    id?: number;
+    email?: string;
+    artwork_id?: number;
+    artwork_title?: string;
+    artwork_creation_date?: string;
+    artwork_description?: string;
+    request_date?: string;
+    current_location_id?: number;
+    current_location_name?: string;
+    current_location_address?: string;
+    current_location_city?: string;
+    current_location_state?: string;
+    current_location_country?: string;
+    new_location_name?: string;
+    new_location_address?: string;
+    new_location_city?: string;
+    new_location_state?: string;
+    new_location_country?: string;
+    status?: string;
 }
 
+
+
 interface RequestContextType {
-    request: RequestType | null
-    setRequest: (r : RequestType) => void;
+    requests: RequestType[];
+    addRequest: (newReques: RequestType) => void;
 }
 
 export const RequestContext = createContext<RequestContextType | undefined>(undefined);
@@ -63,25 +48,35 @@ export const useRequest = () => {
 }
 
 export interface ArtworkType {
-    idartwork: number;
-    title: string;
-    date_created_month: null | string;
-    date_created_year: null | string;
-    comments: null | string;
-    width: string;
-    height: string;
-    artist: number;
-    donor: null | number;
-    location: number;
-    category: number;
-    image_path: number;
+    id?: number;
+    artist_id?: number;
+    artist_name?: string;
+    artist_birth_date?: string;
+    artist_nationality?: string;
+    artist_bio?: string;
+    title?: string;
+    creation_date?: string;
+    description?: string;
+    category_id?: number;
+    category_name?: string;
+    category_description?: string;
+    location_id?: number;
+    location_name?: string;
+    location_address?: string;
+    location_city?: string;
+    location_state?: string;
+    location_country?: string;
+    donor_id?: number;
+    donor_name?: string;
+    donor_contact_email?: string;
+    donor_donation_date?: string;
 }
+
+
 
 interface ArtworkContextType {
     artworks: ArtworkType[];
-    artworksMap: Map<number, ArtworkType[]>
     addArtwork: (newArtwork: ArtworkType) => void;
-    setArtworksMap: (map: Map<number, ArtworkType[]>) => void;
 }
 
 export const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);
@@ -94,11 +89,18 @@ export const useArtwork = () => {
     return context;
 };
 
+export interface UserType {
+    id: number;
+    username: string;
+    email: string;
+    is_admin: boolean;
+    is_faculty: boolean;
+    is_student: boolean;
+};
+
 interface UserContextType {
-    isAdmin: boolean;
-    isFaculty: boolean;
-    setIsAdmin: (cond: boolean) => void;
-    setIsFaculty: (cond: boolean) => void;
+    user: UserType | null;
+    setUser: (u: UserType) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -110,3 +112,51 @@ export const useUser = () => {
     }
     return context;
 }
+
+interface ArtworkImageData {
+    id?: number;
+    artist_id?: number;
+    artist_name?: string;
+    artist_birth_date?: string;
+    artist_nationality?: string;
+    artist_bio?: string;
+    title?: string;
+    creation_date?: string;
+    description?: string;
+    category_id?: number;
+    category_name?: string;
+    category_description?: string;
+    location_id?: number;
+    location_name?: string;
+    location_address?: string;
+    location_city?: string;
+    location_state?: string;
+    location_country?: string;
+    donor_id?: number;
+    donor_name?: string;
+    donor_contact_email?: string;
+    donor_donation_date?: string;
+}
+
+export interface ArtworkImageType {
+    id?: number;
+    artwork_data?: ArtworkImageData;
+    image_file?: string;
+    description?: string;
+}
+
+interface ArtworkImageContextType {
+    artworkImages: ArtworkImageType[];
+    addArtworkImage: (newArtwork: ArtworkImageType) => void;
+}
+
+export const ArtworkImageContext = createContext<ArtworkImageContextType | undefined>(undefined);
+
+export const useArtworkImage = () => {
+    const context = useContext(ArtworkImageContext);
+    if (!context) {
+        throw new Error('useArtworkImage must be used within an ArtworkProvider');
+    }
+    return context;
+};
+

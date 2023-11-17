@@ -1,19 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
+
     try {
-        const data = await req.json();
-        const email = data.email;
+        const url = req.nextUrl;
+        const email = url.searchParams.get('email');
+        const headers = new Headers();
         
-        if (!email) {
-            return NextResponse.json({ error: 'Email is missing in the request body' }, {status: 400});
+        for (const [key, value] of Object.entries(req.headers)) {
+            if (typeof value === 'string') {
+                headers.set(key, value);
+            }
         }
-        const externalApiResponse = await fetch('http://localhost:8000/api/add-or-check-user/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({address: email}),
+
+        const externalApiResponse = await fetch(`http://localhost:8000/api/custom-users/get_user_by_email/?email=${email}`, {
+            method: 'GET',
+            headers: headers
         });
 
         if (externalApiResponse.ok) {
