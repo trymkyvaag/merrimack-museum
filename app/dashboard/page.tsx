@@ -1,16 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
-import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
+import { useEffect, useState, useRef } from 'react';
+import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
+import { IconX, IconDownload, IconCloudUpload } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork, useUser, useRequest } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
-import image from '@/public/404.svg';
-import classesTwo from '@/styles/NotFoundImage.module.css';
-import { format } from 'date-fns';
+import { Dropzone } from '@mantine/dropzone';
+let uploadedFileName = '';
 
 export default function About() {
     const theme = useMantineTheme();
@@ -18,25 +16,36 @@ export default function About() {
     const { artworks } = useArtwork();
     const { isAdmin, isFaculty } = useUser();
     const { request } = useRequest();
-    const [opened, setOpened] = useState(false);
-    const [checked, setChecked] = useState(false);
-    const [selected, setSelected] = useState(artworks[0] || null);
-    const [active, setActive] = useState(1);
-    const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
-    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
-    // const handleMenuItemClick = (item: any) => {
-    //     setSelected(item);
-    // };
 
-    // const items = artworks.map((item) => (
-    //     <Menu.Item
-    //         onClick={() => handleMenuItemClick(item)}
-    //         key={item.idartwork}
-    //     >
-    //         {item.idartwork}
-    //     </Menu.Item>
-    // ));
+    const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+    const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
+    const openRef = useRef<() => void>(null);
+    const handleImageUpload = (files: File[]) => {
+        // Only allow one image
+        if (files.length > 0) {
+            const file = files[0];
+            setUploadedImages([file]);
+
+            uploadedFileName = file.name;
+            console.log(uploadedFileName);
+
+            // Read the file as base64 and set the state
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64Result = reader.result as string;
+                setUploadedImageBase64(base64Result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeImage = (index: number) => {
+        const newImages = [...uploadedImages];
+        newImages.splice(index, 1);
+        setUploadedImages(newImages);
+
+    };
 
     const form = useForm({
         initialValues: {
@@ -74,11 +83,16 @@ export default function About() {
         //     return;
         // }
 
+
+
         const data = {
             ...form.values,
+            uploadedFileName,
+            uploadedImage: uploadedImageBase64
+
         }
         console.log("Request Page: Before sending to nextjs api");
-        console.log(data)
+        console.dir(data.uploadedImage);
         fetch('api/addArtwork', {
             method: "POST",
             headers: {
@@ -192,6 +206,61 @@ export default function About() {
                                 variant="filled"
                                 {...form.getInputProps('comments')}
                             />
+
+                            <div className={classes.wrapper}>
+                                {uploadedImages.length === 0 ? (
+                                    <Dropzone
+                                        openRef={openRef}
+                                        onDrop={handleImageUpload}
+                                        className={classes.dropzone}
+                                        radius="md"
+                                        accept={['image/*']}
+                                        maxSize={30 * 1024 ** 2}
+                                    >
+                                        <div style={{ pointerEvents: 'none' }}>
+                                            <Group justify="center">
+                                                <Dropzone.Accept>
+                                                    <IconDownload
+                                                        style={{ width: rem(50), height: rem(50) }}
+                                                        color={theme.colors.blue[6]}
+                                                        stroke={1.5}
+                                                    />
+                                                </Dropzone.Accept>
+                                                <Dropzone.Reject>
+                                                    <IconX
+                                                        style={{ width: rem(50), height: rem(50) }}
+                                                        color={theme.colors.red[6]}
+                                                        stroke={1.5}
+                                                    />
+                                                </Dropzone.Reject>
+                                                <Dropzone.Idle>
+                                                    <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
+                                                </Dropzone.Idle>
+                                            </Group>
+
+                                            <Text ta="center" fw={700} fz="lg" mt="xl">
+                                                <Dropzone.Accept>Drop images here</Dropzone.Accept>
+                                                <Dropzone.Reject>Images must be less than 30mb</Dropzone.Reject>
+                                                <Dropzone.Idle>Upload images</Dropzone.Idle>
+                                            </Text>
+                                            <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                                                Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                            </Text>
+                                        </div>
+                                    </Dropzone>
+                                ) : null}
+                            </div>
+                            {uploadedImages.map((image, index) => (
+                                <div key={index} style={{ position: 'relative', paddingTop: '10px', textAlign: 'center' }}>
+                                    <Image src={URL.createObjectURL(image)} alt={`Uploaded Image ${index}`} />
+                                    <div style={{ paddingTop: '10px', display: 'inline-block' }}>
+                                        <Button onClick={() => removeImage(index)} color="red">
+                                            Remove
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+
 
                             <Group justify="center" mt="xl">
                                 {/* <Link href="/gallery" passHref> */}
