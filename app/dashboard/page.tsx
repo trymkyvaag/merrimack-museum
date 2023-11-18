@@ -1,195 +1,296 @@
 'use client'
 
-import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
-import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
-import { Container, Grid, SimpleGrid, Skeleton, rem, Table, ScrollArea, Checkbox, Group, Avatar, Text, Button, useMantineTheme } from '@mantine/core';
-import cx from 'clsx';
-import { useRef, useState } from 'react';
-import { table_mock_data } from '@/lib/utils';
-import classes from '@/styles/Dashboard.module.css';
+import { useEffect, useState, useRef } from 'react';
+import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
+import { IconX, IconDownload, IconCloudUpload } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
+import { useSession } from 'next-auth/react';
+import { useArtwork, useUser, useRequest } from '@/lib/types';
+import classes from '@/styles/Picker.module.css';
+import { Dropzone } from '@mantine/dropzone';
+let uploadedFileName = '';
 
-
-const PRIMARY_COL_HEIGHT = typeof window !== 'undefined'
-  ? rem(window.innerHeight || document.documentElement.clientHeight)
-  : rem(300);
-
-export default function Dashboard() {
-    const SECONDARY_COL_HEIGHT = `calc(${PRIMARY_COL_HEIGHT} / 2 - var(--mantine-spacing-md) / 2)`;
-
-    const [selection, setSelection] = useState(['1']);
+export default function About() {
     const theme = useMantineTheme();
-    const openRef = useRef<() => void>(null);
+    const { data: session, status, update } = useSession();
+    const { artworks } = useArtwork();
+    const { isAdmin, isFaculty } = useUser();
+    const { request } = useRequest();
+
+
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-
-    const toggleRow = (id: string) =>
-        setSelection((current) =>
-            current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
-        );
-    const toggleAll = () =>
-        setSelection((current) => (current.length === table_mock_data.length ? [] : table_mock_data.map((item) => item.id)));
-
-    const rows = table_mock_data.map((item) => {
-        const selected = selection.includes(item.id);
-        return (
-            <Table.Tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
-                <Table.Td>
-                    <Checkbox checked={selection.includes(item.id)} onChange={() => toggleRow(item.id)} />
-                </Table.Td>
-                <Table.Td>
-                    <Group gap="sm">
-                        <Avatar size={26} src={item.avatar} radius={26} />
-                        <Text size="sm" fw={500}>
-                            {item.name}
-                        </Text>
-                    </Group>
-                </Table.Td>
-                <Table.Td>{item.email}</Table.Td>
-                <Table.Td>{item.job}</Table.Td>
-            </Table.Tr>
-        );
-    });
-
-
-
+    const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
+    const openRef = useRef<() => void>(null);
     const handleImageUpload = (files: File[]) => {
-        setUploadedImages([...uploadedImages, ...files]);
+        // Only allow one image
+        if (files.length > 0) {
+            const file = files[0];
+            setUploadedImages([file]);
+
+            uploadedFileName = file.name;
+            console.log(uploadedFileName);
+
+            // Read the file as base64 and set the state
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64Result = reader.result as string;
+                setUploadedImageBase64(base64Result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const removeImage = (index: number) => {
         const newImages = [...uploadedImages];
         newImages.splice(index, 1);
         setUploadedImages(newImages);
+
     };
 
-    const sendImagesToServer = () => {
-        const formData = new FormData();
-        uploadedImages.forEach((image, index) => {
-            formData.append(`images`, image, `image${index}`);
+    const form = useForm({
+        initialValues: {
+            title: '',
+            date_created_month: '',
+            date_created_year: '',
+            comments: '',
+            width: '',
+            height: '',
+            artist_name: '',
+            donor_name: '',
+            location: '',
+            category: '',
+            image_path: '',
+        },
+        validate: {
+            title: (value) => value.trim().length === 0,
+            date_created_month: (value) => value.trim().length === 0,
+            date_created_year: (value) => value.trim().length === 0,
+            comments: (value) => value.trim().length === 0,
+            width: (value) => value.trim().length === 0,
+            height: (value) => value.trim().length === 0,
+            artist_name: (value) => value.trim().length === 0,
+            donor_name: (value) => value.trim().length === 0,
+            location: (value) => value.trim().length === 0,
+            category: (value) => value.trim().length === 0,
+            image_path: (value) => value.trim().length === 0,
+        },
+    });
+
+    const handleSubmit = () => {
+        console.log("Form submitted");
+        // if (!selected) {
+        //     console.error("Selected is undefined or null");
+        //     return;
+        // }
+
+
+
+        const data = {
+            ...form.values,
+            uploadedFileName,
+            uploadedImage: uploadedImageBase64
+
+        }
+        console.log("Request Page: Before sending to nextjs api");
+        console.dir(data.uploadedImage);
+        fetch('api/addArtwork', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
         });
-
-        fetch('/your-upload-url/', {
-            method: 'POST',
-            body: formData,
-        })
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log('Images uploaded successfully');
-                    // You can reset the uploadedImages state or take other actions upon successful upload
-                } else {
-                    console.error('Error uploading images');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
     };
-    
+
     return (
         <>
-            <Container fluid my="md">
-                <SimpleGrid cols={{ base: 1/*, sm: 2*/ }} spacing="md">
-                    {/* <Skeleton height={PRIMARY_COL_HEIGHT} radius="md" animate={false} /> */}
-                    <ScrollArea>
-                        <Table miw={800} verticalSpacing="sm">
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th style={{ width: rem(40) }}>
-                                        <Checkbox
-                                            onChange={toggleAll}
-                                            checked={selection.length === table_mock_data.length}
-                                            indeterminate={selection.length > 0 && selection.length !== table_mock_data.length}
-                                        />
-                                    </Table.Th>
-                                    <Table.Th>User</Table.Th>
-                                    <Table.Th>Email</Table.Th>
-                                    <Table.Th>Job</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>{rows}</Table.Tbody>
-                        </Table>
-                    </ScrollArea>
-                    <Grid gutter="md">
-                        <Grid.Col>
-                            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            {/* <Skeleton height={SECONDARY_COL_HEIGHT} radius="md" animate={false} /> */}
+
+            {
+
+                <Container>
+
+                    <Container px='lg' py='lg' size='sm'>
+                        <form>
+                            <Title
+                                order={2}
+                                size="h1"
+                                style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                fw={900}
+                                ta="center"
+                            >
+                                Add a New Artwork
+                            </Title>
+
+                            <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                <TextInput
+                                    label="Title"
+                                    placeholder="The Oasis"
+                                    name="title"
+                                    variant="filled"
+                                    {...form.getInputProps('title')}
+                                />
+                                <TextInput
+                                    label="Artist Name"
+                                    placeholder="Mark"
+                                    name="artist_name"
+                                    variant="filled"
+                                    {...form.getInputProps('artist_name')}
+                                />
+                            </SimpleGrid>
+
+                            <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                <TextInput
+                                    label="Category"
+                                    placeholder="Photograph"
+                                    name="category"
+                                    variant="filled"
+                                    {...form.getInputProps('category')}
+                                />
+                                <TextInput
+                                    label="Location"
+                                    placeholder="Palmisano"
+                                    name="location"
+                                    variant="filled"
+                                    {...form.getInputProps('location')}
+                                />
+                            </SimpleGrid>
+                            <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                <TextInput
+                                    label="Width"
+                                    placeholder="0.000"
+                                    name="width"
+                                    variant="filled"
+                                    {...form.getInputProps('width')}
+                                />
+                                <TextInput
+                                    label="Height"
+                                    placeholder="0.000"
+                                    name="height"
+                                    variant="filled"
+                                    {...form.getInputProps('height')}
+                                />
+                            </SimpleGrid>
+                            <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                <TextInput
+                                    label="Date Created - Month"
+                                    placeholder="MM"
+                                    name="date_created_month"
+                                    variant="filled"
+                                    {...form.getInputProps('date_created_month')}
+                                />
+                                <TextInput
+                                    label="Date Created - Year"
+                                    placeholder="YYYY"
+                                    name="date_created_year"
+                                    variant="filled"
+                                    {...form.getInputProps('date_created_year')}
+                                />
+                            </SimpleGrid>
+                            <Textarea
+                                mt="md"
+                                label="Comments"
+                                placeholder="Your comments"
+                                maxRows={10}
+                                minRows={5}
+                                autosize
+                                name="comments"
+                                variant="filled"
+                                {...form.getInputProps('comments')}
+                            />
 
                             <div className={classes.wrapper}>
-                                <Dropzone
-                                    openRef={openRef}
-                                    onDrop={handleImageUpload}
-                                    className={classes.dropzone}
-                                    radius="md"
-                                    accept={['image/*']}
-                                    maxSize={30 * 1024 ** 2}
-                                    multiple // Enable multiple file upload
-                                >
-                                    <div style={{ pointerEvents: 'none' }}>
-                                        <Group justify="center">
-                                            <Dropzone.Accept>
-                                                <IconDownload
-                                                    style={{ width: rem(50), height: rem(50) }}
-                                                    color={theme.colors.blue[6]}
-                                                    stroke={1.5}
-                                                />
-                                            </Dropzone.Accept>
-                                            <Dropzone.Reject>
-                                                <IconX
-                                                    style={{ width: rem(50), height: rem(50) }}
-                                                    color={theme.colors.red[6]}
-                                                    stroke={1.5}
-                                                />
-                                            </Dropzone.Reject>
-                                            <Dropzone.Idle>
-                                                <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
-                                            </Dropzone.Idle>
-                                        </Group>
+                                {uploadedImages.length === 0 ? (
+                                    <Dropzone
+                                        openRef={openRef}
+                                        onDrop={handleImageUpload}
+                                        className={classes.dropzone}
+                                        radius="md"
+                                        accept={['image/*']}
+                                        maxSize={30 * 1024 ** 2}
+                                    >
+                                        <div style={{ pointerEvents: 'none' }}>
+                                            <Group justify="center">
+                                                <Dropzone.Accept>
+                                                    <IconDownload
+                                                        style={{ width: rem(50), height: rem(50) }}
+                                                        color={theme.colors.blue[6]}
+                                                        stroke={1.5}
+                                                    />
+                                                </Dropzone.Accept>
+                                                <Dropzone.Reject>
+                                                    <IconX
+                                                        style={{ width: rem(50), height: rem(50) }}
+                                                        color={theme.colors.red[6]}
+                                                        stroke={1.5}
+                                                    />
+                                                </Dropzone.Reject>
+                                                <Dropzone.Idle>
+                                                    <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
+                                                </Dropzone.Idle>
+                                            </Group>
 
-                                        <Text ta="center" fw={700} fz="lg" mt="xl">
-                                            <Dropzone.Accept>Drop images here</Dropzone.Accept>
-                                            <Dropzone.Reject>Images must be less than 30mb</Dropzone.Reject>
-                                            <Dropzone.Idle>Upload images</Dropzone.Idle>
-                                        </Text>
-                                        <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                                            Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
-                                        </Text>
-                                    </div>
-                                </Dropzone>
-
-                                {/* {uploadedImages.length > 0 && (
-                <div>
-                    {uploadedImages.map((image, index) => (
-                        <div key={index} className={classes.imageContainer}>
-                            <img src={image} alt={`Uploaded Image ${index}`} />
-                            <Button
-                                className={classes.removeButton}
-                                size="xs"
-                                variant="filled"
-                                onClick={() => removeImage(index)}
-                            >
-                                Remove
-                            </Button>
-                        </div>
-                    ))}
-                </div>
-            )} */}
-
-                                <Button className={classes.control} size="md" radius="xl" onClick={() => openRef.current?.()}>
-                                    Select images
-                                </Button>
-
-                                {/* <Button className={classes.control} size="md" radius="xl" onClick={sendImagesToServer}>
-                Upload Images
-            </Button> */}
+                                            <Text ta="center" fw={700} fz="lg" mt="xl">
+                                                <Dropzone.Accept>Drop images here</Dropzone.Accept>
+                                                <Dropzone.Reject>Images must be less than 30mb</Dropzone.Reject>
+                                                <Dropzone.Idle>Upload images</Dropzone.Idle>
+                                            </Text>
+                                            <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                                                Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                            </Text>
+                                        </div>
+                                    </Dropzone>
+                                ) : null}
                             </div>
-                        </Grid.Col>
-                    </Grid>
-                </SimpleGrid>
-            </Container>
+                            {uploadedImages.map((image, index) => (
+                                <div key={index} style={{ position: 'relative', paddingTop: '10px', textAlign: 'center' }}>
+                                    <Image src={URL.createObjectURL(image)} alt={`Uploaded Image ${index}`} />
+                                    <div style={{ paddingTop: '10px', display: 'inline-block' }}>
+                                        <Button onClick={() => removeImage(index)} color="red">
+                                            Remove
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+
+
+                            <Group justify="center" mt="xl">
+                                {/* <Link href="/gallery" passHref> */}
+
+                                <Button type="submit" size="md" onClick={handleSubmit}>
+                                    Add Artwork
+                                </Button>
+                                {/* </Link> */}
+                            </Group>
+                        </form>
+                    </Container>
+
+                </Container>
+                // :
+                // <Container className={classesTwo.root}>
+                //     <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                //         <Image src={image.src} className={classesTwo.mobileImage} />
+                //         <div>
+                //             <Title className={classesTwo.title}>Please sign in...</Title>
+                //             <Text c="dimmed" size="lg">
+                //                 Note: Only Admin may access the dashboard
+                //             </Text>
+                //             {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                //                                     Get back to home page
+                //                                 </Button> */}
+                //         </div>
+                //         <Image src={image.src} className={classesTwo.desktopImage} />
+                //     </SimpleGrid>
+                // </Container>
+            }
         </>
     );
 }

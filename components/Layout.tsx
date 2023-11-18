@@ -21,16 +21,6 @@ const links = [
     { link: '/request', label: 'Request', auth: 'faculty' },
     { link: '/about', label: 'About', auth: null },
     { link: '/dashboard', label: 'Dashboard', auth: 'admin' },
-    {
-        link: '#2',
-        label: 'Support',
-        auth: null,
-        links: [
-            { link: '/faq', label: 'FAQ', auth: null },
-            { link: '/demo', label: 'Book a demo', auth: null },
-            { link: '/forums', label: 'Forums', auth: null },
-        ],
-    },
 ];
 
 export default function Layout({
@@ -58,32 +48,6 @@ export default function Layout({
             }
         })
     );
-
-    const fetchRandomArtwork = (count = 5) => {
-        fetch('http://localhost:8000/api/randomartwork/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ num_artworks: count }), // Send the count as JSON in the request body
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch random artwork');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Print the data to the console
-                console.log(data);
-
-
-                // You can update your state or do other processing here
-            })
-            .catch((error) => {
-                console.error('Error fetching random artwork:', error);
-            });
-    };
 
     function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
@@ -160,26 +124,7 @@ export default function Layout({
             console.log(error);
         });
 
-        fetchRandomArtwork();
-        // Contact front end server (api/artworks/route.ts)
-        // fetch('api/artworks', {
-        //     method: 'POST',
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error('Failed to fetch data');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then((data) => {
-        //         // Here is your data of random artworks. Goal: Create image cards that 1. Display the info
-        //         // in 'data' and 2. set the img src of that card given by the response. Ex. img_src = "data[0].image_path"
-        //         // (don't take me on that syntax) but the idea is for each index display data and set img src to what the image_path is. 
-        //         console.log('IMG path data:', data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching data:', error);
-        //     });
+
 
         fetch('api/artworksList', {
             method: 'GET',
@@ -242,8 +187,8 @@ export default function Layout({
             <main>
                 <ArtworkContext.Provider value={{ artworks, artworksMap, addArtwork, setArtworksMap }}>
                     <UserContext.Provider value={{ isAdmin, isFaculty, setIsAdmin, setIsFaculty }}>
-                        <RequestContext.Provider value={{request, setRequest}}>
-                        {children}
+                        <RequestContext.Provider value={{ request, setRequest }}>
+                            {children}
                         </RequestContext.Provider>
                     </UserContext.Provider>
                 </ArtworkContext.Provider>
