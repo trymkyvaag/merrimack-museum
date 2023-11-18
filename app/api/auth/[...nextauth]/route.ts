@@ -28,6 +28,10 @@ const handler = NextAuth({
             }
         }),
     ],
+    session: {
+        // Set the duration in seconds (e.g., 1 hour = 3600 seconds)
+        maxAge: 30 * 24 * 60 * 60,
+      },    
     callbacks: {
         async jwt({ token, user }: { token: any; user: any }) {
             // console.log("JWT Callback:", token);
