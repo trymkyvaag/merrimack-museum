@@ -57,32 +57,24 @@ export const RequestContext = createContext<RequestContextType | undefined>(unde
 export const useRequest = () => {
     const context = useContext(RequestContext);
     if (!context) {
-        throw new Error('useArtwork must be used within an ArtworkProvider');
+        throw new Error('useRequest must be used within an ArtworkProvider');
     }
     return context;
 }
 
 export interface ArtworkType {
     idartwork: number;
-    artist: {
-        artist_name: string;
-    };
-    category?: {
-        category: string;
-    };
-    title: string | null;
-    date_created_month?: number | null;
-    date_created_year?: number | null;
-    width?: string | null;
-    height?: string | null;
-    donor?: string | null;
-    location?: {
-        location: string;
-    } | null;
-    comments?: string | null;
-    image_path: {
-        image_path: string;
-    };
+    title: string;
+    date_created_month: null | string;
+    date_created_year: null | string;
+    comments: null | string;
+    width: string;
+    height: string;
+    artist: number;
+    donor: null | number;
+    location: number;
+    category: number;
+    image_path: number;
 }
 
 interface ArtworkContextType {
