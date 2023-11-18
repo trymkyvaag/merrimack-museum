@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
-import { IconX, IconDownload, IconCloudUpload } from '@tabler/icons-react';
+import { IconX, IconDownload, IconCloudUpload, IconChevronDown } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork, useUser, useRequest } from '@/lib/types';
@@ -57,12 +57,30 @@ const mockdata = [
 
 
 export default function About() {
+    const [opened, setOpened] = useState(false);
     const theme = useMantineTheme();
     const { data: session, status, update } = useSession();
     const { artworks } = useArtwork();
     const { isAdmin, isFaculty } = useUser();
     const { request } = useRequest();
     const [active, setActive] = useState(2);
+    const privilegeTypes = ['admin', 'FS', 'student'];
+    const [selectedPrivilege, setSelectedPrivilege] = useState('Select Privilege Type');
+
+    const handleMenuItemClick = (item: any) => {
+        setSelectedPrivilege(item);
+    };
+
+    const items = privilegeTypes.map((item) => (
+        <Menu.Item
+            onClick={() => handleMenuItemClick(item)}
+            key={item}
+        >
+            {item}
+        </Menu.Item>
+    ));
+
+
     const links = mockdata.map((link, index) => (
         <NavbarLink
             {...link}
@@ -166,15 +184,76 @@ export default function About() {
         });
     };
 
-    const [isFormVisible, setIsFormVisible] = useState(true);
+    const formUser = useForm({
+        initialValues: {
+            address: '',
+        },
+        validate: {
+            address: (value) => value.trim().length === 0,
+        },
+    });
 
+    const handleUserSubmit = () => {
+        console.log("Form submitted");
+        // if (!selected) {
+        //     console.error("Selected is undefined or null");
+        //     return;
+        // }
+
+
+
+        const data = {
+            ...formUser.values,
+            user_type: selectedPrivilege
+
+        }
+        console.log("Request Page: Before sending to nextjs api");
+        console.dir(data);
+        fetch('api/editUser', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+    };
+
+    const [isFormVisible, setIsFormVisible] = useState(true);
+    const [isUsersVisible, setIsUsersVisible] = useState(false);
+    const [isEditVisible, setIsEditVisible] = useState(false);
+    const [isMigrationsVisible, setIsMigrationsVisible] = useState(false);
     const handleIconClick = (index: number) => {
         // Toggle the form visibility based on the clicked icon
         if (index === 0) {
             setIsFormVisible(true);
-        } else {
+            setIsUsersVisible(false);
+            setIsEditVisible(false);
+            setIsMigrationsVisible(false);
+        } else if (index === 1) {
             setIsFormVisible(false);
-        } // Assuming the "Add Artwork" icon is at index 0
+            setIsEditVisible(true);
+            setIsMigrationsVisible(false);
+            setIsUsersVisible(false);
+        } else if (index === 2) {
+            setIsFormVisible(false);
+            setIsUsersVisible(true);
+            setIsEditVisible(false);
+            setIsMigrationsVisible(false);
+        } else if (index === 3) {
+            setIsFormVisible(false);
+            setIsUsersVisible(false);
+            setIsEditVisible(false);
+            setIsMigrationsVisible(true);
+        }
     };
 
 
@@ -196,7 +275,7 @@ export default function About() {
 
                     </nav>
 
-                    <Container px='lg' py='lg' size='sm'>
+                    <Container px='lg' size='sm'>
                         {isFormVisible && (
                             <form>
                                 <Title
@@ -352,7 +431,240 @@ export default function About() {
                             </form>
                         )}
                     </Container>
+                    {/* --------------------------------------------------------------------------------------------------------- */}
+                    <Container px='lg' size='sm'>
+                        {isEditVisible && (
+                            <form>
+                                <Title
+                                    order={2}
+                                    size="h1"
+                                    style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                    fw={900}
+                                    ta="center"
+                                >
+                                    Edit a New Artwork
+                                </Title>
 
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Title"
+                                        placeholder="The Oasis"
+                                        name="title"
+                                        variant="filled"
+                                        {...form.getInputProps('title')}
+                                    />
+                                    <TextInput
+                                        label="Artist Name"
+                                        placeholder="Mark"
+                                        name="artist_name"
+                                        variant="filled"
+                                        {...form.getInputProps('artist_name')}
+                                    />
+                                </SimpleGrid>
+
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Category"
+                                        placeholder="Photograph"
+                                        name="category"
+                                        variant="filled"
+                                        {...form.getInputProps('category')}
+                                    />
+                                    <TextInput
+                                        label="Location"
+                                        placeholder="Palmisano"
+                                        name="location"
+                                        variant="filled"
+                                        {...form.getInputProps('location')}
+                                    />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Width"
+                                        placeholder="0.000"
+                                        name="width"
+                                        variant="filled"
+                                        {...form.getInputProps('width')}
+                                    />
+                                    <TextInput
+                                        label="Height"
+                                        placeholder="0.000"
+                                        name="height"
+                                        variant="filled"
+                                        {...form.getInputProps('height')}
+                                    />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Date Created - Month"
+                                        placeholder="MM"
+                                        name="date_created_month"
+                                        variant="filled"
+                                        {...form.getInputProps('date_created_month')}
+                                    />
+                                    <TextInput
+                                        label="Date Created - Year"
+                                        placeholder="YYYY"
+                                        name="date_created_year"
+                                        variant="filled"
+                                        {...form.getInputProps('date_created_year')}
+                                    />
+                                </SimpleGrid>
+                                <Textarea
+                                    mt="md"
+                                    label="Comments"
+                                    placeholder="Your comments"
+                                    maxRows={10}
+                                    minRows={5}
+                                    autosize
+                                    name="comments"
+                                    variant="filled"
+                                    {...form.getInputProps('comments')}
+                                />
+
+                                <div className={classes.wrapper}>
+                                    {uploadedImages.length === 0 ? (
+                                        <Dropzone
+                                            openRef={openRef}
+                                            onDrop={handleImageUpload}
+                                            className={classes.dropzone}
+                                            radius="md"
+                                            accept={['image/*']}
+                                            maxSize={30 * 1024 ** 2}
+                                        >
+                                            <div style={{ pointerEvents: 'none' }}>
+                                                <Group justify="center">
+                                                    <Dropzone.Accept>
+                                                        <IconDownload
+                                                            style={{ width: rem(50), height: rem(50) }}
+                                                            color={theme.colors.blue[6]}
+                                                            stroke={1.5}
+                                                        />
+                                                    </Dropzone.Accept>
+                                                    <Dropzone.Reject>
+                                                        <IconX
+                                                            style={{ width: rem(50), height: rem(50) }}
+                                                            color={theme.colors.red[6]}
+                                                            stroke={1.5}
+                                                        />
+                                                    </Dropzone.Reject>
+                                                    <Dropzone.Idle>
+                                                        <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
+                                                    </Dropzone.Idle>
+                                                </Group>
+
+                                                <Text ta="center" fw={700} fz="lg" mt="xl">
+                                                    <Dropzone.Accept>Drop images here</Dropzone.Accept>
+                                                    <Dropzone.Reject>Images must be less than 30mb</Dropzone.Reject>
+                                                    <Dropzone.Idle>Upload images</Dropzone.Idle>
+                                                </Text>
+                                                <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                                                    Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                                </Text>
+                                            </div>
+                                        </Dropzone>
+                                    ) : null}
+                                </div>
+                                {uploadedImages.map((image, index) => (
+                                    <div key={index} style={{ position: 'relative', paddingTop: '10px', textAlign: 'center' }}>
+                                        <Image src={URL.createObjectURL(image)} alt={`Uploaded Image ${index}`} />
+                                        <div style={{ paddingTop: '10px', display: 'inline-block' }}>
+                                            <Button onClick={() => removeImage(index)} color="red">
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+
+
+                                <Group justify="center" mt="xl">
+                                    {/* <Link href="/gallery" passHref> */}
+
+                                    <Button type="submit" size="md" onClick={handleSubmit}>
+                                        Save Artwork
+                                    </Button>
+                                    {/* </Link> */}
+                                </Group>
+                            </form>
+                        )}
+                    </Container>
+
+                    {/* ------------------------------------------------------------------------------------------------------------------------------- */}
+                    <Container px='lg' size='sm'>
+                        {isUsersVisible && (
+                            <form >
+                                <Title
+                                    order={2}
+                                    size="h1"
+                                    style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                    fw={900}
+                                    ta="center"
+                                >
+                                    Manage Users
+                                </Title>
+                                <Group justify="center" mt="xl">
+                                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl" >
+                                        <TextInput
+                                            label="Email Address"
+                                            placeholder="casem@merrimack.edu"
+                                            name="address"
+                                            variant="filled"
+                                            {...formUser.getInputProps('address')}
+                                        />
+
+
+                                        <Menu
+                                            onOpen={() => setOpened(true)}
+                                            onClose={() => setOpened(false)}
+                                            radius="md"
+                                            width="target"
+                                            withinPortal
+                                            trigger="hover"
+                                            openDelay={100}
+                                            closeDelay={400}
+                                        >
+                                            <Menu.Target>
+                                                <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
+                                                    <Group gap="xs">
+                                                        {/* <Image src={selected.image} width={22} height={22} /> */}
+                                                        <span className={classes.label}>{selectedPrivilege}</span>
+                                                    </Group>
+                                                    <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
+                                                </UnstyledButton>
+                                            </Menu.Target>
+                                            <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                                {/* Map over privilegeTypes to create menu items */}
+                                                {items}
+                                            </Menu.Dropdown>
+                                        </Menu>
+                                    </SimpleGrid>
+                                </Group>
+                                <Group justify="center" mt="xl">
+                                    {/* <Link href="/gallery" passHref> */}
+
+                                    <Button type="submit" size="md" onClick={handleUserSubmit}>
+                                        Save User
+                                    </Button>
+                                    {/* </Link> */}
+                                </Group>
+                            </form>
+                        )}
+                    </Container>
+                    <Container px='lg' size='sm'>
+                        {isMigrationsVisible && (
+                            <form>
+                                <Title
+                                    order={2}
+                                    size="h1"
+                                    style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                    fw={900}
+                                    ta="center"
+                                >
+                                    Manage Migrations
+                                </Title>
+                            </form>
+                        )}
+                    </Container>
                 </Container>
                 // :
                 // <Container className={classesTwo.root}>
