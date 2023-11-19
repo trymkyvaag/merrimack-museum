@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, useMantineTheme, Tooltip, rem } from '@mantine/core';
+import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, useMantineTheme, Tooltip, rem, AspectRatio, Card } from '@mantine/core';
 import { IconX, IconDownload, IconCloudUpload, IconChevronDown } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
@@ -17,7 +17,7 @@ import {
     IconMailQuestion,
 } from '@tabler/icons-react';
 import Link from 'next/link';
-
+import { DateTime } from 'luxon';
 // Navbar interface
 interface NavbarLinkProps {
     icon: typeof IconHome2;
@@ -48,6 +48,40 @@ interface Artwork {
     image_path: {
         image_path: string;
     };
+}
+
+interface Migrations {
+    idmove_request: number | null;
+    artwork: {
+        idartwork: number;
+        artist: {
+            artist_name: string;
+        };
+        category?: {
+            category: string;
+        };
+        title: string | null;
+        date_created_month?: number | null;
+        date_created_year?: number | null;
+        width?: string | null;
+        height?: string | null;
+        donor?: string | null;
+        location?: {
+            location: string;
+        } | null;
+        comments?: string | null;
+        image_path: {
+            image_path: string;
+        };
+    };
+    comments: string;
+    to_location: string;
+    is_pending: boolean;
+    is_approved: boolean;
+    user: {
+        address: string;
+    }
+    time_stamp: DateTime;
 }
 
 // Keep track of "Add Artwork FileName"
@@ -86,6 +120,7 @@ export default function About() {
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
+    const [migrationData, setmigrationData] = useState([]);
     const [artworkData, setArtworkData] = useState([]);
     const [selected, setSelected] = useState<Artwork | string>(artworkData[0] || null);
 
@@ -343,6 +378,8 @@ export default function About() {
 
     useEffect(() => {
         handleArtwork();
+        handleMigrations();
+
     }, []);
 
     const combinedFunction = () => {
@@ -364,6 +401,8 @@ export default function About() {
             </a>
         </Link>
     ));
+
+
 
     // Handle submit for adding artwork
     const handleEdit = () => {
@@ -448,8 +487,150 @@ export default function About() {
             });
     };
 
+    const handleMigrations = () => {
+
+        fetch('api/allMigrations', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
+            cache: 'no-store',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.dir(data);
+            setmigrationData(data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    const handleApprove = (id: number | null) => {
+        // Handle approval logic
+        const type = "approve";
+        console.log(`Approved migration with ID: ${id}`);
+        const data = {
+            type: type,
+            id: id
+        }
+        fetch('api/updateMigration', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
+            body: JSON.stringify(data),
+            cache: 'no-store',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+                //ADD function to display form here
+
+                // Reload the window after the PUT request is successful
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+
+    const handleDeny = (id: number | null) => {
+        // Handle denial logic
+        // Handle approval logic
+        const type = "deny";
+        console.log(`Denied migration with ID: ${id}`);
+        const data = {
+            type: type,
+            id: id
+        };
+        console.log(data);
+        fetch('api/updateMigration', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
+            body: JSON.stringify(data),
+            cache: 'no-store',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+                //ADD function to display form here
+
+                // Reload the window after the PUT request is successful
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
 
 
+
+    const cards = migrationData.map((migration: Migrations) => (
+        <Card key={migration.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} >
+            <Card.Section>
+                <AspectRatio ratio={1080 / 900}>
+
+                    <Image
+                        src={migration.artwork.image_path.image_path}
+                        height={220}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            background: 'transparent',
+                            zIndex: 2,
+                            pointerEvents: 'none'
+                        }}
+                    />
+
+                </AspectRatio>
+            </Card.Section>
+            <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
+                {"Identifier: " + (migration.idmove_request ? migration.idmove_request : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Title: " + (migration.artwork.title ? migration.artwork.title : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"User: " + (migration.user.address ? migration.user.address : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Move to: " + (migration.to_location ? migration.to_location : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Comments: " + (migration.comments ? migration.comments : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Date/Time: " + (migration.time_stamp ? migration.time_stamp : '-')}
+            </Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                <Button onClick={() => handleApprove(migration.idmove_request)} style={{ backgroundColor: 'green', color: 'white' }}>
+                    Approve
+                </Button>
+                <Button onClick={() => handleDeny(migration.idmove_request)} style={{ backgroundColor: 'red', color: 'white' }}>
+                    Deny
+                </Button>
+            </div>
+        </Card>
+    ));
 
     // HTML and CSS  
     return (
@@ -910,6 +1091,9 @@ export default function About() {
                                 >
                                     Manage Migrations
                                 </Title>
+                                <Container py="xl">
+                                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+                                </Container>
                             </form>
                         )}
                     </Container>
