@@ -10,17 +10,25 @@ import classes from '@/styles/Gallery.module.css';
 import { ArtworkImageType, useArtworkImage } from '@/lib/types';
 import { modal_mockdata } from '@/lib/utils';
 
-const sectionStyle = {
+const modalContentStyle: React.CSSProperties = {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    textAlign: 'center',
 };
 
-const imageStyle = {
-    width: '75%', // Image takes 75% of the section width
-    marginRight: '16px', // Adjust spacing as needed
-};
+// const imageStyle: React.CSSProperties = {
+//     width: '75%', // Image takes 75% of the screen
+//     height: '75%',
+//     marginBottom: '16px', // Adjust spacing as needed
+// };
 
+const imageStyle: React.CSSProperties = {
+    width: '100vw', // Image takes up 100% of the viewport width
+    height: '100vh', // Image takes up 100% of the viewport height
+    objectFit: 'cover', // Ensure the image covers the entire container while maintaining its aspect ratio
+    marginBottom: '16px', // Adjust spacing as needed
+  };
 
 export default function Gallery() {
     const [value, setValue] = useState('');
@@ -29,10 +37,8 @@ export default function Gallery() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [scrollToValue, setScrollToValue] = useState(10);
     const [scroll, scrollTo] = useWindowScroll();
-    const [selectedArtwork, setSelectedArtwork] = useState<ArtworkImageType | null>(null);
+    const [selectedArtworkImage, setSelectedArtworkImage] = useState<ArtworkImageType | null>(null);
     const [opened, { open, close }] = useDisclosure(false);
-    const [noTransitionOpened, setNoTransitionOpened] = useState(false);
-    const [slowTransitionOpened, setSlowTransitionOpened] = useState(false);
     const { image, title, description, country, badges } = modal_mockdata;
 
     const features = badges.map((badge) => (
@@ -80,7 +86,7 @@ export default function Gallery() {
 
     const handleCardClick = (artwork: ArtworkImageType) => {
         open();
-        setSelectedArtwork(artwork);
+        setSelectedArtworkImage(artwork);
     };
 
     const cards = (filteredArtworkImages.length > 0 ? filteredArtworkImages : artworkImages).map((artwork: ArtworkImageType) => (
@@ -139,7 +145,31 @@ export default function Gallery() {
                 <Container py="xl">
                     <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
                 </Container>
-                <Modal
+                <Modal.Root opened={opened} onClose={close} fullScreen>
+                    <Modal.Overlay />
+                    <Modal.Content>
+                        <Modal.Header>
+                            <Modal.Title>{selectedArtworkImage?.artwork_data?.title}</Modal.Title>
+                            <Modal.CloseButton />
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div style={modalContentStyle}>
+                                <img
+                                    src="https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" // Replace with your image URL
+                                    alt="Your Alt Text"
+                                    style={imageStyle}
+                                />
+                                <div>
+                                    <p>
+                                        Your modal content text goes here. Lorem ipsum dolor sit amet,
+                                        consectetur adipiscing elit.
+                                    </p>
+                                </div>
+                            </div>
+                        </Modal.Body>
+                    </Modal.Content>
+                </Modal.Root>
+                {/* <Modal
                     opened={opened}
                     onClose={close}
                     withCloseButton={false}
@@ -162,7 +192,7 @@ export default function Gallery() {
                             </p>
                         </div>
                     </div>
-                </Modal>
+                </Modal> */}
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
