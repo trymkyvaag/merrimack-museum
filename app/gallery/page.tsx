@@ -1,39 +1,25 @@
 'use client';
 
-import { Modal, Select } from '@mantine/core';
+import { ActionIcon, Badge, Group, Modal, Select } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Input, Affix, Button, Transition, rem } from '@mantine/core';
-import { IconSearch, IconArrowUp } from '@tabler/icons-react';
+import { IconSearch, IconArrowUp, IconHeart } from '@tabler/icons-react';
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
 import { ArtworkImageType, useArtworkImage } from '@/lib/types';
+import { modal_mockdata } from '@/lib/utils';
 
-/**
-     * Use interface to avoid tsx errors when declaring cards
-     */
-interface Artwork {
-    idartwork: number;
-    artist: {
-        artist_name: string;
-    };
-    category?: {
-        category: string;
-    };
-    title: string | null;
-    date_created_month?: number | null;
-    date_created_year?: number | null;
-    width?: string | null;
-    height?: string | null;
-    donor?: string | null;
-    location?: {
-        location: string;
-    } | null;
-    comments?: string | null;
-    image_path: {
-        image_path: string;
-    };
-}
+const sectionStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+};
+
+const imageStyle = {
+    width: '75%', // Image takes 75% of the section width
+    marginRight: '16px', // Adjust spacing as needed
+};
 
 
 export default function Gallery() {
@@ -45,6 +31,15 @@ export default function Gallery() {
     const [scroll, scrollTo] = useWindowScroll();
     const [selectedArtwork, setSelectedArtwork] = useState<ArtworkImageType | null>(null);
     const [opened, { open, close }] = useDisclosure(false);
+    const [noTransitionOpened, setNoTransitionOpened] = useState(false);
+    const [slowTransitionOpened, setSlowTransitionOpened] = useState(false);
+    const { image, title, description, country, badges } = modal_mockdata;
+
+    const features = badges.map((badge) => (
+        <Badge variant="light" key={badge.label} leftSection={badge.emoji}>
+            {badge.label}
+        </Badge>
+    ));
 
     function filterArtworks(artworks: ArtworkImageType[], searchTerm: string): ArtworkImageType[] {
         const lowercaseSearch = searchTerm.toLowerCase();
@@ -87,40 +82,6 @@ export default function Gallery() {
         open();
         setSelectedArtwork(artwork);
     };
-
-    /**
-     * Create the cards. Maps the data (The artworks) to Cards
-     */
-    // const cards = filteredArtworkImages.map((artwork: ArtworkImageType) => (
-    //     <Card key={artwork.id} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
-    //         <Card.Section>
-    //             <AspectRatio ratio={1080 / 900}>
-
-    //                 <Image
-    //                     src={artwork.image_file}
-    //                     height={220}
-    //                     style={{
-    //                         position: 'absolute',
-    //                         top: 0,
-    //                         left: 0,
-    //                         width: '100%',
-    //                         height: '100%',
-    //                         background: 'transparent',
-    //                         zIndex: 2,
-    //                         pointerEvents: 'none'
-    //                     }}
-    //                 />
-
-    //             </AspectRatio>
-    //         </Card.Section>
-    //         <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-    //             {"Identifier: " + (artwork.id ? artwork.id : '-')}
-    //         </Text>
-    //         <Text className={classes.title} mt={5}>
-    //             {(artwork.artwork_data?.title ? artwork.artwork_data.title : '-')}
-    //         </Text>
-    //     </Card>
-    // ));
 
     const cards = (filteredArtworkImages.length > 0 ? filteredArtworkImages : artworkImages).map((artwork: ArtworkImageType) => (
         <Card key={artwork.id} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
@@ -178,8 +139,29 @@ export default function Gallery() {
                 <Container py="xl">
                     <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
                 </Container>
-                <Modal opened={opened} onClose={close} centered>
-                    {/* Modal content */}
+                <Modal
+                    opened={opened}
+                    onClose={close}
+                    withCloseButton={false}
+                    centered
+                    overlayProps={{
+                        backgroundOpacity: 0.55,
+                        blur: 3,
+                    }}
+
+                >
+                    <div style={sectionStyle}>
+                        <img
+                            src="@/public/404.svg" // Replace with your image URL
+                            alt="Your Alt Text"
+                            style={imageStyle}
+                        />
+                        <div>
+                            <p>
+                                Your text goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            </p>
+                        </div>
+                    </div>
                 </Modal>
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>

@@ -40,3 +40,8 @@
     width: rem(16px);
   }
 }
+
+.custom-modal-class {
+  transform: translateY(-100%); /* Adjust the translateY value as needed */
+  transition: transform 0.3s ease-in-out; /* Adjust the transition duration and timing function as needed */
+}
