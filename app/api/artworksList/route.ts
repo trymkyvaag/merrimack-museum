@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
 
         if (externalApiResponse.ok) {
             const responseData = await externalApiResponse.json();
+            console.dir(responseData);
             return NextResponse.json(responseData)
         } else {
             console.error('External API request failed');

@@ -138,6 +138,7 @@ export default function Layout({
             return response.json();
         }).then(data => {
             setArtworks(data);
+            console.log(data);
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.idartwork)) {
                     artworksMap.set(artwork.idartwork, []);

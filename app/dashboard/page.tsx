@@ -1,32 +1,23 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
+import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, useMantineTheme, Tooltip, rem } from '@mantine/core';
 import { IconX, IconDownload, IconCloudUpload, IconChevronDown } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork, useUser, useRequest } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import { Dropzone } from '@mantine/dropzone';
-
-import { Center, UnstyledButton, Stack } from '@mantine/core';
-
+import { UnstyledButton, Stack } from '@mantine/core';
 import {
     IconHome2,
-    IconGauge,
-    IconDeviceDesktopAnalytics,
     IconCirclePlus,
     IconUserEdit,
     IconEdit,
     IconMailQuestion,
-    IconLogout,
-    IconSwitchHorizontal,
 } from '@tabler/icons-react';
-import { MantineLogo } from '@mantine/ds';
-//import classes from './NavbarMinimalColored.module.css';
 
-let uploadedFileName = '';
-
+// Navbar interface
 interface NavbarLinkProps {
     icon: typeof IconHome2;
     label: string;
@@ -34,9 +25,20 @@ interface NavbarLinkProps {
     onClick?(): void;
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkProps) {
-    const linkClassName = isLast ? classes.linkLast : classes.link;
 
+// Keep track of "Add Artwork FileName"
+let uploadedFileName = '';
+
+// Icons I'm using in floating nav bar
+const mockdata = [
+    { icon: IconCirclePlus, label: 'Add Artwork' },
+    { icon: IconEdit, label: 'Edit Artwork' },
+    { icon: IconUserEdit, label: 'Manage Users' },
+    { icon: IconMailQuestion, label: 'Manage Migrations' },
+];
+
+// Navbar link function
+function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkProps) {
     return (
         <Tooltip label={label} transitionProps={{ duration: 0 }}>
             <UnstyledButton style={!isLast ? { marginRight: '16px', paddingTop: '2.5rem' } : {}} onClick={onClick} className={classes.link} data-active={active || undefined}>
@@ -46,41 +48,39 @@ function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkPr
     );
 }
 
-const mockdata = [
-    { icon: IconCirclePlus, label: 'Add Artwork' },
-    { icon: IconEdit, label: 'Edit Artwork' },
-    { icon: IconUserEdit, label: 'Manage Users' },
-    { icon: IconMailQuestion, label: 'Manage Migrations' },
-];
-
-
-
-
+// Page content
 export default function About() {
     const [opened, setOpened] = useState(false);
     const theme = useMantineTheme();
     const { data: session, status, update } = useSession();
-    const { artworks } = useArtwork();
     const { isAdmin, isFaculty } = useUser();
-    const { request } = useRequest();
     const [active, setActive] = useState(2);
     const privilegeTypes = ['admin', 'FS', 'student'];
     const [selectedPrivilege, setSelectedPrivilege] = useState('Select Privilege Type');
-
-    const handleMenuItemClick = (item: any) => {
-        setSelectedPrivilege(item);
-    };
-
-    const items = privilegeTypes.map((item) => (
-        <Menu.Item
-            onClick={() => handleMenuItemClick(item)}
-            key={item}
-        >
-            {item}
-        </Menu.Item>
-    ));
+    const openRef = useRef<() => void>(null);
+    // Add images
+    const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+    const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
 
+    const { artworks } = useArtwork();
+    const [selected, setSelected] = useState(artworks[0] || null);
+
+    const [formData, setFormData] = useState({
+        title: '',
+        artist_name: '',
+        category: '',
+        location: '',
+        width: '',
+        height: '',
+        date_created_month: '',
+        date_created_year: '',
+        comments: '',
+        image_path: ''
+        // Add other form fields as needed
+    });
+
+    // Link mock data to icons
     const links = mockdata.map((link, index) => (
         <NavbarLink
             {...link}
@@ -90,10 +90,67 @@ export default function About() {
         />
     ));
 
+    // Toggle forms based on icon click
+    const [isFormVisible, setIsFormVisible] = useState(true);
+    const [isUsersVisible, setIsUsersVisible] = useState(false);
+    const [isEditVisible, setIsEditVisible] = useState(false);
+    const [isMigrationsVisible, setIsMigrationsVisible] = useState(false);
+    const handleIconClick = (index: number) => {
+        if (index === 0) {
+            setIsFormVisible(true);
+            setIsUsersVisible(false);
+            setIsEditVisible(false);
+            setIsMigrationsVisible(false);
+        } else if (index === 1) {
+            setIsFormVisible(false);
+            setIsEditVisible(true);
+            setIsMigrationsVisible(false);
+            setIsUsersVisible(false);
+        } else if (index === 2) {
+            setIsFormVisible(false);
+            setIsUsersVisible(true);
+            setIsEditVisible(false);
+            setIsMigrationsVisible(false);
+        } else if (index === 3) {
+            setIsFormVisible(false);
+            setIsUsersVisible(false);
+            setIsEditVisible(false);
+            setIsMigrationsVisible(true);
+        }
+    };
 
-    const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-    const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
-    const openRef = useRef<() => void>(null);
+    // Initial add data values
+    const form = useForm({
+        initialValues: {
+            title: '',
+            date_created_month: '',
+            date_created_year: '',
+            comments: '',
+            width: '',
+            height: '',
+            artist_name: '',
+            donor_name: '',
+            location: '',
+            category: '',
+            image_path: '',
+        },
+        // Trimming
+        validate: {
+            title: (value) => value.trim().length === 0,
+            date_created_month: (value) => value.trim().length === 0,
+            date_created_year: (value) => value.trim().length === 0,
+            comments: (value) => value.trim().length === 0,
+            width: (value) => value.trim().length === 0,
+            height: (value) => value.trim().length === 0,
+            artist_name: (value) => value.trim().length === 0,
+            donor_name: (value) => value.trim().length === 0,
+            location: (value) => value.trim().length === 0,
+            category: (value) => value.trim().length === 0,
+            image_path: (value) => value.trim().length === 0,
+        },
+    });
+
+    // Uploading images for add artwork
     const handleImageUpload = (files: File[]) => {
         // Only allow one image
         if (files.length > 0) {
@@ -113,6 +170,7 @@ export default function About() {
         }
     };
 
+    // Remove image for add artwork
     const removeImage = (index: number) => {
         const newImages = [...uploadedImages];
         newImages.splice(index, 1);
@@ -120,43 +178,13 @@ export default function About() {
 
     };
 
-    const form = useForm({
-        initialValues: {
-            title: '',
-            date_created_month: '',
-            date_created_year: '',
-            comments: '',
-            width: '',
-            height: '',
-            artist_name: '',
-            donor_name: '',
-            location: '',
-            category: '',
-            image_path: '',
-        },
-        validate: {
-            title: (value) => value.trim().length === 0,
-            date_created_month: (value) => value.trim().length === 0,
-            date_created_year: (value) => value.trim().length === 0,
-            comments: (value) => value.trim().length === 0,
-            width: (value) => value.trim().length === 0,
-            height: (value) => value.trim().length === 0,
-            artist_name: (value) => value.trim().length === 0,
-            donor_name: (value) => value.trim().length === 0,
-            location: (value) => value.trim().length === 0,
-            category: (value) => value.trim().length === 0,
-            image_path: (value) => value.trim().length === 0,
-        },
-    });
-
+    // Handle submit for adding artwork
     const handleSubmit = () => {
         console.log("Form submitted");
         // if (!selected) {
         //     console.error("Selected is undefined or null");
         //     return;
         // }
-
-
 
         const data = {
             ...form.values,
@@ -184,6 +212,21 @@ export default function About() {
         });
     };
 
+    // Handle adding user types to drop down (manage users page)
+    const handleMenuItemClick = (item: any) => {
+        setSelectedPrivilege(item);
+    };
+
+    const items = privilegeTypes.map((item) => (
+        <Menu.Item
+            onClick={() => handleMenuItemClick(item)}
+            key={item}
+        >
+            {item}
+        </Menu.Item>
+    ));
+
+    // Inital values for manage users page
     const formUser = useForm({
         initialValues: {
             address: '',
@@ -193,14 +236,13 @@ export default function About() {
         },
     });
 
+    // Handle managing users page
     const handleUserSubmit = () => {
         console.log("Form submitted");
         // if (!selected) {
         //     console.error("Selected is undefined or null");
         //     return;
         // }
-
-
 
         const data = {
             ...formUser.values,
@@ -227,42 +269,48 @@ export default function About() {
         });
     };
 
-    const [isFormVisible, setIsFormVisible] = useState(true);
-    const [isUsersVisible, setIsUsersVisible] = useState(false);
-    const [isEditVisible, setIsEditVisible] = useState(false);
-    const [isMigrationsVisible, setIsMigrationsVisible] = useState(false);
-    const handleIconClick = (index: number) => {
-        // Toggle the form visibility based on the clicked icon
-        if (index === 0) {
-            setIsFormVisible(true);
-            setIsUsersVisible(false);
-            setIsEditVisible(false);
-            setIsMigrationsVisible(false);
-        } else if (index === 1) {
-            setIsFormVisible(false);
-            setIsEditVisible(true);
-            setIsMigrationsVisible(false);
-            setIsUsersVisible(false);
-        } else if (index === 2) {
-            setIsFormVisible(false);
-            setIsUsersVisible(true);
-            setIsEditVisible(false);
-            setIsMigrationsVisible(false);
-        } else if (index === 3) {
-            setIsFormVisible(false);
-            setIsUsersVisible(false);
-            setIsEditVisible(false);
-            setIsMigrationsVisible(true);
-        }
+    const handleMenuItemClick2 = (item: any) => {
+        setSelected(item);
+        setFormData({
+            title: item.title,
+            artist_name: item.artist.artist_name,
+            category: item.category.category,
+            location: item.location.location,
+            width: item.width,
+            height: item.height,
+            date_created_month: item.date_created_month,
+            date_created_year: item.date_created_year,
+            comments: item.comments,
+            image_path: item.image_path.image_path
+
+        });
+
+        console.log(formData.image_path);
+
+
     };
 
+    const items2 = artworks.map((item) => (
+        <Menu.Item
+            onClick={() => handleMenuItemClick2(item)}
+            key={item.idartwork}
+        >
+            {" Id: "}
+            {item.idartwork}
+            {" Title: "}
+            {item.title}
+        </Menu.Item>
+    ));
 
+
+
+
+
+
+    // HTML and CSS  
     return (
         <>
-
             {
-
-
                 <Container>
                     <nav className={classes.navbar}>
 
@@ -271,10 +319,7 @@ export default function About() {
                                 {links}
                             </div>
                         </div>
-
-
                     </nav>
-
                     <Container px='lg' size='sm'>
                         {isFormVisible && (
                             <form>
@@ -287,7 +332,6 @@ export default function About() {
                                 >
                                     Add a New Artwork
                                 </Title>
-
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
                                     <TextInput
                                         label="Title"
@@ -418,8 +462,6 @@ export default function About() {
                                         </div>
                                     </div>
                                 ))}
-
-
                                 <Group justify="center" mt="xl">
                                     {/* <Link href="/gallery" passHref> */}
 
@@ -444,7 +486,29 @@ export default function About() {
                                 >
                                     Edit a New Artwork
                                 </Title>
-
+                                <Group justify="center" mt="xl">
+                                    <Menu
+                                        onOpen={() => setOpened(true)}
+                                        onClose={() => setOpened(false)}
+                                        radius="md"
+                                        width="target"
+                                        withinPortal
+                                        trigger="hover"
+                                        openDelay={100}
+                                        closeDelay={400}
+                                    >
+                                        <Menu.Target>
+                                            <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
+                                                <Group gap="xs">
+                                                    {/* <Image src={selected.image} width={22} height={22} /> */}
+                                                    <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
+                                                </Group>
+                                                <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
+                                            </UnstyledButton>
+                                        </Menu.Target>
+                                        <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>{items2}</Menu.Dropdown>
+                                    </Menu>
+                                </Group>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
                                     <TextInput
                                         label="Title"
@@ -452,6 +516,7 @@ export default function About() {
                                         name="title"
                                         variant="filled"
                                         {...form.getInputProps('title')}
+                                        value={formData.title}
                                     />
                                     <TextInput
                                         label="Artist Name"
@@ -459,6 +524,7 @@ export default function About() {
                                         name="artist_name"
                                         variant="filled"
                                         {...form.getInputProps('artist_name')}
+                                        value={formData.artist_name}
                                     />
                                 </SimpleGrid>
 
@@ -469,6 +535,7 @@ export default function About() {
                                         name="category"
                                         variant="filled"
                                         {...form.getInputProps('category')}
+                                        value={formData.category}
                                     />
                                     <TextInput
                                         label="Location"
@@ -476,6 +543,7 @@ export default function About() {
                                         name="location"
                                         variant="filled"
                                         {...form.getInputProps('location')}
+                                        value={formData.location}
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
@@ -485,6 +553,7 @@ export default function About() {
                                         name="width"
                                         variant="filled"
                                         {...form.getInputProps('width')}
+                                        value={formData.width}
                                     />
                                     <TextInput
                                         label="Height"
@@ -492,6 +561,7 @@ export default function About() {
                                         name="height"
                                         variant="filled"
                                         {...form.getInputProps('height')}
+                                        value={formData.height}
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
@@ -501,6 +571,7 @@ export default function About() {
                                         name="date_created_month"
                                         variant="filled"
                                         {...form.getInputProps('date_created_month')}
+                                        value={formData.date_created_month}
                                     />
                                     <TextInput
                                         label="Date Created - Year"
@@ -508,6 +579,7 @@ export default function About() {
                                         name="date_created_year"
                                         variant="filled"
                                         {...form.getInputProps('date_created_year')}
+                                        value={formData.date_created_year}
                                     />
                                 </SimpleGrid>
                                 <Textarea
@@ -520,8 +592,14 @@ export default function About() {
                                     name="comments"
                                     variant="filled"
                                     {...form.getInputProps('comments')}
+                                    value={formData.comments}
                                 />
 
+                                {uploadedImages.length === 0 && (
+                                    <div style={{ paddingTop: '10px' }}>
+                                        <Image src={formData.image_path} />
+                                    </div>
+                                )}
                                 <div className={classes.wrapper}>
                                     {uploadedImages.length === 0 ? (
                                         <Dropzone
