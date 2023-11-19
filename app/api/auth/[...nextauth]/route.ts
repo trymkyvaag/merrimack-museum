@@ -6,6 +6,24 @@ declare module "next-auth/jwt" {
     }
 }
 
+type Profile = {
+    email?: string;
+    // other properties in the profile
+  };
+  
+  type Account = {
+    provider?: string;
+    // other properties in the account
+  };
+  
+  type Session = {
+    user?: {
+      email?: string;
+      // other properties in the user object
+    };
+    // other properties in the session
+  };
+
 const handler = NextAuth({
     theme: {
         colorScheme: "auto", // "auto" | "dark" | "light"
@@ -23,13 +41,22 @@ const handler = NextAuth({
                     access_type: "offline",
                     response_type: "code"
                 }
-            }
+            },
         }),
     ],
     session: {
         maxAge: 30 * 24 * 60 * 60,
     },
     callbacks: {
+        async signIn(params) {
+            const { account, profile } = params;
+            // Check if the provider is Google and the email ends with "merrimack.edu"
+            if (account?.provider === 'google' && profile?.email?.toLowerCase().endsWith('@merrimack.edu')) {
+              return true; // Allow sign-in
+            }
+      
+            return false; // Deny sign-in
+          },
         async jwt({ token, user }: { token: any; user: any }) {
             try {
                 console.log("JWT Callback:", token);

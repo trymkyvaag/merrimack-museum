@@ -1,5 +1,6 @@
 'use client';
 
+import NextImage from 'next/image';
 import { ActionIcon, Badge, Group, Modal, Select } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Input, Affix, Button, Transition, rem } from '@mantine/core';
@@ -28,7 +29,7 @@ const imageStyle: React.CSSProperties = {
     height: '100vh', // Image takes up 100% of the viewport height
     objectFit: 'cover', // Ensure the image covers the entire container while maintaining its aspect ratio
     marginBottom: '16px', // Adjust spacing as needed
-  };
+};
 
 export default function Gallery() {
     const [value, setValue] = useState('');
@@ -154,11 +155,22 @@ export default function Gallery() {
                         </Modal.Header>
                         <Modal.Body>
                             <div style={modalContentStyle}>
-                                <img
-                                    src="https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" // Replace with your image URL
-                                    alt="Your Alt Text"
-                                    style={imageStyle}
-                                />
+                                <AspectRatio ratio={1080 / 900} style={{ position: 'relative', height: '220px' }}>
+                                    <Image
+                                        src={selectedArtworkImage?.image_file}
+                                        alt="Artwork Image"
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            background: 'transparent',
+                                            zIndex: 2,
+                                            pointerEvents: 'none',
+                                        }}
+                                    />
+                                </AspectRatio>
                                 <div>
                                     <p>
                                         Your modal content text goes here. Lorem ipsum dolor sit amet,
@@ -169,30 +181,6 @@ export default function Gallery() {
                         </Modal.Body>
                     </Modal.Content>
                 </Modal.Root>
-                {/* <Modal
-                    opened={opened}
-                    onClose={close}
-                    withCloseButton={false}
-                    centered
-                    overlayProps={{
-                        backgroundOpacity: 0.55,
-                        blur: 3,
-                    }}
-
-                >
-                    <div style={sectionStyle}>
-                        <img
-                            src="@/public/404.svg" // Replace with your image URL
-                            alt="Your Alt Text"
-                            style={imageStyle}
-                        />
-                        <div>
-                            <p>
-                                Your text goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </div>
-                </Modal> */}
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
