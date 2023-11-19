@@ -67,7 +67,7 @@ export async function PUT(req: NextRequest) {
                     "location": { "location": data.location },
                     "width": data.width,
                     "height": data.height,
-                    "donor_name": { "donor_name": data.donor_name },
+                    "donor": { "donor_name": data.donor_name },
                     "date_created_month": data.date_created_month,
                     "date_created_year": data.date_created_year,
                     "comments": data.comments,
