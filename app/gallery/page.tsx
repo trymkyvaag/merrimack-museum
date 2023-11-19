@@ -2,12 +2,12 @@
 
 import { Modal, Select } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
+import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Input, Affix, Button, Transition, rem } from '@mantine/core';
 import { IconSearch, IconArrowUp } from '@tabler/icons-react';
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import '@mantine/carousel/styles.css';
 import classes from '@/styles/Gallery.module.css';
-import { ArtworkImageType, ArtworkType, useArtworkImage } from '@/lib/types';
+import { ArtworkImageType, useArtworkImage } from '@/lib/types';
 
 /**
      * Use interface to avoid tsx errors when declaring cards
@@ -184,16 +184,6 @@ export default function Gallery() {
             </main>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Select
-                        data={['10', '20', '30', '40', '50']}
-                        value={scrollToValue.toString()}
-                        style={{ width: '75px' }}
-                        onChange={(selectedValue: string | null) => {
-                            if (selectedValue !== null) {
-                                setScrollToValue(parseInt(selectedValue, 10));
-                            }
-                        }}
-                    />
                     <Transition transition="slide-up" mounted={scroll.y > 0}>
                         {(transitionStyles) => (
                             <Button
