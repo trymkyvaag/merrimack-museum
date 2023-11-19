@@ -3,8 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 
 declare module "next-auth/jwt" {
     interface JWT {
-        /** The user's role. */
-        userRole?: "admin"
     }
 }
 
@@ -21,9 +19,9 @@ const handler = NextAuth({
             clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
             authorization: {
                 params: {
-                  prompt: "consent",
-                  access_type: "offline",
-                  response_type: "code"
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
                 }
             }
         }),
@@ -33,14 +31,25 @@ const handler = NextAuth({
     },
     callbacks: {
         async jwt({ token, user }: { token: any; user: any }) {
-            // console.log("JWT Callback:", token);
-            return Promise.resolve(token);
-          },
-          async session({ session, user }: { session: any; user: any }) {
-            // console.log("Session Callback:", session);
-            return Promise.resolve(session);
-          },
+            try {
+                console.log("JWT Callback:", token);
+                return Promise.resolve(token);
+            } catch (error) {
+                console.error("Error in JWT callback:", error);
+                throw error;
+            }
+        },
+        async session({ session, user }: { session: any; user: any }) {
+            try {
+                console.log("Session Callback:", session);
+                return Promise.resolve(session);
+            } catch (error) {
+                console.error("Error in session callback:", error);
+                throw error;
+            }
+        },
     },
+
 });
 
 export { handler as GET, handler as POST }

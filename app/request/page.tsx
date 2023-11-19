@@ -6,6 +6,7 @@ import { UnstyledButton, Text, TextInput, Textarea, SimpleGrid, Menu, Image, Gro
 import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation'
 import { useArtwork, useArtworkImage, useRequest, useUser } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import image from '@/public/404.svg';
@@ -143,14 +144,7 @@ export default function Request() {
             form.setFieldValue('email', session.user.email ?? '');
         }
 
-        // if(request?.move_request && request.move_request.is_approved) {
-        //     setActive(3);
-        // } else if(request?.move_request && request.move_request.is_pending) {
-        //     setActive(2);
-        // } else {
-        //     setActive(1);
-        // }
-    }, [session, selected]);
+    }, [session, selected, user]);
     return (
         <>
             {
@@ -341,21 +335,22 @@ export default function Request() {
                     </Container>
 
                     :
-                    <Container className={classesTwo.root}>
-                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
-                            <Image src={image.src} className={classesTwo.mobileImage} />
-                            <div>
-                                <Title className={classesTwo.title}>Please sign in...</Title>
-                                <Text c="dimmed" size="lg">
-                                    Note: Only Faculty may request an art piece.
-                                </Text>
-                                {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
-                                    Get back to home page
-                                </Button> */}
-                            </div>
-                            <Image src={image.src} className={classesTwo.desktopImage} />
-                        </SimpleGrid>
-                    </Container>
+                    null
+                    // <Container className={classesTwo.root}>
+                    //     <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                    //         <Image src={image.src} className={classesTwo.mobileImage} />
+                    //         <div>
+                    //             <Title className={classesTwo.title}>Please sign in...</Title>
+                    //             <Text c="dimmed" size="lg">
+                    //                 Note: Only Faculty may request an art piece.
+                    //             </Text>
+                    //             {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                    //                 Get back to home page
+                    //             </Button> */}
+                    //         </div>
+                    //         <Image src={image.src} className={classesTwo.desktopImage} />
+                    //     </SimpleGrid>
+                    // </Container>
             }
         </>
     )

@@ -20,7 +20,6 @@ const links = [
     { link: '/gallery', label: 'Gallery', auth: null },
     { link: '/request', label: 'Request', auth: 'faculty' },
     { link: '/about', label: 'About', auth: null },
-    { link: '/dashboard', label: 'Dashboard', auth: 'admin' },
     {
         link: '#2',
         label: 'Support',
@@ -82,7 +81,7 @@ export default function Layout({
                         >
                             <Center>
                                 <span className={classes.linkLabel}>{link.label}</span>
-                                <IconChevronDown size="0.9rem" stroke={1.5} />
+                                <IconChevronDown size={14} stroke={1.5} />
                             </Center>
                         </a>
                     </Menu.Target>
@@ -229,7 +228,9 @@ export default function Layout({
                             </a>
                         </Link>
                         <Group gap={5} visibleFrom="sm">
-                            {items}
+                            {items.map((item, index) => (
+                                <div key={index}>{item}</div>
+                            ))}
                         </Group>
                         <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
                     </div>
