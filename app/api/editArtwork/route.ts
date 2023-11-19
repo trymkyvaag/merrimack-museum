@@ -5,7 +5,7 @@ import path from 'path';
 export async function PUT(req: NextRequest) {
 
     const data = await req.json();
-    console.log(`Sending data: ${JSON.stringify(data)}`);
+
     if (data.uploadedFileName && data.uploadedImage) {
         console.log("INSIDE FIRST IF");
         try {
@@ -49,13 +49,17 @@ export async function PUT(req: NextRequest) {
 
 
 
-            const id = data.idArtwork;
+            const id = (data.idArtwork || '').toString().trim();
+            console.log(id);
+
+
             const externalApiResponse = await fetch(`http://localhost:8000/api/update-artwork/${id}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-store',
                 },
+                cache: 'no-store',
                 body: JSON.stringify({
                     "title": data.title,
                     "artist_name": { "artist_name": data.artist_name },
@@ -63,10 +67,11 @@ export async function PUT(req: NextRequest) {
                     "location": { "location": data.location },
                     "width": data.width,
                     "height": data.height,
+                    "donor_name": { "donor_name": data.donor_name },
                     "date_created_month": data.date_created_month,
                     "date_created_year": data.date_created_year,
                     "comments": data.comments,
-                    "image_path": { "image_path": test2 }
+                    "image_path": { "image_path": test2 },
                 }),
             });
 
@@ -91,6 +96,7 @@ export async function PUT(req: NextRequest) {
             console.log("INSIDE SERVER");
             const id = data.idArtwork;
             console.log(id);
+            console.log(data.donor_name);
             const externalApiResponse = await fetch(`http://localhost:8000/api/update-artwork/${id}/`, {
                 method: 'PUT',
                 headers: {
@@ -99,9 +105,10 @@ export async function PUT(req: NextRequest) {
                 },
                 body: JSON.stringify({
                     "title": data.title,
-                    "artist_name": { "artist_name": data.artist_name },
+                    "artist": { "artist_name": data.artist_name },
                     "category": { "category": data.category },
                     "location": { "location": data.location },
+                    "donor": { "donor_name": data.donor_name },
                     "width": data.width,
                     "height": data.height,
                     "date_created_month": data.date_created_month,

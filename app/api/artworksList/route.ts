@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
         });
 
         if (externalApiResponse.ok) {

@@ -16,6 +16,7 @@ import {
     IconEdit,
     IconMailQuestion,
 } from '@tabler/icons-react';
+import Link from 'next/link';
 
 // Navbar interface
 interface NavbarLinkProps {
@@ -26,6 +27,28 @@ interface NavbarLinkProps {
     isLast: number
 }
 
+interface Artwork {
+    idartwork: number;
+    artist: {
+        artist_name: string;
+    };
+    category?: {
+        category: string;
+    };
+    title: string | null;
+    date_created_month?: number | null;
+    date_created_year?: number | null;
+    width?: string | null;
+    height?: string | null;
+    donor?: string | null;
+    location?: {
+        location: string;
+    } | null;
+    comments?: string | null;
+    image_path: {
+        image_path: string;
+    };
+}
 
 // Keep track of "Add Artwork FileName"
 let uploadedFileName = '';
@@ -63,14 +86,14 @@ export default function About() {
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
-
-    const { artworks } = useArtwork();
-    const [selected, setSelected] = useState(artworks[0] || null);
+    const [artworkData, setArtworkData] = useState([]);
+    const [selected, setSelected] = useState(artworkData[0] || null);
 
     const [formData, setFormData] = useState({
         idArtwork: '',
         title: '',
         artist_name: '',
+        donor_name: '',
         category: '',
         location: '',
         width: '',
@@ -200,6 +223,7 @@ export default function About() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                'Cache-Control': 'no-store',
             },
             body: JSON.stringify(data),
         }).then((response) => {
@@ -257,6 +281,7 @@ export default function About() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                'Cache-Control': 'no-store'
             },
             body: JSON.stringify(data),
         }).then((response) => {
@@ -276,6 +301,7 @@ export default function About() {
         setFormData({
             idArtwork: item.idartwork,
             title: item.title,
+            donor_name: item.donor_name,
             artist_name: item.artist.artist_name,
             category: item.category.category,
             location: item.location.location,
@@ -293,16 +319,49 @@ export default function About() {
 
     };
 
-    const items2 = artworks.map((item) => (
-        <Menu.Item
-            onClick={() => handleMenuItemClick2(item)}
-            key={item.idartwork}
-        >
-            {" Id: "}
-            {item.idartwork}
-            {" Title: "}
-            {item.title}
-        </Menu.Item>
+    const handleArtwork = () => {
+        fetch('api/artworksList', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
+            cache: 'no-store',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.dir(data);
+            setArtworkData(data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    useEffect(() => {
+        handleArtwork();
+    }, []);
+
+    const combinedFunction = () => {
+        handleEdit();
+        handleArtwork();
+        // Add more functions as needed
+    };
+
+
+    const items2 = artworkData.map((item: Artwork) => (
+        <Link legacyBehavior href={`/dashboard`} prefetch={false} key={item.idartwork}>
+            <a>
+                <Menu.Item onClick={() => handleMenuItemClick2(item)}>
+                    {" Id: "}
+                    {item.idartwork}
+                    {" Title: "}
+                    {item.title}
+                </Menu.Item>
+            </a>
+        </Link>
     ));
 
     // Handle submit for adding artwork
@@ -325,6 +384,7 @@ export default function About() {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                'Cache-Control': 'no-store',
             },
             body: JSON.stringify(data),
         }).then((response) => {
@@ -553,6 +613,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('title')}
                                         value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     />
                                     <TextInput
                                         label="Artist Name"
@@ -561,6 +622,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('artist_name')}
                                         value={formData.artist_name}
+                                        onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
                                     />
                                 </SimpleGrid>
 
@@ -572,6 +634,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('category')}
                                         value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                     />
                                     <TextInput
                                         label="Location"
@@ -580,6 +643,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('location')}
                                         value={formData.location}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
@@ -590,6 +654,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('width')}
                                         value={formData.width}
+                                        onChange={(e) => setFormData({ ...formData, width: e.target.value })}
                                     />
                                     <TextInput
                                         label="Height"
@@ -598,6 +663,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('height')}
                                         value={formData.height}
+                                        onChange={(e) => setFormData({ ...formData, height: e.target.value })}
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
@@ -608,6 +674,7 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('date_created_month')}
                                         value={formData.date_created_month}
+                                        onChange={(e) => setFormData({ ...formData, date_created_month: e.target.value })}
                                     />
                                     <TextInput
                                         label="Date Created - Year"
@@ -616,7 +683,20 @@ export default function About() {
                                         variant="filled"
                                         {...form.getInputProps('date_created_year')}
                                         value={formData.date_created_year}
+                                        onChange={(e) => setFormData({ ...formData, date_created_year: e.target.value })}
                                     />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Donor"
+                                        placeholder=""
+                                        name="donor_name"
+                                        variant="filled"
+                                        {...form.getInputProps('donor_name')}
+                                        value={formData.donor_name}
+                                        onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
+                                    />
+
                                 </SimpleGrid>
                                 <Textarea
                                     mt="md"
@@ -629,6 +709,7 @@ export default function About() {
                                     variant="filled"
                                     {...form.getInputProps('comments')}
                                     value={formData.comments}
+                                    onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
                                 />
 
                                 {uploadedImages.length === 0 && (
@@ -694,7 +775,7 @@ export default function About() {
                                 <Group justify="center" mt="xl">
                                     {/* <Link href="/gallery" passHref> */}
 
-                                    <Button type="submit" size="md" onClick={handleEdit}>
+                                    <Button type="submit" size="md" onClick={combinedFunction}>
                                         Save Artwork
                                     </Button>
                                     {/* </Link> */}
