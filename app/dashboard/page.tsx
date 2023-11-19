@@ -1,42 +1,68 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, Stepper, useMantineTheme, Switch, Tooltip, rem } from '@mantine/core';
+import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, useMantineTheme, Tooltip, rem } from '@mantine/core';
 import { IconX, IconDownload, IconCloudUpload, IconChevronDown } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
 import { useArtwork, useUser, useRequest } from '@/lib/types';
 import classes from '@/styles/Picker.module.css';
 import { Dropzone } from '@mantine/dropzone';
-
-import { Center, UnstyledButton, Stack } from '@mantine/core';
-
+import { UnstyledButton, Stack } from '@mantine/core';
 import {
     IconHome2,
-    IconGauge,
-    IconDeviceDesktopAnalytics,
     IconCirclePlus,
     IconUserEdit,
     IconEdit,
     IconMailQuestion,
-    IconLogout,
-    IconSwitchHorizontal,
 } from '@tabler/icons-react';
-import { MantineLogo } from '@mantine/ds';
-//import classes from './NavbarMinimalColored.module.css';
+import Link from 'next/link';
 
-let uploadedFileName = '';
-
+// Navbar interface
 interface NavbarLinkProps {
     icon: typeof IconHome2;
     label: string;
     active?: boolean;
     onClick?(): void;
+    isLast: number
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkProps) {
-    const linkClassName = isLast ? classes.linkLast : classes.link;
+interface Artwork {
+    idartwork: number;
+    artist: {
+        artist_name: string;
+    };
+    category?: {
+        category: string;
+    };
+    title: string | null;
+    date_created_month?: number | null;
+    date_created_year?: number | null;
+    width?: string | null;
+    height?: string | null;
+    donor?: string | null;
+    location?: {
+        location: string;
+    } | null;
+    comments?: string | null;
+    image_path: {
+        image_path: string;
+    };
+}
 
+// Keep track of "Add Artwork FileName"
+let uploadedFileName = '';
+
+// Icons I'm using in floating nav bar
+const mockdata = [
+    { icon: IconCirclePlus, label: 'Add Artwork' },
+    { icon: IconEdit, label: 'Edit Artwork' },
+    { icon: IconUserEdit, label: 'Manage Users' },
+    { icon: IconMailQuestion, label: 'Manage Migrations' },
+];
+
+// Navbar link function
+function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkProps) {
     return (
         <Tooltip label={label} transitionProps={{ duration: 0 }}>
             <UnstyledButton style={!isLast ? { marginRight: '16px', paddingTop: '2.5rem' } : {}} onClick={onClick} className={classes.link} data-active={active || undefined}>
@@ -46,193 +72,55 @@ function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkPr
     );
 }
 
-const mockdata = [
-    { icon: IconCirclePlus, label: 'Add Artwork' },
-    { icon: IconEdit, label: 'Edit Artwork' },
-    { icon: IconUserEdit, label: 'Manage Users' },
-    { icon: IconMailQuestion, label: 'Manage Migrations' },
-];
-
-
-
-
+// Page content
 export default function About() {
     const [opened, setOpened] = useState(false);
     const theme = useMantineTheme();
     const { data: session, status, update } = useSession();
-    const { artworks } = useArtwork();
     const { isAdmin, isFaculty } = useUser();
-    const { request } = useRequest();
     const [active, setActive] = useState(2);
     const privilegeTypes = ['admin', 'FS', 'student'];
     const [selectedPrivilege, setSelectedPrivilege] = useState('Select Privilege Type');
+    const openRef = useRef<() => void>(null);
+    // Add images
+    const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+    const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
-    const handleMenuItemClick = (item: any) => {
-        setSelectedPrivilege(item);
-    };
+    const [artworkData, setArtworkData] = useState([]);
+    const [selected, setSelected] = useState(artworkData[0] || null);
 
-    const items = privilegeTypes.map((item) => (
-        <Menu.Item
-            onClick={() => handleMenuItemClick(item)}
-            key={item}
-        >
-            {item}
-        </Menu.Item>
-    ));
+    const [formData, setFormData] = useState({
+        idArtwork: '',
+        title: '',
+        artist_name: '',
+        donor_name: '',
+        category: '',
+        location: '',
+        width: '',
+        height: '',
+        date_created_month: '',
+        date_created_year: '',
+        comments: '',
+        image_path: ''
+        // Add other form fields as needed
+    });
 
-
+    // Link mock data to icons
     const links = mockdata.map((link, index) => (
         <NavbarLink
+            isLast={0}
             {...link}
             key={link.label}
             active={index === active}
-            onClick={() => handleIconClick(index)}
-        />
+            onClick={() => handleIconClick(index)} />
     ));
 
-
-    const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-    const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
-    const openRef = useRef<() => void>(null);
-    const handleImageUpload = (files: File[]) => {
-        // Only allow one image
-        if (files.length > 0) {
-            const file = files[0];
-            setUploadedImages([file]);
-
-            uploadedFileName = file.name;
-            console.log(uploadedFileName);
-
-            // Read the file as base64 and set the state
-            const reader = new FileReader();
-            reader.onload = () => {
-                const base64Result = reader.result as string;
-                setUploadedImageBase64(base64Result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const removeImage = (index: number) => {
-        const newImages = [...uploadedImages];
-        newImages.splice(index, 1);
-        setUploadedImages(newImages);
-
-    };
-
-    const form = useForm({
-        initialValues: {
-            title: '',
-            date_created_month: '',
-            date_created_year: '',
-            comments: '',
-            width: '',
-            height: '',
-            artist_name: '',
-            donor_name: '',
-            location: '',
-            category: '',
-            image_path: '',
-        },
-        validate: {
-            title: (value) => value.trim().length === 0,
-            date_created_month: (value) => value.trim().length === 0,
-            date_created_year: (value) => value.trim().length === 0,
-            comments: (value) => value.trim().length === 0,
-            width: (value) => value.trim().length === 0,
-            height: (value) => value.trim().length === 0,
-            artist_name: (value) => value.trim().length === 0,
-            donor_name: (value) => value.trim().length === 0,
-            location: (value) => value.trim().length === 0,
-            category: (value) => value.trim().length === 0,
-            image_path: (value) => value.trim().length === 0,
-        },
-    });
-
-    const handleSubmit = () => {
-        console.log("Form submitted");
-        // if (!selected) {
-        //     console.error("Selected is undefined or null");
-        //     return;
-        // }
-
-
-
-        const data = {
-            ...form.values,
-            uploadedFileName,
-            uploadedImage: uploadedImageBase64
-
-        }
-        console.log("Request Page: Before sending to nextjs api");
-        console.dir(data.uploadedImage);
-        fetch('api/addArtwork', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        }).then((data) => {
-            console.log("Response Data:", data);
-        }).catch((error) => {
-            console.error("Error:", error);
-        });
-    };
-
-    const formUser = useForm({
-        initialValues: {
-            address: '',
-        },
-        validate: {
-            address: (value) => value.trim().length === 0,
-        },
-    });
-
-    const handleUserSubmit = () => {
-        console.log("Form submitted");
-        // if (!selected) {
-        //     console.error("Selected is undefined or null");
-        //     return;
-        // }
-
-
-
-        const data = {
-            ...formUser.values,
-            user_type: selectedPrivilege
-
-        }
-        console.log("Request Page: Before sending to nextjs api");
-        console.dir(data);
-        fetch('api/editUser', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        }).then((data) => {
-            console.log("Response Data:", data);
-        }).catch((error) => {
-            console.error("Error:", error);
-        });
-    };
-
+    // Toggle forms based on icon click
     const [isFormVisible, setIsFormVisible] = useState(true);
     const [isUsersVisible, setIsUsersVisible] = useState(false);
     const [isEditVisible, setIsEditVisible] = useState(false);
     const [isMigrationsVisible, setIsMigrationsVisible] = useState(false);
     const handleIconClick = (index: number) => {
-        // Toggle the form visibility based on the clicked icon
         if (index === 0) {
             setIsFormVisible(true);
             setIsUsersVisible(false);
@@ -256,13 +144,269 @@ export default function About() {
         }
     };
 
+    // Initial add data values
+    const form = useForm({
+        initialValues: {
+            title: '',
+            date_created_month: '',
+            date_created_year: '',
+            comments: '',
+            width: '',
+            height: '',
+            artist_name: '',
+            donor_name: '',
+            location: '',
+            category: '',
+            image_path: '',
+        },
+        // Trimming
+        validate: {
+            title: (value) => value.trim().length === 0,
+            date_created_month: (value) => value.trim().length === 0,
+            date_created_year: (value) => value.trim().length === 0,
+            comments: (value) => value.trim().length === 0,
+            width: (value) => value.trim().length === 0,
+            height: (value) => value.trim().length === 0,
+            artist_name: (value) => value.trim().length === 0,
+            donor_name: (value) => value.trim().length === 0,
+            location: (value) => value.trim().length === 0,
+            category: (value) => value.trim().length === 0,
+            image_path: (value) => value.trim().length === 0,
+        },
+    });
 
+    // Uploading images for add artwork
+    const handleImageUpload = (files: File[]) => {
+        // Only allow one image
+        if (files.length > 0) {
+            const file = files[0];
+            setUploadedImages([file]);
+
+            uploadedFileName = file.name;
+            console.log(uploadedFileName);
+
+            // Read the file as base64 and set the state
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64Result = reader.result as string;
+                setUploadedImageBase64(base64Result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // Remove image for add artwork
+    const removeImage = (index: number) => {
+        const newImages = [...uploadedImages];
+        newImages.splice(index, 1);
+        setUploadedImages(newImages);
+
+    };
+
+    // Handle submit for adding artwork
+    const handleSubmit = () => {
+        console.log("Form submitted");
+        // if (!selected) {
+        //     console.error("Selected is undefined or null");
+        //     return;
+        // }
+
+        const data = {
+            ...form.values,
+            uploadedFileName,
+            uploadedImage: uploadedImageBase64
+
+        }
+        console.log("Request Page: Before sending to nextjs api");
+        console.dir(data.uploadedImage);
+        fetch('api/addArtwork', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Cache-Control': 'no-store',
+            },
+            body: JSON.stringify(data),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+    };
+
+    // Handle adding user types to drop down (manage users page)
+    const handleMenuItemClick = (item: any) => {
+        setSelectedPrivilege(item);
+    };
+
+    const items = privilegeTypes.map((item) => (
+        <Menu.Item
+            onClick={() => handleMenuItemClick(item)}
+            key={item}
+        >
+            {item}
+        </Menu.Item>
+    ));
+
+    // Inital values for manage users page
+    const formUser = useForm({
+        initialValues: {
+            address: '',
+        },
+        validate: {
+            address: (value) => value.trim().length === 0,
+        },
+    });
+
+    // Handle managing users page
+    const handleUserSubmit = () => {
+        console.log("Form submitted");
+        // if (!selected) {
+        //     console.error("Selected is undefined or null");
+        //     return;
+        // }
+
+        const data = {
+            ...formUser.values,
+            user_type: selectedPrivilege
+
+        }
+        console.log("Request Page: Before sending to nextjs api");
+        console.dir(data);
+        fetch('api/editUser', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Cache-Control': 'no-store'
+            },
+            body: JSON.stringify(data),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+    };
+
+    const handleMenuItemClick2 = (item: any) => {
+        setSelected(item);
+        setFormData({
+            idArtwork: item.idartwork,
+            title: item.title,
+            donor_name: item.donor_name,
+            artist_name: item.artist.artist_name,
+            category: item.category.category,
+            location: item.location.location,
+            width: item.width,
+            height: item.height,
+            date_created_month: item.date_created_month,
+            date_created_year: item.date_created_year,
+            comments: item.comments,
+            image_path: item.image_path.image_path
+
+        });
+
+        console.log(formData.image_path);
+
+
+    };
+
+    const handleArtwork = () => {
+        fetch('api/artworksList', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
+            cache: 'no-store',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.dir(data);
+            setArtworkData(data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    useEffect(() => {
+        handleArtwork();
+    }, []);
+
+    const combinedFunction = () => {
+        handleEdit();
+        handleArtwork();
+        // Add more functions as needed
+    };
+
+
+    const items2 = artworkData.map((item: Artwork) => (
+        <Link legacyBehavior href={`/dashboard`} prefetch={false} key={item.idartwork}>
+            <a>
+                <Menu.Item onClick={() => handleMenuItemClick2(item)}>
+                    {" Id: "}
+                    {item.idartwork}
+                    {" Title: "}
+                    {item.title}
+                </Menu.Item>
+            </a>
+        </Link>
+    ));
+
+    // Handle submit for adding artwork
+    const handleEdit = () => {
+        console.log("Form submitted");
+        // if (!selected) {
+        //     console.error("Selected is undefined or null");
+        //     return;
+        // }
+
+        const data = {
+            ...formData,
+            ...(uploadedFileName !== null && { uploadedFileName }),
+            ...(uploadedImageBase64 !== null && { uploadedImage: uploadedImageBase64 }),
+
+        }
+        console.log("Request Page: Before sending to nextjs api");
+        console.dir(data.uploadedImage);
+        fetch('api/editArtwork', {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                'Cache-Control': 'no-store',
+            },
+            body: JSON.stringify(data),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+    };
+
+
+
+
+
+    // HTML and CSS  
     return (
         <>
-
             {
-
-
                 <Container>
                     <nav className={classes.navbar}>
 
@@ -271,10 +415,7 @@ export default function About() {
                                 {links}
                             </div>
                         </div>
-
-
                     </nav>
-
                     <Container px='lg' size='sm'>
                         {isFormVisible && (
                             <form>
@@ -287,7 +428,6 @@ export default function About() {
                                 >
                                     Add a New Artwork
                                 </Title>
-
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
                                     <TextInput
                                         label="Title"
@@ -402,7 +542,7 @@ export default function About() {
                                                     <Dropzone.Idle>Upload images</Dropzone.Idle>
                                                 </Text>
                                                 <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                                                    Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                                    Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
                                                 </Text>
                                             </div>
                                         </Dropzone>
@@ -418,8 +558,6 @@ export default function About() {
                                         </div>
                                     </div>
                                 ))}
-
-
                                 <Group justify="center" mt="xl">
                                     {/* <Link href="/gallery" passHref> */}
 
@@ -444,7 +582,29 @@ export default function About() {
                                 >
                                     Edit a New Artwork
                                 </Title>
-
+                                <Group justify="center" mt="xl">
+                                    <Menu
+                                        onOpen={() => setOpened(true)}
+                                        onClose={() => setOpened(false)}
+                                        radius="md"
+                                        width="target"
+                                        withinPortal
+                                        trigger="hover"
+                                        openDelay={100}
+                                        closeDelay={400}
+                                    >
+                                        <Menu.Target>
+                                            <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
+                                                <Group gap="xs">
+                                                    {/* <Image src={selected.image} width={22} height={22} /> */}
+                                                    <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
+                                                </Group>
+                                                <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
+                                            </UnstyledButton>
+                                        </Menu.Target>
+                                        <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>{items2}</Menu.Dropdown>
+                                    </Menu>
+                                </Group>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
                                     <TextInput
                                         label="Title"
@@ -452,6 +612,8 @@ export default function About() {
                                         name="title"
                                         variant="filled"
                                         {...form.getInputProps('title')}
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     />
                                     <TextInput
                                         label="Artist Name"
@@ -459,6 +621,8 @@ export default function About() {
                                         name="artist_name"
                                         variant="filled"
                                         {...form.getInputProps('artist_name')}
+                                        value={formData.artist_name}
+                                        onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
                                     />
                                 </SimpleGrid>
 
@@ -469,6 +633,8 @@ export default function About() {
                                         name="category"
                                         variant="filled"
                                         {...form.getInputProps('category')}
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                     />
                                     <TextInput
                                         label="Location"
@@ -476,6 +642,8 @@ export default function About() {
                                         name="location"
                                         variant="filled"
                                         {...form.getInputProps('location')}
+                                        value={formData.location}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
@@ -485,6 +653,8 @@ export default function About() {
                                         name="width"
                                         variant="filled"
                                         {...form.getInputProps('width')}
+                                        value={formData.width}
+                                        onChange={(e) => setFormData({ ...formData, width: e.target.value })}
                                     />
                                     <TextInput
                                         label="Height"
@@ -492,6 +662,8 @@ export default function About() {
                                         name="height"
                                         variant="filled"
                                         {...form.getInputProps('height')}
+                                        value={formData.height}
+                                        onChange={(e) => setFormData({ ...formData, height: e.target.value })}
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
@@ -501,6 +673,8 @@ export default function About() {
                                         name="date_created_month"
                                         variant="filled"
                                         {...form.getInputProps('date_created_month')}
+                                        value={formData.date_created_month}
+                                        onChange={(e) => setFormData({ ...formData, date_created_month: e.target.value })}
                                     />
                                     <TextInput
                                         label="Date Created - Year"
@@ -508,7 +682,21 @@ export default function About() {
                                         name="date_created_year"
                                         variant="filled"
                                         {...form.getInputProps('date_created_year')}
+                                        value={formData.date_created_year}
+                                        onChange={(e) => setFormData({ ...formData, date_created_year: e.target.value })}
                                     />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Donor"
+                                        placeholder=""
+                                        name="donor_name"
+                                        variant="filled"
+                                        {...form.getInputProps('donor_name')}
+                                        value={formData.donor_name}
+                                        onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
+                                    />
+
                                 </SimpleGrid>
                                 <Textarea
                                     mt="md"
@@ -520,8 +708,15 @@ export default function About() {
                                     name="comments"
                                     variant="filled"
                                     {...form.getInputProps('comments')}
+                                    value={formData.comments}
+                                    onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
                                 />
 
+                                {uploadedImages.length === 0 && (
+                                    <div style={{ paddingTop: '10px' }}>
+                                        <Image src={formData.image_path} />
+                                    </div>
+                                )}
                                 <div className={classes.wrapper}>
                                     {uploadedImages.length === 0 ? (
                                         <Dropzone
@@ -559,7 +754,7 @@ export default function About() {
                                                     <Dropzone.Idle>Upload images</Dropzone.Idle>
                                                 </Text>
                                                 <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                                                    Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                                    Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
                                                 </Text>
                                             </div>
                                         </Dropzone>
@@ -580,7 +775,7 @@ export default function About() {
                                 <Group justify="center" mt="xl">
                                     {/* <Link href="/gallery" passHref> */}
 
-                                    <Button type="submit" size="md" onClick={handleSubmit}>
+                                    <Button type="submit" size="md" onClick={combinedFunction}>
                                         Save Artwork
                                     </Button>
                                     {/* </Link> */}

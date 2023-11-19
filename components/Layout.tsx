@@ -41,7 +41,9 @@ export default function Layout({
     };
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
+            // @ts-ignore
             if (link.links) {
+                // @ts-ignore
                 return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
             } else {
                 return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
@@ -108,7 +110,9 @@ export default function Layout({
             if (data.user_type.user_type === "admin") {
                 setIsAdmin(true);
                 setItems(links.map((link) => {
+                    // @ts-ignore
                     if (link.links) {
+                        // @ts-ignore
                         return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
                     } else {
                         return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
@@ -138,6 +142,7 @@ export default function Layout({
             return response.json();
         }).then(data => {
             setArtworks(data);
+
             artworks.forEach((artwork) => {
                 if (!artworksMap.has(artwork.idartwork)) {
                     artworksMap.set(artwork.idartwork, []);

@@ -4,16 +4,17 @@ export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
         const email = data.email;
-        
+
         if (!email) {
-            return NextResponse.json({ error: 'Email is missing in the request body' }, {status: 400});
+            return NextResponse.json({ error: 'Email is missing in the request body' }, { status: 400 });
         }
         const externalApiResponse = await fetch('http://localhost:8000/api/add-or-check-user/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
-            body: JSON.stringify({address: email}),
+            body: JSON.stringify({ address: email }),
         });
 
         if (externalApiResponse.ok) {

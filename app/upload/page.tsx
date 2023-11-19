@@ -81,7 +81,7 @@ export default function Upload() {
                         <Dropzone.Idle>Upload images</Dropzone.Idle>
                     </Text>
                     <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                        Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                        Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
                     </Text>
                 </div>
             </Dropzone>

@@ -3,17 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
-        
+
         if (!data) {
-            return NextResponse.json({ error: 'Form data is missing in the request body' }, {status: 400});
+            return NextResponse.json({ error: 'Form data is missing in the request body' }, { status: 400 });
         }
 
         const externalApiResponse = await fetch('http://localhost:8000/api/find-request/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
-            body: JSON.stringify( {"address": data.address} ),
+            body: JSON.stringify({ "address": data.address }),
         });
 
         if (externalApiResponse.ok) {
