@@ -87,7 +87,7 @@ export default function About() {
     const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
     const [artworkData, setArtworkData] = useState([]);
-    const [selected, setSelected] = useState(artworkData[0] || null);
+    const [selected, setSelected] = useState<Artwork | string>(artworkData[0] || null);
 
     const [formData, setFormData] = useState({
         idArtwork: '',
@@ -400,6 +400,53 @@ export default function About() {
         });
     };
 
+
+    const handleDelete = () => {
+        if (!selected) {
+            // Handle the case where no artwork is selected
+            return;
+        }
+        const data = {
+            ...formData,
+
+        }
+
+        // Make a DELETE request to your API to delete the artwork
+        fetch(`api/deleteArtwork`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                // Handle successful deletion, such as updating the UI or refreshing the artwork list
+                handleArtwork();
+                // Clear the form fields
+                setFormData({
+                    idArtwork: '',
+                    title: '',
+                    artist_name: '',
+                    donor_name: '',
+                    category: '',
+                    location: '',
+                    width: '',
+                    height: '',
+                    date_created_month: '',
+                    date_created_year: '',
+                    comments: '',
+                    image_path: '',
+                });
+                setSelected('Select Piece');
+                // Optionally, close the form or perform any other necessary actions
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
 
 
 
@@ -780,6 +827,11 @@ export default function About() {
                                         Save Artwork
                                     </Button>
                                     {/* </Link> */}
+                                </Group>
+                                <Group justify="center" mt="xl">
+                                    <Button color="red" onClick={handleDelete}>
+                                        Delete Artwork
+                                    </Button>
                                 </Group>
                             </form>
                         )}
