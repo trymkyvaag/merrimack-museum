@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
             body: JSON.stringify({
                 "title": data.title,

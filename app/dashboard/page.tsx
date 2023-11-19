@@ -23,6 +23,7 @@ interface NavbarLinkProps {
     label: string;
     active?: boolean;
     onClick?(): void;
+    isLast: number
 }
 
 
@@ -67,6 +68,7 @@ export default function About() {
     const [selected, setSelected] = useState(artworks[0] || null);
 
     const [formData, setFormData] = useState({
+        idArtwork: '',
         title: '',
         artist_name: '',
         category: '',
@@ -83,11 +85,11 @@ export default function About() {
     // Link mock data to icons
     const links = mockdata.map((link, index) => (
         <NavbarLink
+            isLast={0}
             {...link}
             key={link.label}
             active={index === active}
-            onClick={() => handleIconClick(index)}
-        />
+            onClick={() => handleIconClick(index)} />
     ));
 
     // Toggle forms based on icon click
@@ -272,6 +274,7 @@ export default function About() {
     const handleMenuItemClick2 = (item: any) => {
         setSelected(item);
         setFormData({
+            idArtwork: item.idartwork,
             title: item.title,
             artist_name: item.artist.artist_name,
             category: item.category.category,
@@ -302,6 +305,39 @@ export default function About() {
         </Menu.Item>
     ));
 
+    // Handle submit for adding artwork
+    const handleEdit = () => {
+        console.log("Form submitted");
+        // if (!selected) {
+        //     console.error("Selected is undefined or null");
+        //     return;
+        // }
+
+        const data = {
+            ...formData,
+            ...(uploadedFileName !== null && { uploadedFileName }),
+            ...(uploadedImageBase64 !== null && { uploadedImage: uploadedImageBase64 }),
+
+        }
+        console.log("Request Page: Before sending to nextjs api");
+        console.dir(data.uploadedImage);
+        fetch('api/editArtwork', {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then((data) => {
+            console.log("Response Data:", data);
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+    };
 
 
 
@@ -446,7 +482,7 @@ export default function About() {
                                                     <Dropzone.Idle>Upload images</Dropzone.Idle>
                                                 </Text>
                                                 <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                                                    Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                                    Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
                                                 </Text>
                                             </div>
                                         </Dropzone>
@@ -637,7 +673,7 @@ export default function About() {
                                                     <Dropzone.Idle>Upload images</Dropzone.Idle>
                                                 </Text>
                                                 <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                                                    Drag'n'drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                                    Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
                                                 </Text>
                                             </div>
                                         </Dropzone>
@@ -658,7 +694,7 @@ export default function About() {
                                 <Group justify="center" mt="xl">
                                     {/* <Link href="/gallery" passHref> */}
 
-                                    <Button type="submit" size="md" onClick={handleSubmit}>
+                                    <Button type="submit" size="md" onClick={handleEdit}>
                                         Save Artwork
                                     </Button>
                                     {/* </Link> */}

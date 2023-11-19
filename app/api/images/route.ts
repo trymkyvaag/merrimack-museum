@@ -14,7 +14,10 @@ export async function GET(req: NextRequest) {
 
         const externalApiResponse = await fetch(`http://localhost:8000/api/images/by_artwork/${artwork}`, {
             method: 'GET',
-            headers: headers
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
         });
 
         if (externalApiResponse.ok) {

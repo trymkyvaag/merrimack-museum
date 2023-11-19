@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
                 method: 'POST', // Type post
                 headers: {
                     'Content-Type': 'application/json',
+                    'Cache-Control': 'no-store',
                 },
                 body: JSON.stringify({ all_artworks: valueToJson }),
 

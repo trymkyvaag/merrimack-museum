@@ -4,11 +4,15 @@ export async function GET(req: NextRequest) {
     try {
         const externalApiResponse = await fetch('http://localhost:8000/api/artworks-list/', {
             method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
         });
 
         if (externalApiResponse.ok) {
             const responseData = await externalApiResponse.json();
-            console.dir(responseData);
+
             return NextResponse.json(responseData)
         } else {
             console.error('External API request failed');

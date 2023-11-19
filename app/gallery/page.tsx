@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Select } from '@mantine/core';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
 import { IconSearch, IconArrowUp } from '@tabler/icons-react';
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
@@ -137,7 +137,7 @@ export default function Gallery() {
      * Create the cards. Maps the data (The artworks) to Cards
      */
     const cards = artworkData.map((artwork: Artwork) => (
-        <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card} onClick={() => handleCardClick(artwork)}>
+        <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card} >
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
 
@@ -199,8 +199,8 @@ export default function Gallery() {
                 <Container pt="xl" size="xs">
                     <Input
                         placeholder="Search artwork"
-                        onChange={(event) => setValue(event.currentTarget.value)}
-                        onKeyDown={(event) => {
+                        onChange={(event: { currentTarget: { value: SetStateAction<string>; }; }) => setValue(event.currentTarget.value)}
+                        onKeyDown={(event: { key: string; }) => {
 
                             //Call handleSearch to display works corresponding to keywords
                             if (event.key === 'Enter') {
