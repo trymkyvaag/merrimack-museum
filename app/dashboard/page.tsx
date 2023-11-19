@@ -298,21 +298,22 @@ export default function About() {
 
     const handleMenuItemClick2 = (item: any) => {
         setSelected(item);
-        setFormData({
-            idArtwork: item.idartwork,
-            title: item.title,
-            donor_name: item.donor_name,
-            artist_name: item.artist.artist_name,
-            category: item.category.category,
-            location: item.location.location,
-            width: item.width,
-            height: item.height,
-            date_created_month: item.date_created_month,
-            date_created_year: item.date_created_year,
-            comments: item.comments,
-            image_path: item.image_path.image_path
 
+        setFormData({
+            idArtwork: item.idartwork || '',
+            title: item.title || '',
+            donor_name: item.donor?.donor_name || '',
+            artist_name: item.artist?.artist_name || '',
+            category: item.category?.category || '',
+            location: item.location?.location || '',
+            width: item.width || '',
+            height: item.height || '',
+            date_created_month: item.date_created_month || '',
+            date_created_year: item.date_created_year || '',
+            comments: item.comments || '',
+            image_path: item.image_path?.image_path || ''
         });
+
 
         console.log(formData.image_path);
 
@@ -612,7 +613,7 @@ export default function About() {
                                         name="title"
                                         variant="filled"
                                         {...form.getInputProps('title')}
-                                        value={formData.title}
+                                        value={formData.title || ''}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     />
                                     <TextInput
@@ -621,7 +622,7 @@ export default function About() {
                                         name="artist_name"
                                         variant="filled"
                                         {...form.getInputProps('artist_name')}
-                                        value={formData.artist_name}
+                                        value={formData.artist_name || ''}
                                         onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
                                     />
                                 </SimpleGrid>
@@ -633,7 +634,7 @@ export default function About() {
                                         name="category"
                                         variant="filled"
                                         {...form.getInputProps('category')}
-                                        value={formData.category}
+                                        value={formData.category || ''}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                     />
                                     <TextInput
@@ -642,7 +643,7 @@ export default function About() {
                                         name="location"
                                         variant="filled"
                                         {...form.getInputProps('location')}
-                                        value={formData.location}
+                                        value={formData.location || ''}
                                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                                     />
                                 </SimpleGrid>
@@ -653,7 +654,7 @@ export default function About() {
                                         name="width"
                                         variant="filled"
                                         {...form.getInputProps('width')}
-                                        value={formData.width}
+                                        value={formData.width || ''}
                                         onChange={(e) => setFormData({ ...formData, width: e.target.value })}
                                     />
                                     <TextInput
@@ -662,7 +663,7 @@ export default function About() {
                                         name="height"
                                         variant="filled"
                                         {...form.getInputProps('height')}
-                                        value={formData.height}
+                                        value={formData.height || ''}
                                         onChange={(e) => setFormData({ ...formData, height: e.target.value })}
                                     />
                                 </SimpleGrid>
@@ -673,7 +674,7 @@ export default function About() {
                                         name="date_created_month"
                                         variant="filled"
                                         {...form.getInputProps('date_created_month')}
-                                        value={formData.date_created_month}
+                                        value={formData.date_created_month || ''}
                                         onChange={(e) => setFormData({ ...formData, date_created_month: e.target.value })}
                                     />
                                     <TextInput
@@ -682,7 +683,7 @@ export default function About() {
                                         name="date_created_year"
                                         variant="filled"
                                         {...form.getInputProps('date_created_year')}
-                                        value={formData.date_created_year}
+                                        value={formData.date_created_year || ''}
                                         onChange={(e) => setFormData({ ...formData, date_created_year: e.target.value })}
                                     />
                                 </SimpleGrid>
@@ -693,7 +694,7 @@ export default function About() {
                                         name="donor_name"
                                         variant="filled"
                                         {...form.getInputProps('donor_name')}
-                                        value={formData.donor_name}
+                                        value={formData.donor_name || ''}
                                         onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
                                     />
 
@@ -708,7 +709,7 @@ export default function About() {
                                     name="comments"
                                     variant="filled"
                                     {...form.getInputProps('comments')}
-                                    value={formData.comments}
+                                    value={formData.comments || ''}
                                     onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
                                 />
 
