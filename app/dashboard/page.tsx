@@ -124,6 +124,7 @@ export default function About() {
     const [migrationData, setmigrationData] = useState([]);
     const [artworkData, setArtworkData] = useState([]);
     const [selected, setSelected] = useState<Artwork | string>(artworkData[0] || null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [formData, setFormData] = useState({
         idArtwork: '',
@@ -391,8 +392,12 @@ export default function About() {
         // Add more functions as needed
     };
 
+    const filteredItems2 = artworkData.filter((item: Artwork) =>
+        (item.idartwork.toString().includes(searchTerm)) ||
+        (item.title && item.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
-    const items2 = artworkData.map((item: Artwork) => (
+    const items2 = filteredItems2.map((item: Artwork) => (
         <Link legacyBehavior href={`/dashboard`} prefetch={false} key={item.idartwork}>
             <a>
                 <Menu.Item onClick={() => handleMenuItemClick2(item)}>
@@ -404,6 +409,19 @@ export default function About() {
             </a>
         </Link>
     ));
+
+    // const items2 = artworkData.map((item: Artwork) => (
+    //     <Link legacyBehavior href={`/dashboard`} prefetch={false} key={item.idartwork}>
+    //         <a>
+    //             <Menu.Item onClick={() => handleMenuItemClick2(item)}>
+    //                 {" Id: "}
+    //                 {item.idartwork}
+    //                 {" Title: "}
+    //                 {item.title}
+    //             </Menu.Item>
+    //         </a>
+    //     </Link>
+    // ));
 
 
 
@@ -531,7 +549,6 @@ export default function About() {
             },
             cache: 'no-store',
             body: JSON.stringify(data),
-            cache: 'no-store',
         })
             .then(response => {
                 if (!response.ok) {
@@ -841,7 +858,14 @@ export default function About() {
                                                 <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                             </UnstyledButton>
                                         </Menu.Target>
-                                        <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>{items2}</Menu.Dropdown>
+                                        <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                            <TextInput
+                                                placeholder="Search..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                            />
+                                            {items2}
+                                        </Menu.Dropdown>
                                     </Menu>
                                 </Group>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
