@@ -42,7 +42,9 @@ export async function POST(req: NextRequest) {
                 method: 'POST', // Type post
                 headers: {
                     'Content-Type': 'application/json',
+                    'Cache-Control': 'no-store',
                 },
+                cache: 'no-store',
                 body: JSON.stringify({ num_artworks: int }),  // Endpoint expects num_artworks: 'int' as input. Default as 5 for now.
 
             });

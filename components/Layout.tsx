@@ -9,7 +9,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { MantineLogo } from '@mantine/ds';
 import classes from '@/styles/HeaderMenu.module.css';
 
-import { RequestType, RequestContext, useRequest, ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser } from '@/lib/types';
+import { RequestType, RequestContext, useRequest, ArtworkType, ArtworkContext, UserContext, useArtwork, LinkProps, useUser, ArtworkTypeFiltered } from '@/lib/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
@@ -34,9 +34,9 @@ export default function Layout({
     const [isFaculty, setIsFaculty] = useState<boolean>(false);
     const [token, setToken] = useState<string>('');
     const [request, setRequest] = useState<RequestType | null>(null);
-    const [artworks, setArtworks] = useState<ArtworkType[]>([]);
-    const [artworksMap, setArtworksMap] = useState<Map<number, ArtworkType[]>>(new Map());
-    const addArtwork = (newArtwork: ArtworkType) => {
+    const [artworks, setArtworks] = useState<ArtworkTypeFiltered[]>([]);
+    const [artworksMap, setArtworksMap] = useState<Map<number, ArtworkTypeFiltered[]>>(new Map());
+    const addArtwork = (newArtwork: ArtworkTypeFiltered) => {
         setArtworks((prevArtwork) => [...prevArtwork, newArtwork]);
     };
     const [items, setItems] = useState<React.ReactNode[]>(
@@ -130,11 +130,13 @@ export default function Layout({
 
 
 
-        fetch('api/artworksList', {
+        fetch('api/artworksListFiltered', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
         }).then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -157,7 +159,9 @@ export default function Layout({
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify({ address: session?.user?.email }),
         }).then(response => {
             if (!response.ok) {

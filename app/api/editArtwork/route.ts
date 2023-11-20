@@ -103,6 +103,7 @@ export async function PUT(req: NextRequest) {
                     'Content-Type': 'application/json',
                     'Cache-Control': 'no-store',
                 },
+                cache: 'no-store',
                 body: JSON.stringify({
                     "title": data.title,
                     "artist": { "artist_name": data.artist_name },

@@ -52,7 +52,9 @@ export default function Gallery() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify({ keyword: searchValue }),
         })
             .then((response) => {
@@ -81,7 +83,9 @@ export default function Gallery() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(num_artworks),
         })
             .then((response) => {
@@ -108,7 +112,9 @@ export default function Gallery() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(all_artworks),
         })
             .then((response) => {

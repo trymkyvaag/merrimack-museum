@@ -4,6 +4,8 @@ export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
 
+        console.log(data);
+
         if (!data) {
             return NextResponse.json({ error: 'Form data is missing in the request body' }, { status: 400 });
         }
@@ -14,6 +16,7 @@ export async function POST(req: NextRequest) {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify({ "address": data.address }),
         });
 

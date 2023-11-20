@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify({
                 "address": { "address": data.email },
                 "to_location": data.destination,

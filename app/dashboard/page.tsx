@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { DateTime } from 'luxon';
+import Email from 'next-auth/providers/email';
 // Navbar interface
 interface NavbarLinkProps {
     icon: typeof IconHome2;
@@ -257,9 +258,10 @@ export default function About() {
         fetch('api/addArtwork', {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(data),
         }).then((response) => {
             if (!response.ok) {
@@ -315,9 +317,10 @@ export default function About() {
         fetch('api/editUser', {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                'Cache-Control': 'no-store'
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(data),
         }).then((response) => {
             if (!response.ok) {
@@ -423,9 +426,10 @@ export default function About() {
         fetch('api/editArtwork', {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(data),
         }).then((response) => {
             if (!response.ok) {
@@ -455,7 +459,9 @@ export default function About() {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(data),
         })
             .then(response => {
@@ -523,6 +529,7 @@ export default function About() {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
+            cache: 'no-store',
             body: JSON.stringify(data),
             cache: 'no-store',
         })
@@ -533,7 +540,8 @@ export default function About() {
                 return response.json();
             })
             .then(() => {
-                //ADD function to display form here
+
+                //TODO function to display form here, write function for email
 
                 // Reload the window after the PUT request is successful
                 window.location.reload();
@@ -559,8 +567,8 @@ export default function About() {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-store',
             },
-            body: JSON.stringify(data),
             cache: 'no-store',
+            body: JSON.stringify(data),
         })
             .then(response => {
                 if (!response.ok) {
@@ -569,7 +577,8 @@ export default function About() {
                 return response.json();
             })
             .then(() => {
-                //ADD function to display form here
+
+                //TODO function to display form here, write function for email 
 
                 // Reload the window after the PUT request is successful
                 window.location.reload();
@@ -825,6 +834,7 @@ export default function About() {
                                         <Menu.Target>
                                             <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
                                                 <Group gap="xs">
+                                                    {/* TODO fix bug  */}
                                                     {/* <Image src={selected.image} width={22} height={22} /> */}
                                                     <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
                                                 </Group>

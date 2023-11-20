@@ -1,18 +1,8 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-
     try {
-        const url = req.nextUrl;
-        const artwork = url.searchParams.get('artwork');
-        const headers = new Headers();
-        for (const [key, value] of Object.entries(req.headers)) {
-            if (typeof value === 'string') {
-                headers.set(key, value);
-            }
-        }
-
-        const externalApiResponse = await fetch(`http://localhost:8000/api/images/by_artwork/${artwork}`, {
+        const externalApiResponse = await fetch('http://localhost:8000/api/artworks-list-filtered/', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -23,6 +13,7 @@ export async function GET(req: NextRequest) {
 
         if (externalApiResponse.ok) {
             const responseData = await externalApiResponse.json();
+
             return NextResponse.json(responseData)
         } else {
             console.error('External API request failed');

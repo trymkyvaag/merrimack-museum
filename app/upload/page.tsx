@@ -29,6 +29,11 @@ export default function Upload() {
 
         fetch('/your-upload-url/', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
+            },
+            cache: 'no-store',
             body: formData,
         })
             .then((response) => {

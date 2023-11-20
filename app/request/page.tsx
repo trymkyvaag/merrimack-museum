@@ -27,15 +27,24 @@ export default function Request() {
 
     const handleMenuItemClick = (item: any) => {
         setSelected(item);
+        form.setValues({ ...form.values, source: item.location.location });
     };
 
     const items = artworks.map((item) => (
-        <Menu.Item
-            onClick={() => handleMenuItemClick(item)}
-            key={item.idartwork}
-        >
-            {item.idartwork}
-        </Menu.Item>
+        <Link legacyBehavior href={`/request`} prefetch={false} key={item.idartwork}>
+            <a>
+                <Menu.Item
+                    onClick={() => handleMenuItemClick(item)}
+                    key={item.idartwork}
+                >
+                    {" Id: "}
+                    {item.idartwork}
+                    {" Title: "}
+                    {item.title}
+                </Menu.Item>
+            </a>
+        </Link>
+
     ));
 
     const form = useForm({
@@ -91,9 +100,9 @@ export default function Request() {
             form.setFieldValue('email', session.user.email ?? '');
         }
 
-        if(request?.move_request && request.move_request.is_approved) {
+        if (request?.move_request && request.move_request.is_approved) {
             setActive(3);
-        } else if(request?.move_request && request.move_request.is_pending) {
+        } else if (request?.move_request && request.move_request.is_pending) {
             setActive(2);
         } else {
             setActive(1);
@@ -105,7 +114,7 @@ export default function Request() {
                 // || isFaculty || isAdmin
                 isFaculty || isAdmin ?
                     <Container>
-                        <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+                        {/* <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">
                                 <Switch
                                     checked={checked}
@@ -130,7 +139,7 @@ export default function Request() {
                                     }
                                 />
                             </Tooltip>
-                        </div>
+                        </div> */}
                         {!checked ? (
                             <Container>
                                 <Container px='lg' py='lg' size='sm'>
@@ -152,6 +161,7 @@ export default function Request() {
                                                 name="email"
                                                 variant="filled"
                                                 {...form.getInputProps('email')}
+                                                disabled={!!(active === 2 && request?.move_request && request.move_request.is_pending)}
                                             />
                                         </SimpleGrid>
 
@@ -162,6 +172,8 @@ export default function Request() {
                                                 name="source"
                                                 variant="filled"
                                                 {...form.getInputProps('source')}
+                                                readOnly // Make the field uneditable
+                                                disabled={!!(active === 2 && request?.move_request && request.move_request.is_pending)}
                                             />
                                             <TextInput
                                                 label="Destination"
@@ -169,6 +181,7 @@ export default function Request() {
                                                 name="destination"
                                                 variant="filled"
                                                 {...form.getInputProps('destination')}
+                                                disabled={!!(active === 2 && request?.move_request && request.move_request.is_pending)}
                                             />
                                         </SimpleGrid>
                                         <Menu
@@ -202,7 +215,13 @@ export default function Request() {
                                             name="message"
                                             variant="filled"
                                             {...form.getInputProps('message')}
+                                            disabled={!!(active === 2 && request?.move_request && request.move_request.is_pending)}
                                         />
+                                        {active === 2 && request?.move_request?.is_pending && (
+                                            <Text color="red" mt="sm">
+                                                You can only request one artwork at a time.
+                                            </Text>
+                                        )}
 
                                         <Group justify="center" mt="xl">
                                             {/* <Link href="/gallery" passHref> */}

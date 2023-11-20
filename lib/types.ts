@@ -1,5 +1,6 @@
 // import { User } from "next-auth";
 import { createContext, useContext } from "react";
+import { DateTime } from 'luxon';
 
 export interface LinkProps {
     link: string;
@@ -10,46 +11,45 @@ export interface LinkProps {
 
 export interface RequestType {
     move_request: {
-        idmove_request: number,
+        idmove_request: number | null;
         user: {
-            address: string,
-            user_type: {
-                user_type: string
-            }
+            address: string | null;
         },
         artwork: {
-            idartwork: number,
+            idartwork: number | null;
             artist: {
-                artist_name: string
+                artist_name: string | null;
             },
-            donor: null,
+            donor: {
+                donor_name: string | null;
+            }
             location: {
-                location: string
+                location: string | null;
             },
             category: {
-                category: string
+                category: string | null;
             },
             image_path: {
-                image_path: string
+                image_path: string | null;
             },
-            title: string,
-            date_created_month: null,
-            date_created_year: null,
-            comments: null,
-            width: string,
-            height: string
+            title: string | null;
+            date_created_month: number | null;
+            date_created_year: number | null;
+            comments: string | null;
+            width: number | null;
+            height: number | null;
         },
-        to_location: string,
-        is_pending: number,
-        is_approved: number,
-        comments: string,
-        time_stamp: string
-    } | null
+        to_location: string | null;
+        is_pending: boolean | null;
+        is_approved: boolean | null;
+        comments: string | null;
+        time_stamp: DateTime | null;
+    }
 }
 
 interface RequestContextType {
     request: RequestType | null
-    setRequest: (r : RequestType) => void;
+    setRequest: (r: RequestType) => void;
 }
 
 export const RequestContext = createContext<RequestContextType | undefined>(undefined);
@@ -110,3 +110,35 @@ export const useUser = () => {
     }
     return context;
 }
+
+export interface ArtworkTypeFiltered {
+    idartwork: number;
+    title: string;
+    date_created_month: null | string;
+    date_created_year: null | string;
+    comments: null | string;
+    width: string;
+    height: string;
+    artist: number;
+    donor: null | number;
+    location: number;
+    category: number;
+    image_path: number;
+}
+
+interface ArtworkContextTypeFiltered {
+    artworks: ArtworkTypeFiltered[];
+    artworksMap: Map<number, ArtworkTypeFiltered[]>
+    addArtwork: (newArtwork: ArtworkTypeFiltered) => void;
+    setArtworksMap: (map: Map<number, ArtworkTypeFiltered[]>) => void;
+}
+
+export const ArtworkContextFiltered = createContext<ArtworkContextTypeFiltered | undefined>(undefined);
+
+export const useArtworkFiltered = () => {
+    const context = useContext(ArtworkContextFiltered);
+    if (!context) {
+        throw new Error('useArtwork must be used within an ArtworkProvider');
+    }
+    return context;
+};
