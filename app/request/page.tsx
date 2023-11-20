@@ -25,12 +25,17 @@ export default function Request() {
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
+    const [searchTerm, setSearchTerm] = useState('');
+
     const handleMenuItemClick = (item: any) => {
         setSelected(item);
         form.setValues({ ...form.values, source: item.location.location });
     };
-
-    const items = artworks.map((item) => (
+    const filteredItems = artworks.filter(item =>
+        (item.idartwork.toString().includes(searchTerm)) ||
+        (item.title && item.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    const items = filteredItems.map((item) => (
         <Link legacyBehavior href={`/request`} prefetch={false} key={item.idartwork}>
             <a>
                 <Menu.Item
@@ -108,6 +113,9 @@ export default function Request() {
             setActive(1);
         }
     }, [session, selected]);
+
+
+
     return (
         <>
             {
@@ -203,7 +211,14 @@ export default function Request() {
                                                     <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                                 </UnstyledButton>
                                             </Menu.Target>
-                                            <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>{items}</Menu.Dropdown>
+                                            <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                                <TextInput
+                                                    placeholder="Search..."
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                />
+                                                {items}
+                                            </Menu.Dropdown>
                                         </Menu>
                                         <Textarea
                                             mt="md"
