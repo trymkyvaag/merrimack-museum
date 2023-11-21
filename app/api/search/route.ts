@@ -34,7 +34,11 @@ export async function POST(req: NextRequest) {
         // Grab data
         const data = await searchArtworkResponse.json();
 
-        console.log("\n\nData grabbed\n\“")
+        console.log("\n\nData grabbed:\n\“")
+        console.log(data)
+        console.log("\n\nEnd data\n\“")
+
+
 
 
         // Return data response in json format
