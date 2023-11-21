@@ -65,6 +65,8 @@ export default function Gallery() {
             })
             .then((data) => {
                 //Set the data to the cards using the setArtwrokData
+                console.log(data)
+
                 setArtworkData(data);
             })
             .catch((error) => {

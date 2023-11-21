@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     try {
 
         // Fetch data from the "randomartworks" endpoint
-        const sewarchArtworksResponse = await fetch('http://127.0.0.1:8000/api/searchartwork/', {
+        const searchArtworkResponse = await fetch('http://127.0.0.1:8000/api/searchartwork/', {
             method: 'POST', // Type post
             headers: {
                 'Content-Type': 'application/json',
@@ -27,12 +27,14 @@ export async function POST(req: NextRequest) {
             body: passedValue
 
         });
-        if (!sewarchArtworksResponse.ok) {
+        if (!searchArtworkResponse.ok) {
             throw new Error('Failed to fetch data from SearchArtworks');
         }
 
         // Grab data
-        const data = await sewarchArtworksResponse.json();
+        const data = await searchArtworkResponse.json();
+
+        console.log("\n\nData grabbed\n\“")
 
 
         // Return data response in json format
