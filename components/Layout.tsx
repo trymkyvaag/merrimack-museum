@@ -107,7 +107,7 @@ export default function Layout({
             return response.json();
         }).then((data) => {
             setToken(data.token);
-            if (data.user_type.user_type === "admin") {
+            if (data.user_type.user_type === "Admin") {
                 setIsAdmin(true);
                 setItems(links.map((link) => {
                     // @ts-ignore

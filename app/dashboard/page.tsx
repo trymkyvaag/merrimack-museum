@@ -114,7 +114,7 @@ export default function About() {
     const { data: session, status, update } = useSession();
     const { isAdmin, isFaculty } = useUser();
     const [active, setActive] = useState(2);
-    const privilegeTypes = ['admin', 'FS', 'student'];
+    const privilegeTypes = ['Admin', 'FS', 'Student'];
     const [selectedPrivilege, setSelectedPrivilege] = useState('Select Privilege Type');
     const openRef = useRef<() => void>(null);
     // Add images
