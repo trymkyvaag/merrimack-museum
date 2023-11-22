@@ -255,9 +255,9 @@ export default function Gallery() {
                         style={{ width: '75px' }}
                         onChange={(selectedValue: string | null) => {
                             if (selectedValue !== null && selectedValue.toLowerCase() !== "all") {
-                                handleCards(parseInt(selectedValue));
-                            } else if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
                                 handleAll(selectedValue);
+                            } else {
+                                handleCards(parseInt(selectedValue));
                             }
                         }}
                     />

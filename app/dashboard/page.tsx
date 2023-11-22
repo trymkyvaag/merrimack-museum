@@ -19,6 +19,7 @@ import {
     IconMailQuestion,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 
 import { DateTime } from 'luxon';
@@ -129,6 +130,12 @@ export default function About() {
     const [artworkData, setArtworkData] = useState([]);
     const [selected, setSelected] = useState<Artwork | string>(artworkData[0] || null);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const router = useRouter();
+
+    const navigateToTestPage = () => {
+        router.push('/dashboard/edit');
+    };
 
     const [formData, setFormData] = useState({
         idArtwork: '',
@@ -464,6 +471,7 @@ export default function About() {
             console.error("Error:", error);
         });
     };
+
 
 
     const handleDelete = () => {
@@ -1053,6 +1061,9 @@ export default function About() {
                                             Delete Artwork
                                         </Button>
                                     </Group>
+                                    <Button onClick={navigateToTestPage}>
+                                        Go to Test Page
+                                    </Button>
                                 </form>
                             )}
                         </Container>
