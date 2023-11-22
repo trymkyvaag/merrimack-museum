@@ -165,7 +165,7 @@ export default function Gallery() {
             case 'success':
                 return artworkData.data.map((artwork: Artwork) => (
                     <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card} >
-                        <Card.Section>
+                        <Card.Section >
                             <AspectRatio ratio={1080 / 900}>
 
                                 <Image
