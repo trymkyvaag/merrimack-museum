@@ -24,7 +24,9 @@ interface Artwork {
     date_created_year?: number | null;
     width?: string | null;
     height?: string | null;
-    donor?: string | null;
+    donor: {
+        donor_name: string;
+    };
     location?: {
         location: string;
     } | null;
@@ -206,7 +208,7 @@ export default function Gallery() {
                                 : '-')}
                         </Text>
                         <Text className={classes.title} mt={5}>
-                            {"Donor Name: " + (artwork.donor ? artwork.donor : '-')}
+                            {"Donor Name: " + (artwork.donor ? artwork.donor.donor_name : '-')}
                         </Text>
                         <Text className={classes.title} mt={5}>
                             {"Location: " + (artwork.location ? artwork.location.location : '-')}

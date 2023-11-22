@@ -440,7 +440,7 @@ export default function About() {
 
         }
         console.log("Request Page: Before sending to nextjs api");
-        console.dir(data.uploadedImage);
+        console.dir(formData);
         fetch('api/editArtwork', {
             method: "PUT",
             headers: {

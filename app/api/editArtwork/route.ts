@@ -51,7 +51,8 @@ export async function PUT(req: NextRequest) {
 
             const id = (data.idArtwork || '').toString().trim();
             console.log(id);
-
+            console.log("donor name");
+            console.log(data.donor_name);
 
             const externalApiResponse = await fetch(`http://localhost:8000/api/update-artwork/${id}/`, {
                 method: 'PUT',
@@ -96,6 +97,7 @@ export async function PUT(req: NextRequest) {
             console.log("INSIDE SERVER");
             const id = data.idArtwork;
             console.log(id);
+            console.log("donor name");
             console.log(data.donor_name);
             const externalApiResponse = await fetch(`http://localhost:8000/api/update-artwork/${id}/`, {
                 method: 'PUT',
