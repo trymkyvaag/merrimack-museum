@@ -240,9 +240,10 @@ export default function Request() {
 
                                         <Group justify="center" mt="xl">
                                             {/* <Link href="/gallery" passHref> */}
-                                            <Button type="submit" size="md" onSubmit={() => { }}>
+                                            <Button type="submit" size="md" onSubmit={() => { }} disabled={!!(active === 2 && request?.move_request && request.move_request.is_pending)}>
                                                 Submit Request
                                             </Button>
+
                                             {/* </Link> */}
                                         </Group>
                                     </form>
