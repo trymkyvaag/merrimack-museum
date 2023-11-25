@@ -15,7 +15,7 @@ const LogInButton = () => {
                 className={classes.control}
                 variant="gradient"
                 gradient={{ from: 'blue', to: 'cyan' }}
-                onClick={() => signOut({ callbackUrl: 'http://localhost:3000' })}
+                onClick={() => signOut()}
             >
                 Log Out
             </Button>
@@ -28,7 +28,7 @@ const LogInButton = () => {
             className={classes.control}
             variant="gradient"
             gradient={{ from: 'blue', to: 'cyan' }}
-            onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000/gallery' })}
+            onClick={() => signIn('google')}
         >
             Log In
         </Button>
