@@ -16,18 +16,28 @@ import { useEffect, useState } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 const imagePaths: string[] = [];
 
-const links = [
-    { link: '/gallery', label: 'Gallery', auth: null },
-    { link: '/request', label: 'Request', auth: 'faculty' },
-    { link: '/about', label: 'About', auth: null },
-    { link: '/dashboard', label: 'Dashboard', auth: 'admin' },
-];
 
-export default function Layout({
+
+export default function lay({
     children,
 }: {
     children: React.ReactNode
 }) {
+    const links = [
+        { link: '/gallery', label: 'Gallery', auth: null },
+        { link: '/request', label: 'Request', auth: 'faculty' },
+        { link: '/about', label: 'About', auth: null },
+        {
+            link: '/dashboard',
+            label: 'Dashboard',
+            auth: 'admin',
+            links: [
+                { link: '/dashboard/users', label: 'Users', auth: 'admin' },
+                { link: '/dashboard/migratins', label: 'Migrations', auth: 'admin' },
+                // Add more nested links as needed
+            ],
+        },
+    ];
     const [opened, { toggle }] = useDisclosure(false);
     const { data: session, status, update } = useSession();
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -42,18 +52,18 @@ export default function Layout({
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
 
-            if (link.links) {
 
-                return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-            } else {
-                return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-            }
+            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+
         })
     );
 
     function convertLinkToComponent(link: LinkProps) {
         const menuItems = link.links?.map((item) => (
-            <Menu.Item key={item.link}>{item.label}</Menu.Item>
+            <Menu.Item key={item.link}>
+                <Link href={item.link}>
+                    {item.label}
+                </Link></Menu.Item>
         ));
 
         if (menuItems) {
@@ -110,13 +120,13 @@ export default function Layout({
             if (data.user_type.user_type === "Admin") {
                 setIsAdmin(true);
                 setItems(links.map((link) => {
+                    return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                    // if (link.links) {
 
-                    if (link.links) {
-
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-                    } else {
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-                    }
+                    //     return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                    // } else {
+                    //     return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
+                    // }
                 }));
             } else if (data.user_type.user_type == "FS") {
                 setIsFaculty(true);
@@ -130,49 +140,6 @@ export default function Layout({
 
 
 
-        fetch('api/artworksListFiltered', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
-            },
-            cache: 'no-store',
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        }).then(data => {
-            setArtworks(data);
-
-            artworks.forEach((artwork) => {
-                if (!artworksMap.has(artwork.idartwork)) {
-                    artworksMap.set(artwork.idartwork, []);
-                }
-                artworksMap.get(artwork.idartwork)?.push(artwork);
-            });
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-
-        fetch('api/findrequest', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
-            },
-            cache: 'no-store',
-            body: JSON.stringify({ address: session?.user?.email }),
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        }).then(data => {
-            setRequest(data)
-        }).catch(error => {
-            console.error('Error:', error);
-        });
 
     }, [session]);
 

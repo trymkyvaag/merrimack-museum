@@ -132,8 +132,24 @@ export default function About() {
 
     const router = useRouter();
 
-    const navigateToTestPage = () => {
-        router.push('/dashboard/edit');
+    const navigateToAddPage = () => {
+        window.location.href = '/dashboard';
+    };
+    const navigateToMigrationsPage = () => {
+        router.push('/dashboard/migrations');
+    };
+    const navigateToUsersPage = () => {
+        router.push('/dashboard/users');
+    };
+
+    const handleIconClick = (index: number) => {
+        if (index === 0) {
+            navigateToAddPage();
+        } else if (index === 3) {
+            navigateToMigrationsPage();
+        } else if (index === 2) {
+            navigateToUsersPage();
+        }
     };
 
     const [formData, setFormData] = useState({
@@ -153,14 +169,14 @@ export default function About() {
     });
 
     // // Link mock data to icons
-    // const links = mockdata.map((link, index) => (
-    //     <NavbarLink
-    //         isLast={0}
-    //         {...link}
-    //         key={link.label}
-    //         active={index === active}
-    //         onClick={() => handleIconClick(index)} />
-    // ));
+    const links = mockdata.map((link, index) => (
+        <NavbarLink
+            isLast={0}
+            {...link}
+            key={link.label}
+            active={index === active}
+            onClick={() => handleIconClick(index)} />
+    ));
 
     // // Toggle forms based on icon click
     // const [isFormVisible, setIsFormVisible] = useState(true);
@@ -416,7 +432,19 @@ export default function About() {
 
     return (
         <>
+        
+
+            <nav className={classes.navbar}>
+
+                <div className={classes.navbarMain}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        {links}
+                    </div>
+                </div>
+            </nav>
+
             <Container px='lg' size='sm'>
+
 
                 <form>
                     <Title
@@ -639,12 +667,16 @@ export default function About() {
                             Delete Artwork
                         </Button>
                     </Group>
-                    <Button onClick={navigateToTestPage}>
-                        Go to Test Page
-                    </Button>
                 </form>
 
             </Container>
+            :
+            <Container className={classesTwo.root}>
+                <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+
+                </SimpleGrid>
+            </Container>
+            }
         </>
     );
 }
