@@ -116,6 +116,8 @@ export default function Gallery() {
      * @param all_artworks, a string from the dropdown: "All"
      */
     const handleAll = (all_artworks: string) => {
+        console.log("search all");
+        console.log(all_artworks);
 
         fetch('api/artworks', {
             method: 'POST',
@@ -254,7 +256,7 @@ export default function Gallery() {
                         value={scrollToValue !== null ? scrollToValue : null}
                         style={{ width: '75px' }}
                         onChange={(selectedValue: string | null) => {
-                            if (selectedValue !== null && selectedValue.toLowerCase() !== "all") {
+                            if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
                                 handleAll(selectedValue);
                             } else {
                                 handleCards(parseInt(selectedValue));

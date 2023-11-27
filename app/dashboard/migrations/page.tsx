@@ -149,7 +149,7 @@ export default function About() {
             navigateToUsersPage();
         }
     };
-    
+
 
     // Link mock data to icons
     const links = mockdata.map((link, index) => (
@@ -309,41 +309,47 @@ export default function About() {
 
     return (
         <>
-            <nav className={classes.navbar}>
 
-                <div className={classes.navbarMain}>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        {links}
-                    </div>
-                </div>
-            </nav>
-            <Container px='lg' size='sm'>
+            {
+                isFaculty || isAdmin ?
+                    <Container>
+                        <nav className={classes.navbar}>
 
-                <Container px='lg' size='sm'>
+                            <div className={classes.navbarMain}>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    {links}
+                                </div>
+                            </div>
+                        </nav>
 
-                    <form>
-                        <Title
-                            order={2}
-                            size="h1"
-                            style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
-                            fw={900}
-                            ta="center"
-                        >
-                            Manage Migrations
-                        </Title>
-                        <Container py="xl">
-                            <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+
+                        <Container px='lg' size='sm'>
+
+                            <form>
+                                <Title
+                                    order={2}
+                                    size="h1"
+                                    style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                    fw={900}
+                                    ta="center"
+                                >
+                                    Manage Migrations
+                                </Title>
+                                <Container py="xl">
+                                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+                                </Container>
+                            </form>
+
                         </Container>
-                    </form>
+                    </Container>
+                    :
+                    <Container className={classesTwo.root}>
+                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
 
-                </Container>
-            </Container>
-            :
-            <Container className={classesTwo.root}>
-                <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                        </SimpleGrid>
+                    </Container>
 
-                </SimpleGrid>
-            </Container>
+            }
         </>
     );
 }

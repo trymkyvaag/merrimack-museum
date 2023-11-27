@@ -353,80 +353,86 @@ export default function About() {
     return (
         <>
 
-            <nav className={classes.navbar}>
+            {
+                isFaculty || isAdmin ?
+                    <Container>
+                        <nav className={classes.navbar}>
 
-                <div className={classes.navbarMain}>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        {linksOne}
-                    </div>
-                </div>
-            </nav>
-            <Container px='lg' size='sm'>
+                            <div className={classes.navbarMain}>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    {linksOne}
+                                </div>
+                            </div>
+                        </nav>
+                        <Container px='lg' size='sm'>
 
-                <form >
-                    <Title
-                        order={2}
-                        size="h1"
-                        style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
-                        fw={900}
-                        ta="center"
-                    >
-                        Manage Users
-                    </Title>
-                    <Group justify="center" mt="xl">
-                        <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl" >
-                            <TextInput
-                                label="Email Address"
-                                placeholder="casem@merrimack.edu"
-                                name="address"
-                                variant="filled"
-                                {...formUser.getInputProps('address')}
-                            />
+                            <form >
+                                <Title
+                                    order={2}
+                                    size="h1"
+                                    style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                    fw={900}
+                                    ta="center"
+                                >
+                                    Manage Users
+                                </Title>
+                                <Group justify="center" mt="xl">
+                                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl" >
+                                        <TextInput
+                                            label="Email Address"
+                                            placeholder="casem@merrimack.edu"
+                                            name="address"
+                                            variant="filled"
+                                            {...formUser.getInputProps('address')}
+                                        />
 
 
-                            <Menu
-                                onOpen={() => setOpened(true)}
-                                onClose={() => setOpened(false)}
-                                radius="md"
-                                width="target"
-                                withinPortal
-                                trigger="hover"
-                                openDelay={100}
-                                closeDelay={400}
-                            >
-                                <Menu.Target>
-                                    <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
-                                        <Group gap="xs">
-                                            {/* <Image src={selected.image} width={22} height={22} /> */}
-                                            <span className={classes.label}>{selectedPrivilege}</span>
-                                        </Group>
-                                        <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
-                                    </UnstyledButton>
-                                </Menu.Target>
-                                <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                                    {/* Map over privilegeTypes to create menu items */}
-                                    {itemsOne}
-                                </Menu.Dropdown>
-                            </Menu>
+                                        <Menu
+                                            onOpen={() => setOpened(true)}
+                                            onClose={() => setOpened(false)}
+                                            radius="md"
+                                            width="target"
+                                            withinPortal
+                                            trigger="hover"
+                                            openDelay={100}
+                                            closeDelay={400}
+                                        >
+                                            <Menu.Target>
+                                                <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
+                                                    <Group gap="xs">
+                                                        {/* <Image src={selected.image} width={22} height={22} /> */}
+                                                        <span className={classes.label}>{selectedPrivilege}</span>
+                                                    </Group>
+                                                    <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
+                                                </UnstyledButton>
+                                            </Menu.Target>
+                                            <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                                {/* Map over privilegeTypes to create menu items */}
+                                                {itemsOne}
+                                            </Menu.Dropdown>
+                                        </Menu>
+                                    </SimpleGrid>
+                                </Group>
+                                <Group justify="center" mt="xl">
+                                    {/* <Link href="/gallery" passHref> */}
+
+                                    <Button type="submit" size="md" onClick={handleUserSubmit}>
+                                        Save User
+                                    </Button>
+                                    {/* </Link> */}
+                                </Group>
+                            </form>
+
+                        </Container>
+                    </Container>
+                    :
+                    <Container className={classesTwo.root}>
+                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+
                         </SimpleGrid>
-                    </Group>
-                    <Group justify="center" mt="xl">
-                        {/* <Link href="/gallery" passHref> */}
+                    </Container>
 
-                        <Button type="submit" size="md" onClick={handleUserSubmit}>
-                            Save User
-                        </Button>
-                        {/* </Link> */}
-                    </Group>
-                </form>
-
-            </Container>
-            :
-            <Container className={classesTwo.root}>
-                <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
-
-                </SimpleGrid>
-            </Container>
+            }
 
 
         </>

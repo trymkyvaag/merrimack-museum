@@ -432,251 +432,256 @@ export default function About() {
 
     return (
         <>
-        
 
-            <nav className={classes.navbar}>
+            {
+                isFaculty || isAdmin ?
+                    <Container>
+                        <nav className={classes.navbar}>
 
-                <div className={classes.navbarMain}>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        {links}
-                    </div>
-                </div>
-            </nav>
-
-            <Container px='lg' size='sm'>
-
-
-                <form>
-                    <Title
-                        order={2}
-                        size="h1"
-                        style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
-                        fw={900}
-                        ta="center"
-                    >
-                        Edit a New Artwork
-                    </Title>
-                    <Group justify="center" mt="xl">
-                        <Menu
-                            onOpen={() => setOpened(true)}
-                            onClose={() => setOpened(false)}
-                            radius="md"
-                            width="target"
-                            withinPortal
-                            trigger="hover"
-                            openDelay={100}
-                            closeDelay={400}
-                        >
-                            <Menu.Target>
-                                <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
-                                    <Group gap="xs">
-                                        {/* TODO fix bug  */}
-                                        {/* <Image src={selected.image} width={22} height={22} /> */}
-                                        <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
-                                    </Group>
-                                    <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
-                                </UnstyledButton>
-                            </Menu.Target>
-                            <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                                <TextInput
-                                    placeholder="Search..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                                {items2}
-                            </Menu.Dropdown>
-                        </Menu>
-                    </Group>
-                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
-                        <TextInput
-                            label="Title"
-                            placeholder="The Oasis"
-                            name="title"
-                            variant="filled"
-                            {...form.getInputProps('title')}
-                            value={formData.title || ''}
-                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        />
-                        <TextInput
-                            label="Artist Name"
-                            placeholder="Mark"
-                            name="artist_name"
-                            variant="filled"
-                            {...form.getInputProps('artist_name')}
-                            value={formData.artist_name || ''}
-                            onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
-                        />
-                    </SimpleGrid>
-
-                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
-                        <TextInput
-                            label="Category"
-                            placeholder="Photograph"
-                            name="category"
-                            variant="filled"
-                            {...form.getInputProps('category')}
-                            value={formData.category || ''}
-                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        />
-                        <TextInput
-                            label="Location"
-                            placeholder="Palmisano"
-                            name="location"
-                            variant="filled"
-                            {...form.getInputProps('location')}
-                            value={formData.location || ''}
-                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                        />
-                    </SimpleGrid>
-                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
-                        <TextInput
-                            label="Width"
-                            placeholder="0.000"
-                            name="width"
-                            variant="filled"
-                            {...form.getInputProps('width')}
-                            value={formData.width || ''}
-                            onChange={(e) => setFormData({ ...formData, width: e.target.value })}
-                        />
-                        <TextInput
-                            label="Height"
-                            placeholder="0.000"
-                            name="height"
-                            variant="filled"
-                            {...form.getInputProps('height')}
-                            value={formData.height || ''}
-                            onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                        />
-                    </SimpleGrid>
-                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
-                        <TextInput
-                            label="Date Created - Month"
-                            placeholder="MM"
-                            name="date_created_month"
-                            variant="filled"
-                            {...form.getInputProps('date_created_month')}
-                            value={formData.date_created_month || ''}
-                            onChange={(e) => setFormData({ ...formData, date_created_month: e.target.value })}
-                        />
-                        <TextInput
-                            label="Date Created - Year"
-                            placeholder="YYYY"
-                            name="date_created_year"
-                            variant="filled"
-                            {...form.getInputProps('date_created_year')}
-                            value={formData.date_created_year || ''}
-                            onChange={(e) => setFormData({ ...formData, date_created_year: e.target.value })}
-                        />
-                    </SimpleGrid>
-                    <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
-                        <TextInput
-                            label="Donor"
-                            placeholder=""
-                            name="donor_name"
-                            variant="filled"
-                            {...form.getInputProps('donor_name')}
-                            value={formData.donor_name || ''}
-                            onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
-                        />
-
-                    </SimpleGrid>
-                    <Textarea
-                        mt="md"
-                        label="Comments"
-                        placeholder="Your comments"
-                        maxRows={10}
-                        minRows={5}
-                        autosize
-                        name="comments"
-                        variant="filled"
-                        {...form.getInputProps('comments')}
-                        value={formData.comments || ''}
-                        onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
-                    />
-
-                    {formData.image_path.length !== 0 && (
-                        <div style={{ paddingTop: '10px' }}>
-                            <Image src={`../${formData.image_path}`} />
-                        </div>
-                    )}
-                    <div className={classes.wrapper}>
-                        {uploadedImages.length === 0 ? (
-                            <Dropzone
-                                openRef={openRef}
-                                onDrop={handleImageUpload}
-                                className={classes.dropzone}
-                                radius="md"
-                                accept={['image/*']}
-                                maxSize={30 * 1024 ** 2}
-                            >
-                                <div style={{ pointerEvents: 'none' }}>
-                                    <Group justify="center">
-                                        <Dropzone.Accept>
-                                            <IconDownload
-                                                style={{ width: rem(50), height: rem(50) }}
-                                                color={theme.colors.blue[6]}
-                                                stroke={1.5}
-                                            />
-                                        </Dropzone.Accept>
-                                        <Dropzone.Reject>
-                                            <IconX
-                                                style={{ width: rem(50), height: rem(50) }}
-                                                color={theme.colors.red[6]}
-                                                stroke={1.5}
-                                            />
-                                        </Dropzone.Reject>
-                                        <Dropzone.Idle>
-                                            <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
-                                        </Dropzone.Idle>
-                                    </Group>
-
-                                    <Text ta="center" fw={700} fz="lg" mt="xl">
-                                        <Dropzone.Accept>Drop images here</Dropzone.Accept>
-                                        <Dropzone.Reject>Images must be less than 30mb</Dropzone.Reject>
-                                        <Dropzone.Idle>Upload images</Dropzone.Idle>
-                                    </Text>
-                                    <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                                        Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
-                                    </Text>
+                            <div className={classes.navbarMain}>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    {links}
                                 </div>
-                            </Dropzone>
-                        ) : null}
-                    </div>
-                    {uploadedImages.map((image, index) => (
-                        <div key={index} style={{ position: 'relative', paddingTop: '10px', textAlign: 'center' }}>
-                            <Image src={URL.createObjectURL(image)} alt={`Uploaded Image ${index}`} />
-                            <div style={{ paddingTop: '10px', display: 'inline-block' }}>
-                                <Button onClick={() => removeImage(index)} color="red">
-                                    Remove
-                                </Button>
                             </div>
-                        </div>
-                    ))}
+                        </nav>
+
+                        <Container px='lg' size='sm'>
 
 
-                    <Group justify="center" mt="xl">
-                        {/* <Link href="/gallery" passHref> */}
+                            <form>
+                                <Title
+                                    order={2}
+                                    size="h1"
+                                    style={{ fontFamily: 'Greycliff CF, var(--mantine-font-family)' }}
+                                    fw={900}
+                                    ta="center"
+                                >
+                                    Edit a New Artwork
+                                </Title>
+                                <Group justify="center" mt="xl">
+                                    <Menu
+                                        onOpen={() => setOpened(true)}
+                                        onClose={() => setOpened(false)}
+                                        radius="md"
+                                        width="target"
+                                        withinPortal
+                                        trigger="hover"
+                                        openDelay={100}
+                                        closeDelay={400}
+                                    >
+                                        <Menu.Target>
+                                            <UnstyledButton mt="md" className={classes.control} data-expanded={opened || undefined}>
+                                                <Group gap="xs">
+                                                    {/* TODO fix bug  */}
+                                                    {/* <Image src={selected.image} width={22} height={22} /> */}
+                                                    <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
+                                                </Group>
+                                                <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
+                                            </UnstyledButton>
+                                        </Menu.Target>
+                                        <Menu.Dropdown style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                            <TextInput
+                                                placeholder="Search..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                            />
+                                            {items2}
+                                        </Menu.Dropdown>
+                                    </Menu>
+                                </Group>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Title"
+                                        placeholder="The Oasis"
+                                        name="title"
+                                        variant="filled"
+                                        {...form.getInputProps('title')}
+                                        value={formData.title || ''}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    />
+                                    <TextInput
+                                        label="Artist Name"
+                                        placeholder="Mark"
+                                        name="artist_name"
+                                        variant="filled"
+                                        {...form.getInputProps('artist_name')}
+                                        value={formData.artist_name || ''}
+                                        onChange={(e) => setFormData({ ...formData, artist_name: e.target.value })}
+                                    />
+                                </SimpleGrid>
 
-                        <Button type="submit" size="md" onClick={combinedFunction}>
-                            Save Artwork
-                        </Button>
-                        {/* </Link> */}
-                    </Group>
-                    <Group justify="center" mt="xl">
-                        <Button color="red" onClick={handleDelete}>
-                            Delete Artwork
-                        </Button>
-                    </Group>
-                </form>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Category"
+                                        placeholder="Photograph"
+                                        name="category"
+                                        variant="filled"
+                                        {...form.getInputProps('category')}
+                                        value={formData.category || ''}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    />
+                                    <TextInput
+                                        label="Location"
+                                        placeholder="Palmisano"
+                                        name="location"
+                                        variant="filled"
+                                        {...form.getInputProps('location')}
+                                        value={formData.location || ''}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                    />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Width"
+                                        placeholder="0.000"
+                                        name="width"
+                                        variant="filled"
+                                        {...form.getInputProps('width')}
+                                        value={formData.width || ''}
+                                        onChange={(e) => setFormData({ ...formData, width: e.target.value })}
+                                    />
+                                    <TextInput
+                                        label="Height"
+                                        placeholder="0.000"
+                                        name="height"
+                                        variant="filled"
+                                        {...form.getInputProps('height')}
+                                        value={formData.height || ''}
+                                        onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                                    />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Date Created - Month"
+                                        placeholder="MM"
+                                        name="date_created_month"
+                                        variant="filled"
+                                        {...form.getInputProps('date_created_month')}
+                                        value={formData.date_created_month || ''}
+                                        onChange={(e) => setFormData({ ...formData, date_created_month: e.target.value })}
+                                    />
+                                    <TextInput
+                                        label="Date Created - Year"
+                                        placeholder="YYYY"
+                                        name="date_created_year"
+                                        variant="filled"
+                                        {...form.getInputProps('date_created_year')}
+                                        value={formData.date_created_year || ''}
+                                        onChange={(e) => setFormData({ ...formData, date_created_year: e.target.value })}
+                                    />
+                                </SimpleGrid>
+                                <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Donor"
+                                        placeholder=""
+                                        name="donor_name"
+                                        variant="filled"
+                                        {...form.getInputProps('donor_name')}
+                                        value={formData.donor_name || ''}
+                                        onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
+                                    />
 
-            </Container>
-            :
-            <Container className={classesTwo.root}>
-                <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                                </SimpleGrid>
+                                <Textarea
+                                    mt="md"
+                                    label="Comments"
+                                    placeholder="Your comments"
+                                    maxRows={10}
+                                    minRows={5}
+                                    autosize
+                                    name="comments"
+                                    variant="filled"
+                                    {...form.getInputProps('comments')}
+                                    value={formData.comments || ''}
+                                    onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
+                                />
 
-                </SimpleGrid>
-            </Container>
+                                {formData.image_path.length !== 0 && (
+                                    <div style={{ paddingTop: '10px' }}>
+                                        <Image src={`../${formData.image_path}`} />
+                                    </div>
+                                )}
+                                <div className={classes.wrapper}>
+                                    {uploadedImages.length === 0 ? (
+                                        <Dropzone
+                                            openRef={openRef}
+                                            onDrop={handleImageUpload}
+                                            className={classes.dropzone}
+                                            radius="md"
+                                            accept={['image/*']}
+                                            maxSize={30 * 1024 ** 2}
+                                        >
+                                            <div style={{ pointerEvents: 'none' }}>
+                                                <Group justify="center">
+                                                    <Dropzone.Accept>
+                                                        <IconDownload
+                                                            style={{ width: rem(50), height: rem(50) }}
+                                                            color={theme.colors.blue[6]}
+                                                            stroke={1.5}
+                                                        />
+                                                    </Dropzone.Accept>
+                                                    <Dropzone.Reject>
+                                                        <IconX
+                                                            style={{ width: rem(50), height: rem(50) }}
+                                                            color={theme.colors.red[6]}
+                                                            stroke={1.5}
+                                                        />
+                                                    </Dropzone.Reject>
+                                                    <Dropzone.Idle>
+                                                        <IconCloudUpload style={{ width: rem(50), height: rem(50) }} stroke={1.5} />
+                                                    </Dropzone.Idle>
+                                                </Group>
+
+                                                <Text ta="center" fw={700} fz="lg" mt="xl">
+                                                    <Dropzone.Accept>Drop images here</Dropzone.Accept>
+                                                    <Dropzone.Reject>Images must be less than 30mb</Dropzone.Reject>
+                                                    <Dropzone.Idle>Upload images</Dropzone.Idle>
+                                                </Text>
+                                                <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                                                    Drag n drop images here to upload. We can accept any image type that is less than 30mb in size.
+                                                </Text>
+                                            </div>
+                                        </Dropzone>
+                                    ) : null}
+                                </div>
+                                {uploadedImages.map((image, index) => (
+                                    <div key={index} style={{ position: 'relative', paddingTop: '10px', textAlign: 'center' }}>
+                                        <Image src={URL.createObjectURL(image)} alt={`Uploaded Image ${index}`} />
+                                        <div style={{ paddingTop: '10px', display: 'inline-block' }}>
+                                            <Button onClick={() => removeImage(index)} color="red">
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+
+
+                                <Group justify="center" mt="xl">
+                                    {/* <Link href="/gallery" passHref> */}
+
+                                    <Button type="submit" size="md" onClick={combinedFunction}>
+                                        Save Artwork
+                                    </Button>
+                                    {/* </Link> */}
+                                </Group>
+                                <Group justify="center" mt="xl">
+                                    <Button color="red" onClick={handleDelete}>
+                                        Delete Artwork
+                                    </Button>
+                                </Group>
+                            </form>
+
+                        </Container>
+                    </Container>
+                    :
+                    <Container className={classesTwo.root}>
+                        <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+
+                        </SimpleGrid>
+                    </Container>
+
             }
         </>
+
     );
 }
