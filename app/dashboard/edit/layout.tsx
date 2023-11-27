@@ -1,13 +1,13 @@
 import Layout from '@/components/Layout'
 
 export default function NestedLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode
 }) {
   return (
-    <Layout>
-        <main>{children}</main>
-    </Layout>
+
+    <main>{children}</main>
+
   )
 }

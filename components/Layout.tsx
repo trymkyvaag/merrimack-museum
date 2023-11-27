@@ -41,13 +41,9 @@ export default function Layout({
     };
     const [items, setItems] = useState<React.ReactNode[]>(
         links.filter((link) => link.auth === null).map((link) => {
-        
-            if (link.links) {
-         
-                return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-            } else {
-                return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-            }
+
+            return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+
         })
     );
 
@@ -93,7 +89,7 @@ export default function Layout({
 
     useEffect(() => {
 
-        fetch('api/user', {
+        fetch(`../api/user`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -110,13 +106,9 @@ export default function Layout({
             if (data.user_type.user_type === "Admin") {
                 setIsAdmin(true);
                 setItems(links.map((link) => {
-               
-                    if (link.links) {
 
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth, links: link.links });
-                    } else {
-                        return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
-                    }
+                    return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
+
                 }));
             } else if (data.user_type.user_type == "FS") {
                 setIsFaculty(true);

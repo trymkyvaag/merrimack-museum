@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         }
         // The value is an integer
     } else {
-        const int = parseInt(valueToJson); // parse value from body to int
+        const int = valueToJson; // parse value from body to int
         try {
             // Fetch data from the "randomartworks" endpoint
             const randomArtworksResponse = await fetch('http://127.0.0.1:8000/api/randomartworksint/', {
