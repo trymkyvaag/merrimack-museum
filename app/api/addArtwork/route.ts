@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export async function POST(req: NextRequest) {
+
     console.log("INSIDE SERVER");
     try {
         const data = await req.json();
