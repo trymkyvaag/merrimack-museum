@@ -20,7 +20,7 @@ export async function DELETE(req: NextRequest) {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
         });

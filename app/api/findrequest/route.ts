@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+
 export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify({ "address": data.address }),

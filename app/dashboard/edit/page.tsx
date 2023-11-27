@@ -292,7 +292,7 @@ export default function About() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
         }).then(response => {
@@ -359,7 +359,7 @@ export default function About() {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify(data),
@@ -392,7 +392,7 @@ export default function About() {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify(data),
@@ -596,7 +596,7 @@ export default function About() {
 
                                 {formData.image_path.length !== 0 && uploadedImages.length === 0 && (
                                     <div style={{ paddingTop: '10px' }}>
-                                        <Image src={`../${formData.image_path}`} />
+                                        <Image src={`../../${formData.image_path}`} />
                                     </div>
                                 )}
                                 <div className={classes.wrapper}>
