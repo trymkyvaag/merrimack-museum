@@ -104,7 +104,7 @@ export default function Gallery() {
                 return response.json();
             })
             .then((data) => {
-                setArtworkData(data);
+                setArtworkData({ status: 'success', data });
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
@@ -256,7 +256,9 @@ export default function Gallery() {
                         value={scrollToValue !== null ? scrollToValue : null}
                         style={{ width: '75px' }}
                         onChange={(selectedValue: string | null) => {
-                            if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
+                            if (selectedValue === null) {
+                                //TODO
+                            } else if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
                                 handleAll(selectedValue);
                             } else {
                                 handleCards(parseInt(selectedValue));

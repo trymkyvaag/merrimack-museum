@@ -163,7 +163,7 @@ export default function About() {
 
     const handleMigrations = () => {
 
-        fetch('api/allMigrations', {
+        fetch('../api/allMigrations', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -183,6 +183,12 @@ export default function About() {
         });
     }
 
+    useEffect(() => {
+        handleMigrations();
+        console.log("here");
+        //console.log(artwork.image_path.image_path);
+    }, []);
+
     const handleApprove = (id: number | null) => {
         // Handle approval logic
         const type = "approve";
@@ -191,7 +197,7 @@ export default function About() {
             type: type,
             id: id
         }
-        fetch('api/updateMigration', {
+        fetch('../api/updateMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -228,7 +234,7 @@ export default function About() {
             id: id
         };
         console.log(data);
-        fetch('api/updateMigration', {
+        fetch('../api/updateMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -261,7 +267,7 @@ export default function About() {
                 <AspectRatio ratio={1080 / 900}>
 
                     <Image
-                        src={migration.artwork.image_path.image_path}
+                        src={`../${migration.artwork.image_path.image_path}`}
                         height={220}
                         style={{
                             position: 'absolute',

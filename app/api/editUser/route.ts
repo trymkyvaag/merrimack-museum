@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from 'fs';
-import path from 'path';
+
 
 export async function POST(req: NextRequest) {
     console.log("INSIDE SERVER 2 ");
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
         }
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: 'Server error' });
+        return NextResponse.json({ error: 'Server errorrr' });
     }
 }
 

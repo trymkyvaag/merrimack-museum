@@ -115,17 +115,14 @@ function NavbarLink({ icon: Icon, label, active, onClick, isLast }: NavbarLinkPr
 export default function About() {
     const [opened, setOpened] = useState(false);
     const theme = useMantineTheme();
-    const { data: session, status, update } = useSession();
     const { isAdmin, isFaculty } = useUser();
     const [active, setActive] = useState(2);
-    const privilegeTypes = ['Admin', 'FS', 'Student'];
-    const [selectedPrivilege, setSelectedPrivilege] = useState('Select Privilege Type');
     const openRef = useRef<() => void>(null);
     // Add images
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
-    const [migrationData, setmigrationData] = useState([]);
+
     const [artworkData, setArtworkData] = useState([]);
     const [selected, setSelected] = useState<Artwork | string>(artworkData[0] || null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -344,6 +341,7 @@ export default function About() {
     // Handle submit for adding artwork
     const handleEdit = () => {
         console.log("Form submitted");
+        console.log(formData);
         // if (!selected) {
         //     console.error("Selected is undefined or null");
         //     return;
@@ -474,7 +472,7 @@ export default function About() {
                                                 <Group gap="xs">
                                                     {/* TODO fix bug  */}
                                                     {/* <Image src={selected.image} width={22} height={22} /> */}
-                                                    <span className={classes.label}>{selected ? selected.idartwork : 'Select piece'}</span>
+                                                    <span className={classes.label}>{selected && typeof selected === 'object' ? selected.idartwork : 'Select piece'}</span>
                                                 </Group>
                                                 <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
                                             </UnstyledButton>
@@ -596,7 +594,7 @@ export default function About() {
                                     onChange={(e) => setFormData({ ...formData, comments: e.target.value })}
                                 />
 
-                                {formData.image_path.length !== 0 && (
+                                {formData.image_path.length !== 0 && uploadedImages.length === 0 && (
                                     <div style={{ paddingTop: '10px' }}>
                                         <Image src={`../${formData.image_path}`} />
                                     </div>
@@ -644,6 +642,7 @@ export default function About() {
                                         </Dropzone>
                                     ) : null}
                                 </div>
+
                                 {uploadedImages.map((image, index) => (
                                     <div key={index} style={{ position: 'relative', paddingTop: '10px', textAlign: 'center' }}>
                                         <Image src={URL.createObjectURL(image)} alt={`Uploaded Image ${index}`} />
