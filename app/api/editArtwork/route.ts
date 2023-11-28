@@ -81,6 +81,14 @@ export async function PUT(req: NextRequest) {
                 console.log("Unsuccessfull upload")
             }
 
+            // Check if date_created_month is an empty string, replace with null
+            const month = data.date_created_month !== '' ? data.date_created_month : null;
+            // Check if date_created_year is an empty string, replace with null
+            const year = data.date_created_year !== '' ? data.date_created_year : null;
+
+            console.log(month);
+            console.log(year);
+
             const externalApiResponse = await fetch(`http://localhost:8000/api/update-artwork/${id}/`, {
                 method: 'PUT',
                 headers: {
@@ -96,8 +104,8 @@ export async function PUT(req: NextRequest) {
                     "width": data.width,
                     "height": data.height,
                     "donor": { "donor_name": data.donor_name },
-                    "date_created_month": data.date_created_month,
-                    "date_created_year": data.date_created_year,
+                    "date_created_month": month,
+                    "date_created_year": year,
                     "comments": data.comments,
                     "image_path": { "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + uploadedFileName, },
                 }),
@@ -120,6 +128,13 @@ export async function PUT(req: NextRequest) {
             if (!data) {
                 return NextResponse.json({ error: 'Form data is missing in the request body' }, { status: 400 });
             }
+            // Check if date_created_month is an empty string, replace with null
+            const month = data.date_created_month !== '' ? data.date_created_month : null;
+            // Check if date_created_year is an empty string, replace with null
+            const year = data.date_created_year !== '' ? data.date_created_year : null;
+
+            console.log(month);
+            console.log(year);
 
             console.log("INSIDE SERVER");
             const id = data.idArtwork;
@@ -141,8 +156,8 @@ export async function PUT(req: NextRequest) {
                     "donor": { "donor_name": data.donor_name },
                     "width": data.width,
                     "height": data.height,
-                    "date_created_month": data.date_created_month,
-                    "date_created_year": data.date_created_year,
+                    "date_created_month": month,
+                    "date_created_year": year,
                     "comments": data.comments
                 }),
             });
