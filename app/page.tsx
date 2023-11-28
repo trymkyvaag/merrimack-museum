@@ -6,7 +6,6 @@ import LogInButton from '@/components/LogInButton';
 
 export default function Home() {
   return (
-    <main>
       <div className={classes.wrapper}>
         <Container size={700} className={classes.inner}>
           <h1 className={classes.title}>
@@ -36,6 +35,5 @@ export default function Home() {
           </Group>
         </Container>
       </div>
-    </main>
   )
 }

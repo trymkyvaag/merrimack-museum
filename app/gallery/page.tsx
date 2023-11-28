@@ -227,7 +227,7 @@ export default function Gallery() {
 
 
     return (
-        <>
+        <div>
             <main>
                 <Container pt="xl" size="xs">
                     <Input
@@ -278,6 +278,6 @@ export default function Gallery() {
                     </Transition>
                 </div>
             </Affix>
-        </>
+        </div>
     );
 }

@@ -117,7 +117,7 @@ export default function Request() {
 
 
     return (
-        <>
+        <div>
             {
                 // || isFaculty || isAdmin
                 isFaculty || isAdmin ?
@@ -309,6 +309,6 @@ export default function Request() {
                         </SimpleGrid>
                     </Container>
             }
-        </>
+        </div>
     )
 }
