@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs';
 import path from 'path';
+import { S3, PutObjectCommand } from '@aws-sdk/client-s3';
+
 
 export async function POST(req: NextRequest) {
 
     console.log("INSIDE SERVER");
+
+
     try {
         const data = await req.json();
 
@@ -16,10 +20,42 @@ export async function POST(req: NextRequest) {
         // Extract the base64 data from the string
         const base64Data = data.uploadedImage.split(',')[1];
 
-        console.log(base64Data);
+
         // Decode the base64 string to a Buffer
 
         const decodedData = Buffer.from(base64Data, 'base64');
+
+        console.log("S3 INFO");
+        console.log(uploadedFileName);
+        console.log(decodedData);
+
+
+        const s3 = new S3({
+            region: 'us-east-2',
+            credentials: {
+                accessKeyId: process.env.AWS_ACCESS_KEY!,
+                secretAccessKey: process.env.AWS_SECRET_KEY!,
+            }
+        });
+
+        const params = {
+            Bucket: 'merrimackartcollection',
+            Key: uploadedFileName,
+            Body: decodedData,
+            ContentType: 'image/*',
+        }
+
+
+        try {
+            console.log(params);
+            const upload = await s3.send(new PutObjectCommand(params));
+            console.log("Successfull upload")
+        } catch (error) {
+            console.log("Unsuccessfull upload")
+        }
+
+
+
         // Find the highest-numbered folder
         const imageDir = path.join(process.cwd(), 'public', 'images');
         const imageDirRel = path.relative('public', 'images');
@@ -52,6 +88,8 @@ export async function POST(req: NextRequest) {
 
 
         console.log("INSIDE SERVER");
+
+
         const externalApiResponse = await fetch('http://localhost:8000/api/add-artwork/', {
             method: 'POST',
             headers: {
@@ -69,7 +107,7 @@ export async function POST(req: NextRequest) {
                 "date_created_month": data.date_created_month,
                 "date_created_year": data.date_created_year,
                 "comments": data.comments,
-                "image_path": test2,
+                "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + uploadedFileName,
             }),
         });
 

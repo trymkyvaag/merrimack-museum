@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs';
 import path from 'path';
+import { S3, PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function PUT(req: NextRequest) {
 
     const data = await req.json();
-
+    console.log("INSIDE FIRST IF");
     if (data.uploadedFileName && data.uploadedImage) {
         console.log("INSIDE FIRST IF");
         try {
@@ -54,6 +55,32 @@ export async function PUT(req: NextRequest) {
             console.log("donor name");
             console.log(data.donor_name);
 
+
+
+            const s3 = new S3({
+                region: 'us-east-2',
+                credentials: {
+                    accessKeyId: process.env.AWS_ACCESS_KEY!,
+                    secretAccessKey: process.env.AWS_SECRET_KEY!,
+                }
+            });
+
+            const params = {
+                Bucket: 'merrimackartcollection',
+                Key: uploadedFileName,
+                Body: decodedData,
+                ContentType: 'image/png',
+            }
+
+
+            try {
+                console.log(params);
+                const upload = await s3.send(new PutObjectCommand(params));
+                console.log("Successfull upload")
+            } catch (error) {
+                console.log("Unsuccessfull upload")
+            }
+
             const externalApiResponse = await fetch(`http://localhost:8000/api/update-artwork/${id}/`, {
                 method: 'PUT',
                 headers: {
@@ -72,7 +99,7 @@ export async function PUT(req: NextRequest) {
                     "date_created_month": data.date_created_month,
                     "date_created_year": data.date_created_year,
                     "comments": data.comments,
-                    "image_path": { "image_path": test2 },
+                    "image_path": { "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + uploadedFileName, },
                 }),
             });
 

@@ -267,7 +267,7 @@ export default function About() {
                 <AspectRatio ratio={1080 / 900}>
 
                     <Image
-                        src={`../${migration.artwork.image_path.image_path}`}
+                        src={migration.artwork.image_path.image_path}
                         height={220}
                         style={{
                             position: 'absolute',

@@ -35,24 +35,24 @@ interface NavbarLinkProps {
 
 interface Artwork {
     idartwork: number;
-    artist: {
-        artist_name: string;
+    artist?: {
+        artist_name: string | null;
     };
     category?: {
-        category: string;
+        category: string | null;
     };
-    title: string | null;
+    title?: string | null;
     date_created_month?: number | null;
     date_created_year?: number | null;
     width?: string | null;
     height?: string | null;
     donor?: string | null;
     location?: {
-        location: string;
-    } | null;
+        location: string | null;
+    };
     comments?: string | null;
-    image_path: {
-        image_path: string;
+    image_path?: {
+        image_path: string | null;
     };
 }
 
