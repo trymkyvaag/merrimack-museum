@@ -11,6 +11,7 @@ const LogInButton = () => {
     if (session && session.user) {
         return (
             <Button
+                id='HomePageLogButton'
                 size="xl"
                 className={classes.control}
                 variant="gradient"
@@ -24,6 +25,7 @@ const LogInButton = () => {
 
     return (
         <Button
+            id='HomePageLogButton'
             size="xl"
             className={classes.control}
             variant="gradient"

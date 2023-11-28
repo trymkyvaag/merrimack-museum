@@ -6,7 +6,7 @@ import LogInButton from '@/components/LogInButton';
 
 export default function Home() {
   return (
-      <div className={classes.wrapper}>
+      <div className={classes.wrapper} suppressHydrationWarning>
         <Container size={700} className={classes.inner}>
           <h1 className={classes.title}>
             A{' '}
@@ -23,6 +23,7 @@ export default function Home() {
           <Group className={classes.controls}>
             <LogInButton />
             <Button
+              id='HomePageBrowseButton'
               component={Link}
               href='/gallery'
               size="xl"

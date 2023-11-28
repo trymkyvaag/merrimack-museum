@@ -227,7 +227,7 @@ export default function Gallery() {
 
 
     return (
-        <div>
+        <div suppressHydrationWarning>
             <main>
                 <Container pt="xl" size="xs">
                     <Input

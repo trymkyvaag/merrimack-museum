@@ -1,7 +1,7 @@
 export default function About() {
     
     return (
-        <div>  
+        <div suppressHydrationWarning>  
             <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
             Venenatis urna cursus eget nunc. Egestas sed tempus urna et pharetra pharetra massa massa ultricies. 

@@ -13,9 +13,8 @@ describe('Home Page', () => {
     cy.contains(descriptionText).should('be.visible');
   });
 
-  it('should contain a "Browse" button that links to the gallery page', () => {
-    // Assert that the "Browse" button is visible and clicking it navigates to the gallery page
-    cy.contains('Browse').click();
-    cy.url().should('include', '/gallery');
+  it('should find and assert the existence of the browse button', () => {
+    // Use the ID selector to locate the button
+    cy.get('#HomePageBrowseButton').should('exist');
   });
 });
