@@ -35,24 +35,24 @@ interface NavbarLinkProps {
 
 interface Artwork {
     idartwork: number;
-    artist: {
-        artist_name: string;
+    artist?: {
+        artist_name: string | null;
     };
     category?: {
-        category: string;
+        category: string | null;
     };
-    title: string | null;
+    title?: string | null;
     date_created_month?: number | null;
     date_created_year?: number | null;
     width?: string | null;
     height?: string | null;
     donor?: string | null;
     location?: {
-        location: string;
-    } | null;
+        location: string | null;
+    };
     comments?: string | null;
-    image_path: {
-        image_path: string;
+    image_path?: {
+        image_path: string | null;
     };
 }
 
@@ -290,7 +290,7 @@ export default function About() {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify(data),
@@ -394,7 +394,7 @@ export default function About() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
         }).then(response => {
@@ -638,56 +638,7 @@ export default function About() {
 
 
 
-    const cards = migrationData.map((migration: Migrations) => (
-        <Card key={migration.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} >
-            <Card.Section>
-                <AspectRatio ratio={1080 / 900}>
 
-                    <Image
-                        src={migration.artwork.image_path.image_path}
-                        height={220}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            background: 'transparent',
-                            zIndex: 2,
-                            pointerEvents: 'none'
-                        }}
-                    />
-
-                </AspectRatio>
-            </Card.Section>
-            <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-                {"Identifier: " + (migration.idmove_request ? migration.idmove_request : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Title: " + (migration.artwork.title ? migration.artwork.title : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"User: " + (migration.user.address ? migration.user.address : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Move to: " + (migration.to_location ? migration.to_location : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Comments: " + (migration.comments ? migration.comments : '-')}
-            </Text>
-            <Text className={classes.title} mt={5}>
-                {"Date/Time: " + (migration.time_stamp ? migration.time_stamp : '-')}
-            </Text>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                <Button onClick={() => handleApprove(migration.idmove_request)} style={{ backgroundColor: 'green', color: 'white' }}>
-                    Approve
-                </Button>
-                <Button onClick={() => handleDeny(migration.idmove_request)} style={{ backgroundColor: 'red', color: 'white' }}>
-                    Deny
-                </Button>
-            </div>
-        </Card>
-    ));
 
     // HTML and CSS  
     return (

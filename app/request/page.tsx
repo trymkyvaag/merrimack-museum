@@ -61,7 +61,6 @@ export default function Request() {
         },
         validate: {
             email: (value) => !/^\S+@\S+$/.test(value),
-            source: (value) => value.trim().length === 0,
             destination: (value) => value.trim().length === 0,
         },
     });
@@ -83,8 +82,10 @@ export default function Request() {
         fetch('api/moverequests', {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
+            cache: 'no-store',
             body: JSON.stringify(data),
         }).then((response) => {
             if (!response.ok) {

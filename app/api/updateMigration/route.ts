@@ -11,7 +11,7 @@ export async function PUT(req: NextRequest) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify({ "type": type })

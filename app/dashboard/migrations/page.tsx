@@ -167,7 +167,7 @@ export default function About() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
         }).then(response => {
@@ -201,7 +201,7 @@ export default function About() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify(data),
@@ -238,7 +238,7 @@ export default function About() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
             body: JSON.stringify(data),
@@ -267,7 +267,7 @@ export default function About() {
                 <AspectRatio ratio={1080 / 900}>
 
                     <Image
-                        src={`../${migration.artwork.image_path.image_path}`}
+                        src={migration.artwork.image_path.image_path}
                         height={220}
                         style={{
                             position: 'absolute',
