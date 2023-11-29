@@ -381,9 +381,21 @@ export default function About() {
         });
     };
 
+    const confirmDelete = () => {
+        const isConfirmed = window.confirm('Are you sure you want to delete the artwork?');
 
+        if (isConfirmed) {
+            handleDelete();
+        } else {
+            // Handle the case where the user cancels the delete operation
+            console.log('Delete operation cancelled');
+        }
+    }
 
     const handleDelete = () => {
+
+
+
         if (!selected) {
             // Handle the case where no artwork is selected
             return;
@@ -680,7 +692,7 @@ export default function About() {
                                     {/* </Link> */}
                                 </Group>
                                 <Group justify="center" mt="xl">
-                                    <Button color="red" onClick={handleDelete}>
+                                    <Button color="red" onClick={confirmDelete}>
                                         Delete Artwork
                                     </Button>
                                 </Group>
