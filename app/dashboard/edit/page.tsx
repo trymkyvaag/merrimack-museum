@@ -292,7 +292,7 @@ export default function About() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+                'Cache-Control': 'no-cache, no-store, max-age=0',
             },
             cache: 'no-store',
         }).then(response => {
@@ -316,6 +316,7 @@ export default function About() {
     const combinedFunction = () => {
         handleEdit();
         handleArtwork();
+        window.location.href = '/dashboard/edit'
         // Add more functions as needed
     };
 

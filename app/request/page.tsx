@@ -61,7 +61,6 @@ export default function Request() {
         },
         validate: {
             email: (value) => !/^\S+@\S+$/.test(value),
-            source: (value) => value.trim().length === 0,
             destination: (value) => value.trim().length === 0,
         },
     });

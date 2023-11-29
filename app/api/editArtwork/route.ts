@@ -65,9 +65,12 @@ export async function PUT(req: NextRequest) {
                 }
             });
 
+            const timestamp = Date.now(); // Get current timestamp
+            const updatedFileName = `${timestamp}_${uploadedFileName}`;
+
             const params = {
                 Bucket: 'merrimackartcollection',
-                Key: uploadedFileName,
+                Key: updatedFileName,
                 Body: decodedData,
                 ContentType: 'image/png',
             }
@@ -98,7 +101,7 @@ export async function PUT(req: NextRequest) {
                 cache: 'no-store',
                 body: JSON.stringify({
                     "title": data.title,
-                    "artist_name": { "artist_name": data.artist_name },
+                    "artist": { "artist_name": data.artist_name },
                     "category": { "category": data.category },
                     "location": { "location": data.location },
                     "width": data.width,
@@ -107,7 +110,7 @@ export async function PUT(req: NextRequest) {
                     "date_created_month": month,
                     "date_created_year": year,
                     "comments": data.comments,
-                    "image_path": { "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + uploadedFileName, },
+                    "image_path": { "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + updatedFileName, },
                 }),
             });
 

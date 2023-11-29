@@ -38,9 +38,12 @@ export async function POST(req: NextRequest) {
             }
         });
 
+        const timestamp = Date.now(); // Get current timestamp
+        const updatedFileName = `${timestamp}_${uploadedFileName}`;
+
         const params = {
             Bucket: 'merrimackartcollection',
-            Key: uploadedFileName,
+            Key: updatedFileName,
             Body: decodedData,
             ContentType: 'image/*',
         }
@@ -113,7 +116,7 @@ export async function POST(req: NextRequest) {
                 "date_created_month": month,
                 "date_created_year": year,
                 "comments": data.comments,
-                "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + uploadedFileName,
+                "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + updatedFileName,
             }),
         });
 
