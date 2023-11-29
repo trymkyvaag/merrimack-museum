@@ -13,6 +13,11 @@ describe('Home Page', () => {
     cy.contains(descriptionText).should('be.visible');
   });
 
+  it('should find and assert the existence of the log button', () => {
+    // Use the ID selector to locate the button
+    cy.get('#HomePageLogButton').should('exist');
+  });
+
   it('should find and assert the existence of the browse button', () => {
     // Use the ID selector to locate the button
     cy.get('#HomePageBrowseButton').should('exist');

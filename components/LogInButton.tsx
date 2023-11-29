@@ -10,30 +10,34 @@ const LogInButton = () => {
 
     if (session && session.user) {
         return (
+            <div suppressHydrationWarning>
+                <Button
+                    id='HomePageLogButton'
+                    size="xl"
+                    className={classes.control}
+                    variant="gradient"
+                    gradient={{ from: 'blue', to: 'cyan' }}
+                    onClick={() => signOut({ callbackUrl: 'http://localhost:3000' })}
+                >
+                    Log Out
+                </Button>
+            </div>
+        )
+    }
+
+    return (
+        <div suppressHydrationWarning>
             <Button
                 id='HomePageLogButton'
                 size="xl"
                 className={classes.control}
                 variant="gradient"
                 gradient={{ from: 'blue', to: 'cyan' }}
-                onClick={() => signOut({ callbackUrl: 'http://localhost:3000' })}
+                onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000/gallery' })}
             >
-                Log Out
+                Log In
             </Button>
-        )
-    }
-
-    return (
-        <Button
-            id='HomePageLogButton'
-            size="xl"
-            className={classes.control}
-            variant="gradient"
-            gradient={{ from: 'blue', to: 'cyan' }}
-            onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000/gallery' })}
-        >
-            Log In
-        </Button>
+        </div>
     )
 }
 

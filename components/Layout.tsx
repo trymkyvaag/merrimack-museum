@@ -102,8 +102,11 @@ export default function Layout({
             }
             return response.json();
         }).then((data) => {
+            console.log(`Logged in: ${data}`);
+            console.log(data);
             setToken(data.token);
-            if (data.user_type.user_type === "Admin") {
+            if (data.user_type.user_type === "admin") {
+                console.log("Is ADMIN");
                 setIsAdmin(true);
                 setItems(links.map((link) => {
 
