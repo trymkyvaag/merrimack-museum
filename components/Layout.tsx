@@ -103,14 +103,14 @@ export default function Layout({
             return response.json();
         }).then((data) => {
             setToken(data.token);
-            if (data.user_type.user_type == "admin") {
+            if (data.user_type.user_type === "Admin") {
                 setIsAdmin(true);
                 setItems(links.map((link) => {
 
                     return convertLinkToComponent({ link: link.link, label: link.label, auth: link.auth });
 
                 }));
-            } else if (data.user_type.user_type == "FS") {
+            } else if (data.user_type.user_type === "FS") {
                 setIsFaculty(true);
                 links
                     .filter((link) => link.auth == 'faculty')
