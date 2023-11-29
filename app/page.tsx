@@ -24,6 +24,7 @@ export default function Home() {
           <Group className={classes.controls}>
             <LogInButton />
             <Button
+              id='HomePageBrowseButton'
               component={Link}
               href='/gallery'
               size="xl"

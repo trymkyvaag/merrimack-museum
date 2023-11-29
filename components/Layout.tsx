@@ -103,7 +103,7 @@ export default function Layout({
             return response.json();
         }).then((data) => {
             setToken(data.token);
-            if (data.user_type.user_type === "Admin") {
+            if (data.user_type.user_type == "admin") {
                 setIsAdmin(true);
                 setItems(links.map((link) => {
 
@@ -113,7 +113,7 @@ export default function Layout({
             } else if (data.user_type.user_type == "FS") {
                 setIsFaculty(true);
                 links
-                    .filter((link) => link.auth === 'faculty')
+                    .filter((link) => link.auth == 'faculty')
                     .forEach((link) => addItemAtIndex({ link: link.link, label: link.label, auth: link.auth }, items.length - 1));
             }
         }).catch(error => {

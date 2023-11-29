@@ -227,28 +227,26 @@ export default function Gallery() {
 
 
     return (
-        <>
-            <main>
-                <Container pt="xl" size="xs">
-                    <Input
-                        placeholder="Search artwork"
-                        onChange={(event: { currentTarget: { value: SetStateAction<string>; }; }) => setValue(event.currentTarget.value)}
-                        onKeyDown={(event: { key: string; }) => {
-                            if (event.key === 'Enter') {
-                                handleSearch(value);
-                            }
-                        }}
-                        rightSectionPointerEvents="all"
-                        rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} onClick={() => handleSearch(value)} />}
-                    />
-                </Container>
-                <Container py="xl">
-                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards()}</SimpleGrid>
-                </Container>
-                <Modal opened={opened} onClose={close} centered>
-                    {/* Modal content */}
-                </Modal>
-            </main>
+        <div suppressHydrationWarning>
+            <Container pt="xl" size="xs">
+                <Input
+                    placeholder="Search artwork"
+                    onChange={(event: { currentTarget: { value: SetStateAction<string>; }; }) => setValue(event.currentTarget.value)}
+                    onKeyDown={(event: { key: string; }) => {
+                        if (event.key === 'Enter') {
+                            handleSearch(value);
+                        }
+                    }}
+                    rightSectionPointerEvents="all"
+                    rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} onClick={() => handleSearch(value)} />}
+                />
+            </Container>
+            <Container py="xl">
+                <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards()}</SimpleGrid>
+            </Container>
+            <Modal opened={opened} onClose={close} centered>
+                {/* Modal content */}
+            </Modal>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Select
@@ -278,6 +276,6 @@ export default function Gallery() {
                     </Transition>
                 </div>
             </Affix>
-        </>
+        </div>
     );
 }
