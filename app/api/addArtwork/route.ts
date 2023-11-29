@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
         const width = data.width !== '' ? data.width : null;
         const height = data.height !== '' ? data.height : null;
         const comments = data.comments !== '' ? data.comments : null;
+        const size = data.size !== '' ? data.size : null;
 
         console.log("Month and Year values: ");
         console.log(month);
@@ -123,6 +124,7 @@ export async function POST(req: NextRequest) {
                 "date_created_month": month,
                 "date_created_year": year,
                 "comments": comments,
+                "size": size,
                 "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + updatedFileName,
             }),
         });

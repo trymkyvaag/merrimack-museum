@@ -27,6 +27,7 @@ interface Artwork {
     donor: {
         donor_name: string;
     };
+    size: string | null;
     location?: {
         location: string;
     } | null;
@@ -198,6 +199,9 @@ export default function Gallery() {
                         </Text>
                         <Text className={classes.title} mt={5}>
                             {"Category: " + (artwork.category ? artwork.category.category : '-')}
+                        </Text>
+                        <Text className={classes.title} mt={5}>
+                            {"Size Category: " + (artwork.size ? artwork.size : '-')}
                         </Text>
                         <Text className={classes.title} mt={5}>
                             {"MM/YYYY: " + (artwork.date_created_month && artwork.date_created_year

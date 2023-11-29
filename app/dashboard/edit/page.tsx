@@ -47,6 +47,7 @@ interface Artwork {
     width?: string | null;
     height?: string | null;
     donor?: string | null;
+    size?: string | null;
     location?: {
         location: string;
     } | null;
@@ -161,7 +162,8 @@ export default function About() {
         date_created_month: '',
         date_created_year: '',
         comments: '',
-        image_path: ''
+        image_path: '',
+        size: '',
         // Add other form fields as needed
     });
 
@@ -218,6 +220,7 @@ export default function About() {
             location: '',
             category: '',
             image_path: '',
+            size: '',
         },
         // Trimming
         validate: {
@@ -232,6 +235,7 @@ export default function About() {
             location: (value) => value.trim().length === 0,
             category: (value) => value.trim().length === 0,
             image_path: (value) => value.trim().length === 0,
+            size: (value) => value.trim().length === 0,
         },
     });
 
@@ -278,7 +282,8 @@ export default function About() {
             date_created_month: item.date_created_month || '',
             date_created_year: item.date_created_year || '',
             comments: item.comments || '',
-            image_path: item.image_path?.image_path || ''
+            image_path: item.image_path?.image_path || '',
+            size: item.size || '',
         });
 
 
@@ -418,6 +423,7 @@ export default function About() {
                     date_created_year: '',
                     comments: '',
                     image_path: '',
+                    size: '',
                 });
                 setSelected('Select Piece');
                 // Optionally, close the form or perform any other necessary actions
@@ -570,6 +576,15 @@ export default function About() {
                                     />
                                 </SimpleGrid>
                                 <SimpleGrid cols={{ base: 1, sm: 2 }} mt="xl">
+                                    <TextInput
+                                        label="Size Category"
+                                        placeholder=""
+                                        name="size"
+                                        variant="filled"
+                                        {...form.getInputProps('size')}
+                                        value={formData.donor_name || ''}
+                                        onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                                    />
                                     <TextInput
                                         label="Donor"
                                         placeholder=""

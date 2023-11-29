@@ -95,6 +95,7 @@ export async function PUT(req: NextRequest) {
             const width = data.width !== '' ? data.width : null;
             const height = data.height !== '' ? data.height : null;
             const comments = data.comments !== '' ? data.comments : null;
+            const size = data.size !== '' ? data.size : null;
 
             console.log(month);
             console.log(year);
@@ -117,6 +118,7 @@ export async function PUT(req: NextRequest) {
                     "date_created_month": month,
                     "date_created_year": year,
                     "comments": comments,
+                    "size": size,
                     "image_path": { "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + updatedFileName, },
                 }),
             });
@@ -148,6 +150,7 @@ export async function PUT(req: NextRequest) {
             const width = data.width !== '' ? data.width : null;
             const height = data.height !== '' ? data.height : null;
             const comments = data.comments !== '' ? data.comments : null;
+            const size = data.size !== '' ? data.size : null;
 
             console.log(month);
             console.log(year);
@@ -174,7 +177,8 @@ export async function PUT(req: NextRequest) {
                     "height": height,
                     "date_created_month": month,
                     "date_created_year": year,
-                    "comments": comments
+                    "comments": comments,
+                    "size": size,
                 }),
             });
 
