@@ -94,8 +94,15 @@ export async function POST(req: NextRequest) {
 
         // Check if date_created_month is an empty string, replace with null
         const month = data.date_created_month !== '' ? data.date_created_month : null;
-        // Check if date_created_year is an empty string, replace with null
         const year = data.date_created_year !== '' ? data.date_created_year : null;
+        const title = data.title !== '' ? data.title : null;
+        const artist_name = data.artist_name !== '' ? data.artist_name : null;
+        const category = data.category !== '' ? data.category : null;
+        const location = data.location !== '' ? data.location : null;
+        const width = data.width !== '' ? data.width : null;
+        const height = data.height !== '' ? data.height : null;
+        const comments = data.comments !== '' ? data.comments : null;
+
         console.log("Month and Year values: ");
         console.log(month);
         console.log(year);
@@ -107,15 +114,15 @@ export async function POST(req: NextRequest) {
             },
             cache: 'no-store',
             body: JSON.stringify({
-                "title": data.title,
-                "artist_name": data.artist_name,
-                "category": data.category,
-                "location": data.location,
-                "width": data.width,
-                "height": data.height,
+                "title": title,
+                "artist_name": artist_name,
+                "category": category,
+                "location": location,
+                "width": width,
+                "height": height,
                 "date_created_month": month,
                 "date_created_year": year,
-                "comments": data.comments,
+                "comments": comments,
                 "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + updatedFileName,
             }),
         });

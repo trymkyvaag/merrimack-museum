@@ -85,10 +85,16 @@ export async function PUT(req: NextRequest) {
                 console.log("Unsuccessfull upload")
             }
 
-            // Check if date_created_month is an empty string, replace with null
             const month = data.date_created_month !== '' ? data.date_created_month : null;
-            // Check if date_created_year is an empty string, replace with null
             const year = data.date_created_year !== '' ? data.date_created_year : null;
+            const title = data.title !== '' ? data.title : null;
+            const donor_name = data.donor_name !== '' ? data.donor_name : null;
+            const artist_name = data.artist_name !== '' ? data.artist_name : null;
+            const category = data.category !== '' ? data.category : null;
+            const location = data.location !== '' ? data.location : null;
+            const width = data.width !== '' ? data.width : null;
+            const height = data.height !== '' ? data.height : null;
+            const comments = data.comments !== '' ? data.comments : null;
 
             console.log(month);
             console.log(year);
@@ -101,16 +107,16 @@ export async function PUT(req: NextRequest) {
                 },
                 cache: 'no-store',
                 body: JSON.stringify({
-                    "title": data.title,
-                    "artist": { "artist_name": data.artist_name },
-                    "category": { "category": data.category },
-                    "location": { "location": data.location },
-                    "width": data.width,
-                    "height": data.height,
-                    "donor": { "donor_name": data.donor_name },
+                    "title": title,
+                    "artist": { "artist_name": artist_name },
+                    "category": { "category": category },
+                    "location": { "location": location },
+                    "width": width,
+                    "height": height,
+                    "donor": { "donor_name": donor_name },
                     "date_created_month": month,
                     "date_created_year": year,
-                    "comments": data.comments,
+                    "comments": comments,
                     "image_path": { "image_path": 'https://d1pv6hg7024ex5.cloudfront.net/' + updatedFileName, },
                 }),
             });
@@ -132,10 +138,16 @@ export async function PUT(req: NextRequest) {
             if (!data) {
                 return NextResponse.json({ error: 'Form data is missing in the request body' }, { status: 400 });
             }
-            // Check if date_created_month is an empty string, replace with null
             const month = data.date_created_month !== '' ? data.date_created_month : null;
-            // Check if date_created_year is an empty string, replace with null
             const year = data.date_created_year !== '' ? data.date_created_year : null;
+            const title = data.title !== '' ? data.title : null;
+            const donor_name = data.donor_name !== '' ? data.donor_name : null;
+            const artist_name = data.artist_name !== '' ? data.artist_name : null;
+            const category = data.category !== '' ? data.category : null;
+            const location = data.location !== '' ? data.location : null;
+            const width = data.width !== '' ? data.width : null;
+            const height = data.height !== '' ? data.height : null;
+            const comments = data.comments !== '' ? data.comments : null;
 
             console.log(month);
             console.log(year);
@@ -153,16 +165,16 @@ export async function PUT(req: NextRequest) {
                 },
                 cache: 'no-store',
                 body: JSON.stringify({
-                    "title": data.title,
-                    "artist": { "artist_name": data.artist_name },
-                    "category": { "category": data.category },
-                    "location": { "location": data.location },
-                    "donor": { "donor_name": data.donor_name },
-                    "width": data.width,
-                    "height": data.height,
+                    "title": title,
+                    "artist": { "artist_name": artist_name },
+                    "category": { "category": category },
+                    "location": { "location": location },
+                    "donor": { "donor_name": donor_name },
+                    "width": width,
+                    "height": height,
                     "date_created_month": month,
                     "date_created_year": year,
-                    "comments": data.comments
+                    "comments": comments
                 }),
             });
 
