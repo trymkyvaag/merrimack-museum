@@ -594,7 +594,7 @@ export default function About() {
                                         name="size"
                                         variant="filled"
                                         {...form.getInputProps('size')}
-                                        value={formData.donor_name || ''}
+                                        value={formData.size || ''}
                                         onChange={(e) => setFormData({ ...formData, size: e.target.value })}
                                     />
                                     <TextInput

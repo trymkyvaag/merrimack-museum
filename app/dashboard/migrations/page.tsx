@@ -47,6 +47,7 @@ interface Artwork {
     width?: string | null;
     height?: string | null;
     donor?: string | null;
+    size?: string | null;
     location?: {
         location: string;
     } | null;
@@ -84,11 +85,14 @@ interface Migrations {
     to_location: string;
     is_pending: boolean;
     is_approved: boolean;
+    is_complete: boolean;
     user: {
         address: string;
     }
     time_stamp: DateTime;
 }
+
+
 
 // Keep track of "Add Artwork FileName"
 let uploadedFileName = '';
@@ -126,6 +130,7 @@ export default function About() {
     const [uploadedImageBase64, setUploadedImageBase64] = useState<string | null>(null);
 
     const [migrationData, setmigrationData] = useState([]);
+    const [migrationDataA, setmigrationDataA] = useState([]);
     const [artworkData, setArtworkData] = useState([]);
     const [selected, setSelected] = useState<Artwork | string>(artworkData[0] || null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -176,8 +181,31 @@ export default function About() {
             }
             return response.json();
         }).then(data => {
-            console.dir(data);
             setmigrationData(data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    const handleMigrationsA = () => {
+
+        fetch('../api/approvedMigrations', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+            },
+            cache: 'no-store',
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.dir("Approved");
+            console.dir(data);
+            setmigrationDataA(data);
+
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -185,8 +213,9 @@ export default function About() {
 
     useEffect(() => {
         handleMigrations();
-        console.log("here");
-        //console.log(artwork.image_path.image_path);
+        handleMigrationsA();
+        // console.log("here");
+        console.log(migrationData);
     }, []);
 
     const handleApprove = (id: number | null) => {
@@ -235,6 +264,78 @@ export default function About() {
         };
         console.log(data);
         fetch('../api/updateMigration', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+            },
+            cache: 'no-store',
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+
+                //TODO function to display form here, write function for email 
+
+                // Reload the window after the PUT request is successful
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+
+    const handleComplete = (id: number | null) => {
+        // Handle approval logic
+        const type = "complete";
+        console.log(`Approved migration with ID: ${id}`);
+        const data = {
+            type: type,
+            id: id
+        }
+        fetch('../api/completeMigration', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+            },
+            cache: 'no-store',
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+
+                //TODO function to display form here, write function for email
+
+                // Reload the window after the PUT request is successful
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+
+    const handleSendBack = (id: number | null) => {
+        // Handle denial logic
+        // Handle approval logic
+        const type = "sendback";
+        console.log(`Denied migration with ID: ${id}`);
+        const data = {
+            type: type,
+            id: id
+        };
+        console.log(data);
+        fetch('../api/completeMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -312,6 +413,58 @@ export default function About() {
         </Card>
     ));
 
+    const approvedCards = migrationDataA.map((migrations: Migrations) => (
+        <Card key={migrations.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} >
+            <Card.Section>
+                <AspectRatio ratio={1080 / 900}>
+
+                    <Image
+                        src={migrations.artwork.image_path.image_path}
+                        height={220}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            background: 'transparent',
+                            zIndex: 2,
+                            pointerEvents: 'none'
+                        }}
+                    />
+
+                </AspectRatio>
+            </Card.Section>
+            <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
+                {"Identifier: " + (migrations.idmove_request ? migrations.idmove_request : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Title: " + (migrations.artwork.title ? migrations.artwork.title : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"User: " + (migrations.user.address ? migrations.user.address : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Move to: " + (migrations.to_location ? migrations.to_location : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Comments: " + (migrations.comments ? migrations.comments : '-')}
+            </Text>
+            <Text className={classes.title} mt={5}>
+                {"Date/Time: " + (migrations.time_stamp ? migrations.time_stamp : '-')}
+            </Text>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                <Button onClick={() => handleComplete(migrations.idmove_request)} style={{ backgroundColor: 'green', color: 'white' }}>
+                    Complete
+                </Button>
+                <Button onClick={() => handleSendBack(migrations.idmove_request)} style={{ backgroundColor: 'red', color: 'white' }}>
+                    Send Back
+                </Button>
+            </div>
+        </Card>
+    ));
+
+
 
     return (
         <>
@@ -342,7 +495,15 @@ export default function About() {
                                     Manage Migrations
                                 </Title>
                                 <Container py="xl">
+                                    <Title size={25}> Pending Requests: </Title>
+                                    <br></br>
                                     <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards}</SimpleGrid>
+                                </Container>
+                                <Container py="xl">
+                                    <Title size={25}> Requests in Movement: </Title>
+                                    <br>
+                                    </br>
+                                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{approvedCards}</SimpleGrid>
                                 </Container>
                             </form>
 

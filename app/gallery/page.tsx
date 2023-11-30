@@ -162,7 +162,11 @@ export default function Gallery() {
     const cards = () => {
         switch (artworkData.status) {
             case 'loading':
-                return <p>Loading...</p>;
+                return (
+                    <div className={classes.loaderContainer}>
+                        <span className={`loader ${classes.loader}`} />
+                    </div>
+                );
             case 'noMatch':
                 return <p>Nothing matched the search</p>;
             case 'success':

@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
                 "to_location": data.destination,
                 "is_pending": 1,
                 "is_approved": 0,
+                "is_complete": 0,
                 "comments": data.message,
                 "artwork": data.artwork.idartwork,
                 "time_stamp": data.time_stamp
