@@ -290,13 +290,15 @@ export default function About() {
             });
     };
 
-    const handleComplete = (id: number | null) => {
+    const handleComplete = (id: number | null, location: string, idArtwork: number | null) => {
         // Handle approval logic
         const type = "complete";
         console.log(`Approved migration with ID: ${id}`);
         const data = {
             type: type,
-            id: id
+            id: id,
+            location: location,
+            idArtwork: idArtwork
         }
         fetch('../api/completeMigration', {
             method: 'PUT',
@@ -454,7 +456,7 @@ export default function About() {
                 {"Date/Time: " + (migrations.time_stamp ? migrations.time_stamp : '-')}
             </Text>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                <Button onClick={() => handleComplete(migrations.idmove_request)} style={{ backgroundColor: 'green', color: 'white' }}>
+                <Button onClick={() => handleComplete(migrations.idmove_request, migrations.to_location, migrations.artwork.idartwork)} style={{ backgroundColor: 'green', color: 'white' }}>
                     Complete
                 </Button>
                 <Button onClick={() => handleSendBack(migrations.idmove_request)} style={{ backgroundColor: 'red', color: 'white' }}>
