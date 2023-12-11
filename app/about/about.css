@@ -1,0 +1,18 @@
+/* about.css */
+.about-container {
+    padding-top: 17vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 2;
+    font-size: 18px;
+}
+
+.about-container p {
+    max-width: 800px;
+    /* Adjust as needed */
+    margin: 0 auto;
+    /* Center the text within the container */
+}
+
