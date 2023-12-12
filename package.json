@@ -31,7 +31,7 @@
     "@mantine/tiptap": "^7.1.3",
     "@mui/material": "^5.14.18",
     "@radix-ui/react-icons": "^1.3.0",
-    "@tabler/icons-react": "^2.42.0",
+    "@tabler/icons-react": "^2.44.0",
     "@tiptap/extension-link": "^2.1.12",
     "@tiptap/react": "^2.1.12",
     "@tiptap/starter-kit": "^2.1.12",

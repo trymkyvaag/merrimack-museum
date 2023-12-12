@@ -120,10 +120,10 @@ export default function Request() {
     return (
         <>
             {
-                // || isFaculty || isAdmin
+
                 isFaculty || isAdmin ?
                     <Container>
-                        {/* <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
                             <Tooltip label="View your requests" refProp="rootRef">
                                 <Switch
                                     checked={checked}
@@ -148,7 +148,7 @@ export default function Request() {
                                     }
                                 />
                             </Tooltip>
-                        </div> */}
+                        </div>
                         {!checked ? (
                             <Container>
                                 <Container px='lg' py='lg' size='sm'>
@@ -251,41 +251,32 @@ export default function Request() {
                                 </Container>
                             </Container>
                         ) : (
-                            request?.move_request ? (
-                                <Container py='lg' size='sm'>
-                                    <Stepper active={active} onStepClick={setActive}>
-                                        <Stepper.Step label="First step" description="Request">
-                                            Step 1: Submit Request
-                                        </Stepper.Step>
-                                        <Stepper.Step label="Second step" description="Request Review">
-                                            Step 2: Request is being reviewed
-                                        </Stepper.Step>
-                                        <Stepper.Step label="Final step" description="Approved">
-                                            Step 3: Request Approved
-                                        </Stepper.Step>
-                                        <Stepper.Completed>
-                                            Art piece out for delivery
-                                        </Stepper.Completed>
-                                    </Stepper>
-                                    {/* <Group justify="center" mt="xl">
-                                        <Button variant="default" onClick={prevStep}>Back</Button>
-                                        <Button onClick={nextStep}>Next step</Button>
-                                    </Group> */}
+                            active === 2 ? (
+                                <Container className={classesTwo.root}>
+                                    <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
+                                        <Image src={image.src} className={classesTwo.mobileImage} />
+                                        <div>
+                                            <Title className={classesTwo.title}>Request in progress...</Title>
+
+                                            {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
+                                                Get back to home page
+                                            </Button> */}
+                                        </div>
+
+                                    </SimpleGrid>
                                 </Container>
                             ) : (
                                 <Container className={classesTwo.root}>
                                     <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
                                         <Image src={image.src} className={classesTwo.mobileImage} />
                                         <div>
-                                            <Title className={classesTwo.title}>Please file a request...</Title>
-                                            <Text c="dimmed" size="lg">
-                                                You have no active requests.
-                                            </Text>
+                                            <Title className={classesTwo.title}>Make a Request...</Title>
+
                                             {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
-                                    Get back to home page
-                                </Button> */}
+                                                Get back to home page
+                                            </Button> */}
                                         </div>
-                                        <Image src={image.src} className={classesTwo.desktopImage} />
+
                                     </SimpleGrid>
                                 </Container>
                             )

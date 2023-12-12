@@ -3,11 +3,17 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import Providers from '@/components/Providers';
+import { Open_Sans } from 'next/font/google'
+import { Button, Center, Container, Input, Modal, Text, Textarea, TextInput } from '@mantine/core';
 
-const inter = Inter({ subsets: ['latin'] })
+const openSans = Open_Sans({
+  weight: '400',
+  subsets: ['latin'],
+});
+
 
 export const metadata: Metadata = {
   title: 'Merrimack College Art Collection',
@@ -22,9 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript />
+
       </head>
-      <body>
+      <body className={openSans.className}>
         <Providers>
           <MantineProvider><Notifications />{children}</MantineProvider>
         </Providers>

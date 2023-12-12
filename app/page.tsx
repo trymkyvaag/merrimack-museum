@@ -14,7 +14,7 @@ export default function Home() {
             <Text component="span" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} inherit>
               Merrimack College
             </Text>{' '}
-            Museum.
+            Art Collection.
           </h1>
 
           <Text className={classes.description} data-color="dimmed">

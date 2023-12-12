@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import './about.css';
-
-import { Open_Sans } from 'next/font/google'
 import { Button, Center, Container, Input, Modal, Text, Textarea, TextInput } from '@mantine/core';
 
+import { Open_Sans } from 'next/font/google'
 const openSans = Open_Sans({
     weight: '400',
     subsets: ['latin'],
@@ -77,8 +76,6 @@ export default function About() {
                     />
                     <Textarea
                         placeholder="Type your message here"
-                        multiline
-                        rows={4}
                         value={emailForm.message}
                         onChange={(event) => handleInputChange('message', event.currentTarget.value)}
                         mb={10}
