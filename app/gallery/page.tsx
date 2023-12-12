@@ -14,10 +14,10 @@ import classes from '@/styles/Gallery.module.css';
 interface Artwork {
     idartwork: number;
     artist: {
-        artist_name: string;
+        artist_name: string | null;
     };
     category?: {
-        category: string;
+        category: string | null;
     };
     title: string | null;
     date_created_month?: number | null;

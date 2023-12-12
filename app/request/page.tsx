@@ -124,30 +124,30 @@ export default function Request() {
                 isFaculty || isAdmin ?
                     <Container>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
-                            <Tooltip label="View your requests" refProp="rootRef">
-                                <Switch
-                                    checked={checked}
-                                    onChange={(event) => setChecked(event.currentTarget.checked)}
-                                    color="teal"
-                                    size="md"
-                                    thumbIcon={
-                                        checked ? (
-                                            <IconCheck
-                                                style={{ width: rem(12), height: rem(12) }}
-                                                color={theme.colors.teal[6]}
-                                                stroke={3}
-                                            />
-                                        ) : (
-                                            // <IconX
-                                            //     style={{ width: rem(12), height: rem(12) }}
-                                            //     color={theme.colors.red[6]}
-                                            //     stroke={3}
-                                            // />
-                                            null
-                                        )
-                                    }
-                                />
-                            </Tooltip>
+
+                            <Switch
+                                checked={checked}
+                                onChange={(event) => setChecked(event.currentTarget.checked)}
+                                color="teal"
+                                size="md"
+                                thumbIcon={
+                                    checked ? (
+                                        <IconCheck
+                                            style={{ width: rem(12), height: rem(12) }}
+                                            color={theme.colors.teal[6]}
+                                            stroke={3}
+                                        />
+                                    ) : (
+                                        // <IconX
+                                        //     style={{ width: rem(12), height: rem(12) }}
+                                        //     color={theme.colors.red[6]}
+                                        //     stroke={3}
+                                        // />
+                                        null
+                                    )
+                                }
+                            />
+
                         </div>
                         {!checked ? (
                             <Container>
@@ -270,7 +270,7 @@ export default function Request() {
                                     <SimpleGrid spacing={{ base: 40, sm: 80 }} cols={{ base: 1, sm: 2 }}>
                                         <Image src={image.src} className={classesTwo.mobileImage} />
                                         <div>
-                                            <Title className={classesTwo.title}>Make a Request...</Title>
+
 
                                             {/* <Button variant="outline" size="md" mt="xl" className={classesTwo.control}>
                                                 Get back to home page

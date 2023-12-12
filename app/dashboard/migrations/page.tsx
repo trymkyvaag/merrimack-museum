@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, useMantineTheme, Tooltip, rem, AspectRatio, Card } from '@mantine/core';
+import { Text, TextInput, Textarea, SimpleGrid, Menu, Image, Group, Title, Button, Container, useMantineTheme, Tooltip, rem, AspectRatio, Card, Input, Modal } from '@mantine/core';
 import { IconX, IconDownload, IconCloudUpload, IconChevronDown } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useSession } from 'next-auth/react';
@@ -219,6 +219,7 @@ export default function About() {
     }, []);
 
     const handleApprove = (id: number | null) => {
+
         // Handle approval logic
         const type = "approve";
         console.log(`Approved migration with ID: ${id}`);
@@ -242,18 +243,21 @@ export default function About() {
                 return response.json();
             })
             .then(() => {
-
+                window.location.reload();
                 //TODO function to display form here, write function for email
 
                 // Reload the window after the PUT request is successful
-                window.location.reload();
+
             })
             .catch(error => {
                 console.error('Error:', error);
             });
+
+
     };
 
     const handleDeny = (id: number | null) => {
+
         // Handle denial logic
         // Handle approval logic
         const type = "deny";
@@ -288,6 +292,8 @@ export default function About() {
             .catch(error => {
                 console.error('Error:', error);
             });
+        handleContactUsClick();
+
     };
 
     const handleComplete = (id: number | null, location: string, idArtwork: number | null) => {
@@ -362,10 +368,74 @@ export default function About() {
             .catch(error => {
                 console.error('Error:', error);
             });
+
     };
 
+    const [contactUsModalOpen, setContactUsModalOpen] = useState(false);
+
+    const [emailSent, setemailSent] = useState(false);
+    const [emailForm, setEmailForm] = useState({
+        name: '',
+        email: '',
+        message: '',
+    });
+
+    const handleContactUsClick = () => {
+        setContactUsModalOpen(true);
+
+    };
+
+    const handleModalClose = () => {
+        setContactUsModalOpen(false);
+    };
+
+    const handleInputChange = (key: any, value: any) => {
+        setEmailForm({
+            ...emailForm,
+            [key]: value,
+        });
+    };
+
+    const handleSendEmail = (msg: string, name: string, email: string) => {
+        console.log("calling send")
+        // Perform the logic to send the email using the emailForm data
+        console.log('Sending email:', emailForm);
+        const newMsg = `From ${name}: ${email} \n` + msg
+        window.open(`mailto:artmerrimack@gmail.com?subject=ContactForm&body=${`From ${name}: ${email} \n + ${msg}`}`);
+
+    }
+
+
+    class DateTime {
+        constructor(public timestamp: number) { }
+    }
+
+    function isDateTime(value: any): value is DateTime {
+        return value instanceof DateTime;
+    }
+
+    function formatDateTime(dateTimeString: DateTime | boolean | string | number) {
+        if (typeof dateTimeString === 'boolean') {
+            return 'Invalid Date';
+        }
+
+        let dateValue: Date;
+
+        if (isDateTime(dateTimeString)) {
+            dateValue = new Date(dateTimeString.timestamp);
+        } else {
+            // Handle the case when dateTimeString is string or number
+            dateValue = new Date(dateTimeString);
+        }
+
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        return dateValue.toLocaleString();
+    }
+
+
+
     const cards = migrationData.map((migration: Migrations) => (
-        <Card key={migration.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} >
+        <Card key={migration.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} style={{ width: '300px' }} >
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
 
@@ -386,26 +456,26 @@ export default function About() {
 
                 </AspectRatio>
             </Card.Section>
-            <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
+            <Text style={{ fontWeight: 'bold' }} c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                 {"Identifier: " + (migration.idmove_request ? migration.idmove_request : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"Title: " + (migration.artwork.title ? migration.artwork.title : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"User: " + (migration.user.address ? migration.user.address : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"Move to: " + (migration.to_location ? migration.to_location : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"Comments: " + (migration.comments ? migration.comments : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
-                {"Date/Time: " + (migration.time_stamp ? migration.time_stamp : '-')}
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
+                {"Date/Time: " + (migration.time_stamp ? formatDateTime(migration.time_stamp as unknown as DateTime) : '-')}
             </Text>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                <Button onClick={() => handleApprove(migration.idmove_request)} style={{ backgroundColor: 'green', color: 'white' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                <Button onClick={() => handleApprove(migration.idmove_request)} style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}>
                     Approve
                 </Button>
                 <Button onClick={() => handleDeny(migration.idmove_request)} style={{ backgroundColor: 'red', color: 'white' }}>
@@ -416,7 +486,7 @@ export default function About() {
     ));
 
     const approvedCards = migrationDataA.map((migrations: Migrations) => (
-        <Card key={migrations.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} >
+        <Card key={migrations.idmove_request} p="md" radius="md" component="a" href="#" className={classes.card} style={{ width: '300px' }}>
             <Card.Section>
                 <AspectRatio ratio={1080 / 900}>
 
@@ -440,27 +510,27 @@ export default function About() {
             <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                 {"Identifier: " + (migrations.idmove_request ? migrations.idmove_request : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"Title: " + (migrations.artwork.title ? migrations.artwork.title : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"User: " + (migrations.user.address ? migrations.user.address : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"Move to: " + (migrations.to_location ? migrations.to_location : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
                 {"Comments: " + (migrations.comments ? migrations.comments : '-')}
             </Text>
-            <Text className={classes.title} mt={5}>
-                {"Date/Time: " + (migrations.time_stamp ? migrations.time_stamp : '-')}
+            <Text style={{ fontWeight: 'bold' }} className={classes.title} mt={5}>
+                {"Date/Time: " + (migrations.time_stamp ? formatDateTime(migrations.time_stamp as unknown as DateTime) : '-')}
             </Text>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                <Button onClick={() => handleComplete(migrations.idmove_request, migrations.to_location, migrations.artwork.idartwork)} style={{ backgroundColor: 'green', color: 'white' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                <Button onClick={() => handleComplete(migrations.idmove_request, migrations.to_location, migrations.artwork.idartwork)} style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}>
                     Complete
                 </Button>
                 <Button onClick={() => handleSendBack(migrations.idmove_request)} style={{ backgroundColor: 'red', color: 'white' }}>
-                    Send Back
+                    Back
                 </Button>
             </div>
         </Card>
@@ -473,6 +543,8 @@ export default function About() {
 
             {
                 isFaculty || isAdmin ?
+
+
                     <Container>
                         <nav className={classes.navbar}>
 
@@ -482,7 +554,36 @@ export default function About() {
                                 </div>
                             </div>
                         </nav>
-
+                        <Modal opened={contactUsModalOpen} onClose={handleModalClose} centered>
+                            <Container p="xl">
+                                <div style={{ textAlign: 'center' }}>
+                                    <Text size="xl" mb={40} className="text-align-center" >
+                                        Contact Us
+                                    </Text>
+                                </div>
+                                <TextInput
+                                    placeholder="Enter your name"
+                                    value={emailForm.name}
+                                    onChange={(event) => handleInputChange('name', event.currentTarget.value)}
+                                    mb={10}
+                                />
+                                <Input
+                                    placeholder="Enter your email"
+                                    value={emailForm.email}
+                                    onChange={(event: { currentTarget: { value: string; }; }) => handleInputChange('email', event.currentTarget.value)}
+                                    mb={10}
+                                />
+                                <Textarea
+                                    placeholder="Type your message here"
+                                    value={emailForm.message}
+                                    onChange={(event) => handleInputChange('message', event.currentTarget.value)}
+                                    mb={10}
+                                />
+                                <Button onClick={() => handleSendEmail(emailForm.name, emailForm.email, emailForm.message)} fullWidth>
+                                    Send Email
+                                </Button>
+                            </Container>
+                        </Modal>
 
                         <Container px='lg' size='sm'>
 
