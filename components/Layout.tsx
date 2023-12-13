@@ -21,6 +21,8 @@ const links = [
     { link: '/request', label: 'Request', auth: 'faculty' },
     { link: '/about', label: 'About', auth: null },
     { link: '/dashboard', label: 'Dashboard', auth: 'admin' },
+    { link: '/support', label: 'Support', auth: null },
+    
 ];
 
 export default function Layout({
