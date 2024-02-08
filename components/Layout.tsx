@@ -89,7 +89,7 @@ export default function Layout({
 
     useEffect(() => {
 
-        fetch(`http://127.0.0.1:8001/api/user`, {
+        fetch(`http://127.0.0.1:8000/api/add-or-check-user/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function Layout({
 
 
 
-        fetch(`http://127.0.0.1:8001/api/artworksListFiltered`, {
+        fetch(`http://127.0.0.1:8000/api/artworks-list-filtered/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ export default function Layout({
             console.error('Error:', error);
         });
 
-        fetch(`http://127.0.0.1:8001/api/findrequest`, {
+        fetch(`http://127.0.0.1:8000/api/find-request/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -199,7 +199,7 @@ export default function About() {
         }
         console.log("Request Page: Before sending to nextjs api");
         console.dir(data);
-        fetch(`http://127.0.0.1:8001/api/editUser`, {
+        fetch(`http://127.0.0.1:8000/api/editUser`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -298,7 +298,7 @@ export default function About() {
 
     useEffect(() => {
 
-        fetch(`http://127.0.0.1:8001/api/user`, {
+        fetch(`http://127.0.0.1:8000/api/user`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

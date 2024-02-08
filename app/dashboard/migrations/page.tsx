@@ -168,7 +168,7 @@ export default function About() {
 
     const handleMigrations = () => {
 
-        fetch('http://127.0.0.1:8001/api/allMigrations', {
+        fetch('http://127.0.0.1:8000/api/allMigrations', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -189,7 +189,7 @@ export default function About() {
 
     const handleMigrationsA = () => {
 
-        fetch('http://127.0.0.1:8001/api/approvedMigrations', {
+        fetch('http://127.0.0.1:8000/api/approvedMigrations', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ export default function About() {
             type: type,
             id: id
         }
-        fetch('http://127.0.0.1:8001/api/updateMigration', {
+        fetch('http://127.0.0.1:8000/api/updateMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -267,7 +267,7 @@ export default function About() {
             id: id
         };
         console.log(data);
-        fetch('http://127.0.0.1:8001/api/updateMigration', {
+        fetch('http://127.0.0.1:8000/api/updateMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -306,7 +306,7 @@ export default function About() {
             location: location,
             idArtwork: idArtwork
         }
-        fetch('http://127.0.0.1:8001/api/completeMigration', {
+        fetch('http://127.0.0.1:8000/api/completeMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -343,7 +343,7 @@ export default function About() {
             id: id
         };
         console.log(data);
-        fetch('http://127.0.0.1:8001/api/completeMigration', {
+        fetch('http://127.0.0.1:8000/api/completeMigration', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

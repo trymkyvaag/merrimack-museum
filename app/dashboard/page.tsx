@@ -290,7 +290,7 @@ export default function About() {
         }
         console.log("Request Page: Before sending to nextjs api");
         console.dir(data.uploadedImage);
-        fetch(`http://127.0.0.1:8001/api/addArtwork`, {
+        fetch(`http://127.0.0.1:8000/api/add-Artwork`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -349,7 +349,7 @@ export default function About() {
         }
         console.log("Request Page: Before sending to nextjs api");
         console.dir(data);
-        fetch(`http://127.0.0.1:8001/api/editUser`, {
+        fetch(`http://127.0.0.1:8000/api/edit-User`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -395,7 +395,7 @@ export default function About() {
     };
 
     const handleArtwork = () => {
-        fetch(`http://127.0.0.1:8001/api/artworksList`, {
+        fetch(`http://127.0.0.1:8000/api/artworks-List`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -476,7 +476,7 @@ export default function About() {
         }
         console.log("Request Page: Before sending to nextjs api");
         console.dir(formData);
-        fetch(`http://127.0.0.1:8001/api/editArtwork`, {
+        fetch(`http://127.0.0.1:8000/api/edit-Artwork`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
@@ -509,7 +509,7 @@ export default function About() {
         }
 
         // Make a DELETE request to your API to delete the artwork
-        fetch(`http://127.0.0.1:8001/api/deleteArtwork`, {
+        fetch(`http://127.0.0.1:8000/api/delete-Artwork`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -550,7 +550,7 @@ export default function About() {
 
     const handleMigrations = () => {
 
-        fetch(`http://127.0.0.1:8001/api/allMigrations`, {
+        fetch(`http://127.0.0.1:8000/api/all-Migrations`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -578,7 +578,7 @@ export default function About() {
             type: type,
             id: id
         }
-        fetch(`http://127.0.0.1:8001/api/updateMigration`, {
+        fetch(`http://127.0.0.1:8000/api/update-Migration`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -615,7 +615,7 @@ export default function About() {
             id: id
         };
         console.log(data);
-        fetch(`http://127.0.0.1:8001/api/updateMigration`, {
+        fetch(`http://127.0.0.1:8000/api/update-Migration`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

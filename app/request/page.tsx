@@ -79,7 +79,7 @@ export default function Request() {
         }
         console.log("Request Page: Before sending to nextjs api");
         console.log(data)
-        fetch(`http://127.0.0.1:8001/api/moverequests`, {
+        fetch(`http://127.0.0.1:8000/api/move-requests`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',

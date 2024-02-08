@@ -293,7 +293,7 @@ export default function About() {
     };
 
     const handleArtwork = () => {
-        fetch(`http://127.0.0.1:8001/api/artworksList`, {
+        fetch(`http://127.0.0.1:8000/api/artworksList`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -361,7 +361,7 @@ export default function About() {
         }
         console.log("Request Page: Before sending to nextjs api");
         console.dir(formData);
-        fetch(`http://127.0.0.1:8001/api/editArtwork`, {
+        fetch(`http://127.0.0.1:8000/api/editArtwork`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
@@ -406,7 +406,7 @@ export default function About() {
         }
 
         // Make a DELETE request to your API to delete the artwork
-        fetch(`http://127.0.0.1:8001/api/deleteArtwork`, {
+        fetch(`http://127.0.0.1:8000/api/deleteArtwork`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
