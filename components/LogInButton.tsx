@@ -20,7 +20,7 @@ const LogInButton = () => {
             <div suppressHydrationWarning id='HomePageLogButton'>
                 <Button
                     {...commonButtonProps}
-                    onClick={() => signOut({ callbackUrl: 'http://localhost:3000' })}
+                    onClick={() => signOut({ callbackUrl: 'http://localhost:3000/' })}
                 >
                     Log Out
                 </Button>
@@ -32,7 +32,7 @@ const LogInButton = () => {
         <div suppressHydrationWarning id='HomePageLogButton'>
             <Button
                 {...commonButtonProps}
-                onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000/gallery' })}
+                onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000/gallery/' })}
             >
                 Log In
             </Button>

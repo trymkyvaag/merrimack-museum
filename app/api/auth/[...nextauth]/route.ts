@@ -12,7 +12,7 @@ const handler = NextAuth({
     theme: {
         colorScheme: "auto", // "auto" | "dark" | "light"
         brandColor: "", // Hex color code
-        logo: "https://next-auth.js.org/img/logo/logo-sm.png",
+        logo: "https://next-auth.js.org/img/logo/logo-sm.png/",
         buttonText: "" // Hex color code
     },
     providers: [
@@ -21,9 +21,9 @@ const handler = NextAuth({
             clientSecret: process.env.AUTH_GOOGLE_SECRET ?? "",
             authorization: {
                 params: {
-                  prompt: "consent",
-                  access_type: "offline",
-                  response_type: "code"
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
                 }
             }
         }),
@@ -31,16 +31,16 @@ const handler = NextAuth({
     session: {
         // Set the duration in seconds (e.g., 1 hour = 3600 seconds)
         maxAge: 30 * 24 * 60 * 60,
-      },    
+    },
     callbacks: {
         async jwt({ token, user }: { token: any; user: any }) {
             // console.log("JWT Callback:", token);
             return Promise.resolve(token);
-          },
-          async session({ session, user }: { session: any; user: any }) {
+        },
+        async session({ session, user }: { session: any; user: any }) {
             // console.log("Session Callback:", session);
             return Promise.resolve(session);
-          },
+        },
     },
 });
 

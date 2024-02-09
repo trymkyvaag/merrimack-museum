@@ -26,7 +26,7 @@ export default function Home() {
             <Button
               id='HomePageBrowseButton'
               component={Link}
-              href='/gallery'
+              href='/gallery/'
               size="xl"
               variant="default"
               className={classes.control}

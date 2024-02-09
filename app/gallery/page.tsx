@@ -91,7 +91,7 @@ export default function Gallery() {
      */
     const handleCards = (num_artworks: number) => {
 
-        fetch(`http://127.0.0.1:3000/api/search-artworks`, {
+        fetch(`http://127.0.0.1:3000/api/searchartwork/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function Gallery() {
         console.log("search all");
         console.log(all_artworks);
 
-        fetch(`http://127.0.0.1:8000/api/searchartwork`, {
+        fetch(`http://127.0.0.1:8000/api/searchartwork/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
