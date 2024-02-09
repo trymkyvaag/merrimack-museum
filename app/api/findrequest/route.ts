@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
                 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
             },
             cache: 'no-store',
-            body: JSON.stringify({ "address": data.address }),
+            body: JSON.stringify({ "address": data.email }),
         });
 
         if (externalApiResponse.ok) {
