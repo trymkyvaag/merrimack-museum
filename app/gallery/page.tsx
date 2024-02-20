@@ -240,12 +240,12 @@ export default function Gallery() {
 
 
     return (
-        <div suppressHydrationWarning>
+        <div suppressHydrationWarning style={{ backgroundColor: '#003768' }}>
             <Container pt="xl" size="xs">
                 <Input
                     placeholder="Search artwork"
-                    onChange={(event: { currentTarget: { value: SetStateAction<string>; }; }) => setValue(event.currentTarget.value)}
-                    onKeyDown={(event: { key: string; }) => {
+                    onChange={(event) => setValue(event.currentTarget.value)}
+                    onKeyDown={(event) => {
                         if (event.key === 'Enter') {
                             handleSearch(value);
                         }
@@ -266,7 +266,7 @@ export default function Gallery() {
                         data={['15', '30', '45', '60', '90', "All"]}
                         value={scrollToValue !== null ? scrollToValue : null}
                         style={{ width: '75px' }}
-                        onChange={(selectedValue: string | null) => {
+                        onChange={(selectedValue) => {
                             if (selectedValue === null) {
                                 //TODO
                             } else if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
@@ -291,4 +291,5 @@ export default function Gallery() {
             </Affix>
         </div>
     );
+
 }

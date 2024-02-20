@@ -173,11 +173,13 @@ export default function Layout({
             <header className={classes.header}>
                 <Container size="md">
                     <div className={classes.inner}>
-                        <Link legacyBehavior href="/">
-                            <a>
-                                <MantineLogo size={28} />
-                            </a>
-                        </Link>
+                        <div className={classes.logoContainer}>
+                            <Link legacyBehavior href="/">
+                                <div>
+                                    <img src="/pictures/McLogo.png" alt="Logo" style={{ width: 45, height: 45 }} />
+                                </div>
+                            </Link>
+                        </div>
                         <Group gap={5} visibleFrom="sm">
                             {items}
                         </Group>
