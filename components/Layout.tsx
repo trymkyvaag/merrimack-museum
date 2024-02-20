@@ -175,10 +175,15 @@ export default function Layout({
                     <div className={classes.inner}>
                         <div className={classes.logoContainer}>
                             <Link legacyBehavior href="/">
-                                <div>
-                                    <img src="/pictures/McLogo.png" alt="Logo" style={{ width: 45, height: 45 }} />
+                                <div className={classes.logoContainer}>
+                                    <a className={classes.headerLink}>
+                                        <img src="/pictures/McLogo.png" alt="Logo" style={{ width: 45, height: 45 }} />
+                                        Merrimack Art Collection
+
+                                    </a>
                                 </div>
                             </Link>
+
                         </div>
                         <Group gap={5} visibleFrom="sm">
                             {items}
