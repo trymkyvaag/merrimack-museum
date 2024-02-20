@@ -141,7 +141,10 @@ export default function Gallery() {
                 if (data.length === 0) {
                     setArtworkData({ status: 'noMatch', data: [] });
                 } else {
-                    setArtworkData({ status: 'success', data });
+                    const randomNumber = Math.floor(Math.random() * data.length) - 29;
+
+                    const dispData = data.slice(randomNumber, randomNumber + 30);
+                    setArtworkData({ status: 'success', data: dispData }); // Update the 'data' property instead of 'dispData'
                 }
             })
             .catch((error) => {
