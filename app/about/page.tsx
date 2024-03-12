@@ -43,16 +43,18 @@ export default function About() {
     }
 
     return (
-        <div className={`${openSans.className} about-container`} suppressHydrationWarning>
-            <div>
-                <p>
-                    Art is an expression of human creativity, knowledge, and skill. It is usually produced to communicate a message. Most importantly, it is essential to understanding culture and society during a period of time. By looking and studying different art forms, we are able to learn more about ourselves and others. Additionally, art expands our imagination beyond the creative limits we set for ourselves.
-                    Merrimack College has developed a modest collection of artworks from gifts by exhibiting professional artists (McQuade Library Gallery, 1970-1999 and the McCoy Gallery, 1999-2019). Additionally, the Merrimack College Art Collection includes a second group of artworks by Merrimack students. The Student Collection has been expanding through the generosity of our students.
-                    Please view our works on the “Gallery” page, where a random selection of works will be shown via thumbnails. You can click on a small image to view a larger image, along with more details about the artwork.
-                </p>
-                <Button onClick={() => handleContactUsClick()} mt={30}>
-                    Contact Us
-                </Button>
+        <div className={`${openSans.className} about-container`} suppressHydrationWarning style={{ backgroundColor: '#003768', color: 'white' }} >
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+                <Container style={{ textAlign: 'center', marginBottom: '50px' }}>
+                    <p>
+                        Art is an expression of human creativity, knowledge, and skill. It is usually produced to communicate a message. Most importantly, it is essential to understanding culture and society during a period of time. By looking and studying different art forms, we are able to learn more about ourselves and others. Additionally, art expands our imagination beyond the creative limits we set for ourselves. Merrimack College has developed a modest collection of artworks from gifts by exhibiting professional artists (McQuade Library Gallery, 1970-1999 and the McCoy Gallery, 1999-2019). Additionally, the Merrimack College Art Collection includes a second group of artworks by Merrimack students. The Student Collection has been expanding through the generosity of our students. Please view our works on the “Gallery” page, where a random selection of works will be shown via thumbnails. You can click on a small image to view a larger image, along with more details about the artwork.
+                    </p>
+                </Container>
+                <Container style={{ position: 'fixed', bottom: '50px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: '999' }}>
+                    <Button onClick={handleContactUsClick}>
+                        Contact Us
+                    </Button>
+                </Container>
             </div>
 
             <Modal opened={contactUsModalOpen} onClose={handleModalClose} centered>

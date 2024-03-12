@@ -1,18 +1,36 @@
-/* about.css */
 .about-container {
-    padding-top: 17vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    line-height: 2;
-    font-size: 18px;
+    /* background-image: url('/pictures/ABckg.png'); */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: calc(100vh - 80px);
+    /* Adjust 80px to match the height of your header */
+    padding-top: 0px;
+    /* Adjust 80px to match the height of your header */
 }
+
 
 .about-container p {
-    max-width: 800px;
-    /* Adjust as needed */
-    margin: 0 auto;
-    /* Center the text within the container */
+    margin-bottom: 20px;
+    /* Add spacing between paragraphs */
 }
 
+.about-container button {
+    background-color: #007bff;
+    /* Set button background color */
+    color: #ffffff;
+    /* Set button text color */
+    border: none;
+    /* Remove button border */
+    padding: 10px 20px;
+    /* Adjust button padding as needed */
+    cursor: pointer;
+    /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease;
+    /* Add smooth transition for background color */
+}
+
+.about-container button:hover {
+    background-color: #0056b3;
+    /* Change button background color on hover */
+}
