@@ -176,10 +176,8 @@ export default function Layout({
                         <div className={classes.logoContainer}>
                             <Link legacyBehavior href="/">
                                 <div className={classes.logoContainer}>
-                                    <a className={classes.headerLink}>
-                                        <img src="/pictures/McLogo.png" alt="Logo" style={{ width: 45, height: 45 }} />
-                                        Merrimack Art Collection
-
+                                    <a href="https://www.merrimack.edu" className={classes.headerLink}>
+                                        <img src="/pictures/McLogoHoriz.png"  alt="Logo" style={{ width: 300, height: 75 }} />
                                     </a>
                                 </div>
                             </Link>
