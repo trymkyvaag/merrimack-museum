@@ -9,8 +9,10 @@
 }
 
 .overlay {
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-    z-index: 9998; /* Ensure the overlay appears below the popup */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black background */
+    z-index: 9998;
+    /* Ensure the overlay appears below the popup */
 }
 
 /* Styles for the selected card */
@@ -19,9 +21,11 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 800px;
-    max-height: 800px;
+    width: 950px;
+    height: 800px;
     z-index: 9999;
-    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
-    overflow-y: auto; /* Allow vertical scrolling if content overflows */
+    background-color: rgba(255, 255, 255);
+    /* Semi-transparent background */
+    overflow-y: auto;
+    /* Allow vertical scrolling if content overflows */
 }
