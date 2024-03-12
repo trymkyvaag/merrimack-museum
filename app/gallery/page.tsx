@@ -47,6 +47,7 @@ export default function Gallery() {
     const [scrollToValue, setScrollToValue] = useState(null);
     const [scroll, scrollTo] = useWindowScroll();
     const [opened, { open, close }] = useDisclosure(false);
+    const [remainingData, setRemainingData] = useState([]); // State for remaining data
     /**
      * Function for handling the search 
      * @param searchValue, a string where words are separated by spaces 
@@ -142,9 +143,10 @@ export default function Gallery() {
                     setArtworkData({ status: 'noMatch', data: [] });
                 } else {
                     const randomNumber = Math.floor(Math.random() * data.length) - 29;
-
                     const dispData = data.slice(randomNumber, randomNumber + 30);
-                    setArtworkData({ status: 'success', data: dispData }); // Update the 'data' property instead of 'dispData'
+                    const remaining = data.slice(0, randomNumber).concat(data.slice(randomNumber + 30, data.length - 1));
+                    setRemainingData(remaining); // Set remainingData state
+                    setArtworkData({ status: 'success', data: dispData });
                 }
             })
             .catch((error) => {
@@ -239,6 +241,28 @@ export default function Gallery() {
 
 
 
+    const handleButtonClick = () => {
+        setArtworkData((prevData) => {
+            if (prevData.status === 'success') {
+                const currentDisplayedCount = prevData.data.length;
+                const nextIndex = currentDisplayedCount; // Start index for the next set of pictures
+    
+                if (nextIndex < remainingData.length) {
+                    const nextSubset = remainingData.slice(nextIndex, nextIndex + 30);
+                    const newData = prevData.data.concat(nextSubset);
+                    return { status: 'success', data: newData };
+                } else {
+                    // All pictures have been displayed
+                    return prevData;
+                }
+            } else {
+                // Handle other statuses (e.g., 'noMatch')
+                return prevData;
+            }
+        });
+    };
+    
+
     return (
         <div suppressHydrationWarning style={{ backgroundColor: '#003768' }}>
             <Container pt="xl" size="xs">
@@ -258,24 +282,9 @@ export default function Gallery() {
                 <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards()}</SimpleGrid>
             </Container>
             <Modal opened={opened} onClose={close} centered>
-                {/* Modal content */}
             </Modal>
             <Affix position={{ bottom: 20, right: 20 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Select
-                        data={['15', '30', '45', '60', '90', "All"]}
-                        value={scrollToValue !== null ? scrollToValue : null}
-                        style={{ width: '75px' }}
-                        onChange={(selectedValue) => {
-                            if (selectedValue === null) {
-                                //TODO
-                            } else if (selectedValue !== null && selectedValue.toLowerCase() === "all") {
-                                handleAll(selectedValue);
-                            } else {
-                                handleCards(parseInt(selectedValue));
-                            }
-                        }}
-                    />
                     <Transition transition="slide-up" mounted={scroll.y > 0}>
                         {(transitionStyles) => (
                             <Button
@@ -287,9 +296,31 @@ export default function Gallery() {
                             </Button>
                         )}
                     </Transition>
+                    <Transition
+                        transition="slide-up"
+                        mounted={scroll.y > 0}
+                    >
+                        {(transitionStyles) => (
+                            <div
+                                style={{
+                                    position: 'fixed',
+                                    bottom: '20px', // Adjust bottom spacing as needed
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    ...transitionStyles // Include transition styles
+                                }}
+                            >
+                                <Button onClick={handleButtonClick}>
+                                    Load More
+                                </Button>
+                            </div>
+                        )}
+                    </Transition>
+
                 </div>
             </Affix>
         </div>
     );
+
 
 }
