@@ -1,5 +1,5 @@
 'use client';
-
+import './gallery.css';
 import { Modal, Select } from '@mantine/core';
 import { useState, useEffect, SetStateAction } from 'react';
 import { SimpleGrid, Card, Image, Text, Container, AspectRatio, Autocomplete, Input, ComboboxItem, OptionsFilter, Affix, Button, Transition, rem } from '@mantine/core';
@@ -48,6 +48,7 @@ export default function Gallery() {
     const [scroll, scrollTo] = useWindowScroll();
     const [opened, { open, close }] = useDisclosure(false);
     const [remainingData, setRemainingData] = useState([]); // State for remaining data
+    const [selectedCard, setSelectedCard] = useState(null);
     /**
      * Function for handling the search 
      * @param searchValue, a string where words are separated by spaces 
@@ -162,6 +163,38 @@ export default function Gallery() {
         handleAll("All");
     }, []);
 
+    const handlePicClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        // throw new Error('This is a test error!');
+        const cards = document.querySelectorAll('.artwork-card');
+        cards.forEach(card => {
+            card.classList.remove('no-hover');
+            card.classList.remove('selected');
+            card.classList.add('overlay');
+        });
+        event.currentTarget.classList.remove('no-hover');
+        event.currentTarget.classList.add('selected');
+    }
+
+    // Define a function to close the expanded card
+    const closeExpandedCard = () => {
+        const expandedCard = document.querySelector('.artwork-card.selected');
+        if (expandedCard) {
+            expandedCard.classList.remove('selected');
+
+            document.body.classList.remove('no-scroll'); // Optionally, remove no-scroll class to enable scrolling
+        }
+        const cards = document.querySelectorAll('.artwork-card');
+        cards.forEach(card => {
+            card.classList.remove('overlay');
+        });
+    };
+
+    // Add event listener to the document to close the expanded card when clicking outside of it
+    document.addEventListener('click', (event) => {
+        if (event.target instanceof Element && !event.target.closest('.selected')) {
+            closeExpandedCard();
+        }
+    });
 
     /**
      * Create the cards. Maps the data (The artworks) to Cards
@@ -178,7 +211,14 @@ export default function Gallery() {
                 return <p>Nothing matched the search</p>;
             case 'success':
                 return artworkData.data.map((artwork: Artwork) => (
-                    <Card key={artwork.idartwork} p="md" radius="md" component="a" href="#" className={classes.card} >
+                    <Card
+                        key={artwork.idartwork}
+                        p="md"
+                        radius="md"
+                        component="div" // Change component to 'div'
+                        className="artwork-card"
+                        onClick={handlePicClick} // Change the type of onClick event handler
+                    >
                         <Card.Section >
                             <AspectRatio ratio={1080 / 900}>
 
@@ -246,7 +286,7 @@ export default function Gallery() {
             if (prevData.status === 'success') {
                 const currentDisplayedCount = prevData.data.length;
                 const nextIndex = currentDisplayedCount; // Start index for the next set of pictures
-    
+
                 if (nextIndex < remainingData.length) {
                     const nextSubset = remainingData.slice(nextIndex, nextIndex + 30);
                     const newData = prevData.data.concat(nextSubset);
@@ -261,7 +301,7 @@ export default function Gallery() {
             }
         });
     };
-    
+
 
     return (
         <div suppressHydrationWarning style={{ backgroundColor: '#003768' }}>
