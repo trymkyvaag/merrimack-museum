@@ -177,7 +177,7 @@ export default function Layout({
                             <Link legacyBehavior href="/">
                                 <div className={classes.logoContainer}>
                                     <a href="https://www.merrimack.edu" className={classes.headerLink}>
-                                        <img src="/pictures/McLogoHoriz.png"  alt="Logo" style={{ width: 240, height: 56 }} />
+                                        <img src="/pictures/McLogoHoriz2.png" alt="Logo" style={{ width: 240, height: 56 }} />
                                     </a>
                                 </div>
                             </Link>
