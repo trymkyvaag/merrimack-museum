@@ -248,6 +248,7 @@ export default function Gallery() {
                         <Text className={classes.title} mt={5}>
                             {"Artist Name: " + (artwork.artist ? artwork.artist.artist_name : '-')}
                         </Text>
+                        {/* Info to be displayed on big card */}
                         <div id="extraInfo">
                             <Text className={classes.title} mt={5}>
                                 {"Category: " + (artwork.category ? artwork.category.category : '-')}
