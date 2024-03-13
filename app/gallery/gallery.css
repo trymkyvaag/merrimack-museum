@@ -29,3 +29,13 @@
     overflow-y: auto;
     /* Allow vertical scrolling if content overflows */
 }
+
+#extraInfo {
+    display: none;
+    /* Initially hide the extra info */
+}
+
+.artwork-card.selected #extraInfo {
+    display: block;
+    /* Show the extra info only when the card is selected */
+}

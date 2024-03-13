@@ -248,31 +248,33 @@ export default function Gallery() {
                         <Text className={classes.title} mt={5}>
                             {"Artist Name: " + (artwork.artist ? artwork.artist.artist_name : '-')}
                         </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"Category: " + (artwork.category ? artwork.category.category : '-')}
-                        </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"Size Category: " + (artwork.size ? artwork.size : '-')}
-                        </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"MM/YYYY: " + (artwork.date_created_month && artwork.date_created_year
-                                ? `${artwork.date_created_month}/${artwork.date_created_year}`
-                                : '-')}
-                        </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"Width X Height: " + (artwork.width && artwork.height
-                                ? `${artwork.width}/${artwork.height}`
-                                : '-')}
-                        </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"Donor Name: " + (artwork.donor ? artwork.donor.donor_name : '-')}
-                        </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"Location: " + (artwork.location ? artwork.location.location : '-')}
-                        </Text>
-                        <Text className={classes.title} mt={5}>
-                            {"Comments: " + (artwork.comments ? artwork.comments : '-')}
-                        </Text>
+                        <div id="extraInfo">
+                            <Text className={classes.title} mt={5}>
+                                {"Category: " + (artwork.category ? artwork.category.category : '-')}
+                            </Text>
+                            <Text className={classes.title} mt={5}>
+                                {"Size Category: " + (artwork.size ? artwork.size : '-')}
+                            </Text>
+                            <Text className={classes.title} mt={5}>
+                                {"MM/YYYY: " + (artwork.date_created_month && artwork.date_created_year
+                                    ? `${artwork.date_created_month}/${artwork.date_created_year}`
+                                    : '-')}
+                            </Text>
+                            <Text className={classes.title} mt={5}>
+                                {"Width X Height: " + (artwork.width && artwork.height
+                                    ? `${artwork.width}/${artwork.height}`
+                                    : '-')}
+                            </Text>
+                            <Text className={classes.title} mt={5}>
+                                {"Donor Name: " + (artwork.donor ? artwork.donor.donor_name : '-')}
+                            </Text>
+                            <Text className={classes.title} mt={5}>
+                                {"Location: " + (artwork.location ? artwork.location.location : '-')}
+                            </Text>
+                            <Text className={classes.title} mt={5}>
+                                {"Comments: " + (artwork.comments ? artwork.comments : '-')}
+                            </Text>
+                        </div>
                     </Card>
                 )); default:
                 return <p>Error loading data</p>;
