@@ -39,6 +39,7 @@ interface Artwork {
 
 
 export default function Gallery() {
+    const [showDownloadMessage, setShowDownloadMessage] = useState(false);
     const [value, setValue] = useState('');
     const [artworkData, setArtworkData] = useState({
         status: 'loading', // Possible values: 'loading', 'noMatch', 'success'
@@ -282,13 +283,22 @@ export default function Gallery() {
         }
     };
 
+    const handleContextMenu = (event: { preventDefault: () => void; }) => {
+
+        event.preventDefault(); // Prevent the default right-click behavior
+        setShowDownloadMessage(true);
+        setTimeout(() => {
+            setShowDownloadMessage(false);
+        }, 1500); // Hide the message after 1 second
+    };
+
 
 
     const handleButtonClick = () => {
         setArtworkData((prevData) => {
             if (prevData.status === 'success') {
                 const currentDisplayedCount = prevData.data.length;
-                const nextIndex = currentDisplayedCount; // Start index for the next set of pictures
+                const nextIndex = currentDisplayedCount; // Start index for the next set of pictures (TODO: Change if time)
 
                 if (nextIndex < remainingData.length) {
                     const nextSubset = remainingData.slice(nextIndex, nextIndex + 30);
@@ -307,7 +317,7 @@ export default function Gallery() {
 
 
     return (
-        <div suppressHydrationWarning style={{ backgroundColor: '#003768' }}>
+        <div suppressHydrationWarning style={{ backgroundColor: '#003768' }} onContextMenu={handleContextMenu}>
             <Container pt="xl" size="xs">
                 <Input
                     placeholder="Search artwork"
@@ -362,7 +372,9 @@ export default function Gallery() {
 
                 </div>
             </Affix>
+            {showDownloadMessage && <div className="download-message">Artworks are owned by Merrimack College</div>}
         </div>
+
     );
 
 
