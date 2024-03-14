@@ -289,7 +289,7 @@ export default function Gallery() {
         setShowDownloadMessage(true);
         setTimeout(() => {
             setShowDownloadMessage(false);
-        }, 1500); // Hide the message after 1 second
+        }, 3000); // Hide the message after 1 second
     };
 
 
@@ -372,7 +372,7 @@ export default function Gallery() {
 
                 </div>
             </Affix>
-            {showDownloadMessage && <div className="download-message">Artworks are owned by Merrimack College</div>}
+            {showDownloadMessage && <div className="download-message">Please do not download Artwork. If you to use them, email us through the contact form at the about page</div>}
         </div>
 
     );
