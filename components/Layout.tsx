@@ -94,7 +94,7 @@ export default function Layout({
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email: session?.user?.email }),
+            body: JSON.stringify({ address: session?.user?.email }),
 
         }).then(response => {
             if (!response.ok) {
