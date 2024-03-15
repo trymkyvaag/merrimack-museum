@@ -372,7 +372,7 @@ export default function Gallery() {
 
                 </div>
             </Affix>
-            {showDownloadMessage && <div className="download-message">Please do not download Artwork. If you to use them, email us through the contact form at the about page</div>}
+            {showDownloadMessage && <div className="download-message">Please do not download Artwork. If you want to use them, email us through the contact form at the about page</div>}
         </div>
 
     );
