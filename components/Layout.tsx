@@ -18,6 +18,7 @@ const imagePaths: string[] = [];
 
 const links = [
     { link: '/gallery', label: 'Gallery', auth: null },
+    {link: '/collection', label: 'Collection', auth: null },
     { link: '/request', label: 'Request', auth: 'faculty' },
     { link: '/about', label: 'About', auth: null },
     { link: '/dashboard', label: 'Dashboard', auth: 'admin' },

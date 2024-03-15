@@ -174,7 +174,9 @@ export default function About() {
     const navigateToUsersPage = () => {
         router.push('/dashboard/users');
     };
-
+    // const navigateToCollectuin = () => {
+    //     router.push('/dashboard/users');
+    // };
     const handleIconClick = (index: number) => {
         if (index === 1) {
             navigateToEditPage();
