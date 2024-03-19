@@ -117,7 +117,7 @@ export default function Collection() {
                 } else {
                     const startIndex = 0;
                     const dispData = data.slice(0, 30);
-                    const remaining = data.slice(31, data.length);
+                    const remaining = data.slice(0, data.length);
                     setRemainingData(remaining); // Set remainingData state
                     setArtworkData({ status: 'success', data: dispData });
                 }

@@ -317,19 +317,22 @@ export default function Gallery() {
 
 
     return (
-        <div suppressHydrationWarning style={{ backgroundColor: '#003768' }} onContextMenu={handleContextMenu}>
+        <div suppressHydrationWarning style={{ backgroundColor: '#003768' }}>
             <Container pt="xl" size="xs">
                 <Input
                     placeholder="Search artwork"
+                    value={value}
                     onChange={(event) => setValue(event.currentTarget.value)}
                     onKeyDown={(event) => {
                         if (event.key === 'Enter') {
+                            event.preventDefault(); // Prevent default form submission behavior
                             handleSearch(value);
                         }
                     }}
                     rightSectionPointerEvents="all"
                     rightSection={<IconSearch style={{ width: 'rem(15)', height: 'rem(15)' }} stroke={1.5} onClick={() => handleSearch(value)} />}
                 />
+
             </Container>
             <Container py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }}>{cards()}</SimpleGrid>
@@ -373,7 +376,7 @@ export default function Gallery() {
                 </div>
             </Affix>
             {showDownloadMessage && <div className="download-message">Please do not download Artwork. If you want to use them, email us through the contact form at the about page</div>}
-        </div>
+        </div >
 
     );
 
